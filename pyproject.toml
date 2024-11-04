@@ -1,0 +1,57 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
+
+[dependency-groups]
+dev = [
+    { include-group = "lint" },
+    { include-group = "pre-commit" },
+    { include-group = "test" },
+    { include-group = "type-check" },
+]
+lint = ["ruff>=0.4"]
+pre-commit = ["pre-commit"]
+test = []
+type-check = ["mypy>=1.10"]
+
+[project]
+authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Framework :: Hatch",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+]
+description = "Convert your AsciiDoc README to MarkDown, with Hatch."
+dynamic = ["version"]
+keywords = ["AsciiDoc", "README", "MarkDown", "Hatch", "Hatchling", "build", "metadata", "pyproject.toml"]
+name = "hatch-downdoc-readme"
+requires-python = ">=3.9"
+dependencies = [
+  "hatchling",
+]
+
+[project.urls]
+Issues = "https://github.com/CarrotManMatt/hatch-downdoc-readme/issues"
+Repository = "https://github.com/CarrotManMatt/hatch-downdoc-readme"
+
+[tool.hatch.version]
+raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
+source = "vcs"
+
+[tool.ruff]
+line-length = 95
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+skip-magic-trailing-comma = true
