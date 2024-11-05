@@ -59,11 +59,14 @@ raw-options = { local_scheme = "no-local-version", version_scheme = "python-simp
 source = "vcs"
 
 [tool.ruff]
+indent-width = 4
 line-length = 95
 
 [tool.ruff.format]
 docstring-code-format = true
+indent-style = "space"
 line-ending = "lf"
+quote-style = "double"
 skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
@@ -92,64 +95,7 @@ ignore = [
     "TD003",
     "W191",
 ]
-select = [
-    "A",
-    "ANN",
-    "ARG",
-    "ASYNC",
-    "B",
-    "BLE",
-    "C",
-    "COM",
-    "D",
-    "D204",
-    "D213",
-    "D400",
-    "D401",
-    "D404",
-    "DOC",
-    "DTZ",
-    "E",
-    "EM",
-    "ERA",
-    "EXE",
-    "F",
-    "FBT",
-    "FIX",
-    "FLY",
-    "FURB",
-    "G",
-    "I",
-    "ICN",
-    "INP",
-    "INT",
-    "ISC",
-    "LOG",
-    "N",
-    "PERF",
-    "PGH",
-    "PIE",
-    "PL",
-    "PT",
-    "PTH",
-    "PYI",
-    "Q",
-    "RET",
-    "RSE",
-    "RUF",
-    "S",
-    "SIM",
-    "SLF",
-    "SLOT",
-    "T",
-    "TCH",
-    "TD",
-    "TID",
-    "TRY",
-    "UP",
-    "W",
-    "YTT",
-]
+select = ["ALL"]
 task-tags = [
     "BUG",
     "DONE",
