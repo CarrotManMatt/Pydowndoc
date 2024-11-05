@@ -18,8 +18,8 @@ type-check = ["mypy>=1.10"]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: Developers",
     "Framework :: Hatch",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
@@ -31,18 +31,28 @@ classifiers = [
     "Topic :: Software Development",
     "Typing :: Typed",
 ]
+dependencies = ["hatchling"]
 description = "Convert your AsciiDoc README to MarkDown, with Hatch."
 dynamic = ["version"]
-keywords = ["AsciiDoc", "README", "MarkDown", "Hatch", "Hatchling", "build", "metadata", "pyproject.toml"]
+keywords = [
+    "AsciiDoc",
+    "Hatch",
+    "Hatchling",
+    "MarkDown",
+    "README",
+    "build",
+    "metadata",
+    "pyproject.toml",
+]
 name = "hatch-downdoc-readme"
 requires-python = ">=3.9"
-dependencies = [
-  "hatchling",
-]
 
 [project.urls]
 Issues = "https://github.com/CarrotManMatt/hatch-downdoc-readme/issues"
 Repository = "https://github.com/CarrotManMatt/hatch-downdoc-readme"
+
+[tool.hatch.build]
+only-packages = true
 
 [tool.hatch.version]
 raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
@@ -55,3 +65,135 @@ line-length = 95
 docstring-code-format = true
 line-ending = "lf"
 skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+ignore = [
+    "ANN101",
+    "ANN102",
+    "C90",
+    "COM812",
+    "COM819",
+    "D206",
+    "D207",
+    "D208",
+    "D212",
+    "D300",
+    "E111",
+    "E114",
+    "E117",
+    "PIE808",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "S603",
+    "SIM910",
+    "TD002",
+    "TD003",
+    "W191",
+]
+select = [
+    "A",
+    "ANN",
+    "ARG",
+    "ASYNC",
+    "B",
+    "BLE",
+    "C",
+    "COM",
+    "D",
+    "D204",
+    "D213",
+    "D400",
+    "D401",
+    "D404",
+    "DOC",
+    "DTZ",
+    "E",
+    "EM",
+    "ERA",
+    "EXE",
+    "F",
+    "FBT",
+    "FIX",
+    "FLY",
+    "FURB",
+    "G",
+    "I",
+    "ICN",
+    "INP",
+    "INT",
+    "ISC",
+    "LOG",
+    "N",
+    "PERF",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "Q",
+    "RET",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "SLF",
+    "SLOT",
+    "T",
+    "TCH",
+    "TD",
+    "TID",
+    "TRY",
+    "UP",
+    "W",
+    "YTT",
+]
+task-tags = [
+    "BUG",
+    "DONE",
+    "FIXME",
+    "HACK",
+    "IDEA",
+    "ISSUE",
+    "NOBUG",
+    "NOTE",
+    "REQ",
+    "TODO",
+]
+
+[tool.ruff.lint.flake8-type-checking]
+quote-annotations = true
+strict = true
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = [
+    "typed_classproperties.cached_classproperty",
+    "typed_classproperties.classproperty",
+]
+extend-ignore-names = ["BROKEN_*_MESSAGE", "INVALID_*_MESSAGE", "NO_*_MESSAGE"]
+
+[tool.ruff.lint.pycodestyle]
+ignore-overlong-task-comments = true
+max-doc-length = 95
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+property-decorators = [
+    "typed_classproperties.cached_classproperty",
+    "typed_classproperties.classproperty",
+]
+
+[tool.ruff.lint.pylint]
+allow-magic-value-types = ["bytes", "int", "str"]
+max-args = 7
+max-branches = 19
+max-returns = 10
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.uv]
+default-groups = ["dev"]
+trusted-publishing = "always"
