@@ -4,12 +4,12 @@ requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
 
 [dependency-groups]
 dev = [
-    { include-group = "lint" },
+    { include-group = "lint-format" },
     { include-group = "pre-commit" },
     { include-group = "test" },
     { include-group = "type-check" },
 ]
-lint = ["ruff>=0.4"]
+lint-format = ["ruff>=0.4", "taplo"]
 pre-commit = ["pre-commit"]
 test = []
 type-check = ["mypy>=1.10"]
@@ -76,14 +76,17 @@ ignore = [
     "C90",
     "COM812",
     "COM819",
+    "CPY",
     "D206",
-    "D207",
-    "D208",
     "D212",
-    "D300",
-    "E111",
-    "E114",
-    "E117",
+    "DJ",
+    "FA",
+    "FAST",
+    "INP001",
+    "ISC001",
+    "ISC002",
+    "N806",
+    "PD",
     "PIE808",
     "Q000",
     "Q001",
@@ -95,19 +98,8 @@ ignore = [
     "TD003",
     "W191",
 ]
-select = ["ALL"]
-task-tags = [
-    "BUG",
-    "DONE",
-    "FIXME",
-    "HACK",
-    "IDEA",
-    "ISSUE",
-    "NOBUG",
-    "NOTE",
-    "REQ",
-    "TODO",
-]
+select = ["ALL", "D204", "D213", "D401"]
+task-tags = ["BUG", "DONE", "FIXME", "HACK", "IDEA", "ISSUE", "NOBUG", "NOTE", "REQ", "TODO"]
 
 [tool.ruff.lint.flake8-type-checking]
 quote-annotations = true
