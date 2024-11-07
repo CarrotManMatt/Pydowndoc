@@ -40,15 +40,23 @@ keywords = [
     "MarkDown",
     "README",
     "build",
+    "documentation",
     "metadata",
+    "pypi",
     "pyproject.toml",
 ]
 name = "pydowndoc"
 requires-python = ">=3.9"
 
+[project.entry-points.hatch]
+downdoc-readme = "pydowndoc.hatch_hooks"
+
+[project.scripts]
+downdoc = "pydowndoc.console:run"
+
 [project.urls]
 Issues = "https://github.com/CarrotManMatt/pydowndoc/issues"
-Repository = "https://github.com/CarrotManMatt/pydowndox"
+Repository = "https://github.com/CarrotManMatt/pydowndoc"
 
 [tool.hatch.build]
 only-packages = true

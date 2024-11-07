@@ -1,0 +1,24 @@
+name: Build NPM Binaries
+
+on: workflow_dispatch
+
+jobs:
+    build-npm-binaries:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                repository: opendevise/downdoc
+
+            - uses: actions/setup-node@v4
+              with:
+                node-version: 18
+
+            - run: npx pkg -t node18-linux,node18-macos,node18-win .
+
+            - uses: actions/upload-artifact@v4
+              with:
+                path: |-
+                    ./downdoc-linux
+                    ./downdoc-macos
+                    ./downdoc-win.exe
