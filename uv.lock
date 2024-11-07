@@ -29,50 +29,6 @@ wheels = [
 ]
 
 [[package]]
-name = "hatch-downdoc-readme"
-version = "0.0.1.dev4"
-source = { editable = "." }
-dependencies = [
-    { name = "hatchling" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "ruff" },
-    { name = "taplo" },
-]
-lint-format = [
-    { name = "ruff" },
-    { name = "taplo" },
-]
-pre-commit = [
-    { name = "pre-commit" },
-]
-type-check = [
-    { name = "mypy" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "hatchling" }]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "mypy", specifier = ">=1.10" },
-    { name = "pre-commit" },
-    { name = "ruff", specifier = ">=0.4" },
-    { name = "taplo" },
-]
-lint-format = [
-    { name = "ruff", specifier = ">=0.4" },
-    { name = "taplo" },
-]
-pre-commit = [{ name = "pre-commit" }]
-test = []
-type-check = [{ name = "mypy", specifier = ">=1.10" }]
-
-[[package]]
 name = "hatchling"
 version = "1.25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -205,6 +161,50 @@ sdist = { url = "https://files.pythonhosted.org/packages/2e/c8/e22c292035f1bac8b
 wheels = [
     { url = "https://files.pythonhosted.org/packages/16/8f/496e10d51edd6671ebe0432e33ff800aa86775d2d147ce7d43389324a525/pre_commit-4.0.1-py2.py3-none-any.whl", hash = "sha256:efde913840816312445dc98787724647c65473daefe420785f885e8ed9a06878", size = 218713 },
 ]
+
+[[package]]
+name = "pydowndoc"
+version = "0.0.1.dev6"
+source = { editable = "." }
+dependencies = [
+    { name = "hatchling" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "ruff" },
+    { name = "taplo" },
+]
+lint-format = [
+    { name = "ruff" },
+    { name = "taplo" },
+]
+pre-commit = [
+    { name = "pre-commit" },
+]
+type-check = [
+    { name = "mypy" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "hatchling" }]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "mypy", specifier = ">=1.10" },
+    { name = "pre-commit" },
+    { name = "ruff", specifier = ">=0.4" },
+    { name = "taplo" },
+]
+lint-format = [
+    { name = "ruff", specifier = ">=0.4" },
+    { name = "taplo" },
+]
+pre-commit = [{ name = "pre-commit" }]
+test = []
+type-check = [{ name = "mypy", specifier = ">=1.10" }]
 
 [[package]]
 name = "pyyaml"

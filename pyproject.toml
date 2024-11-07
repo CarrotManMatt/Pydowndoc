@@ -43,21 +43,41 @@ keywords = [
     "metadata",
     "pyproject.toml",
 ]
-name = "hatch-downdoc-readme"
+name = "pydowndoc"
 requires-python = ">=3.9"
 
 [project.urls]
-Issues = "https://github.com/CarrotManMatt/hatch-downdoc-readme/issues"
-Repository = "https://github.com/CarrotManMatt/hatch-downdoc-readme"
+Issues = "https://github.com/CarrotManMatt/pydowndoc/issues"
+Repository = "https://github.com/CarrotManMatt/pydowndox"
 
 [tool.hatch.build]
 only-packages = true
+
+[tool.hatch.metadata.hooks.docstring-description]
 
 [tool.hatch.version]
 raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
 source = "vcs"
 
-[tool.hatch.metadata.hooks.docstring-description]
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_decorated = true
+disallow_any_explicit = true
+disallow_any_generics = true
+disallow_any_unimported = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+extra_checks = true
+no_implicit_reexport = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
 [tool.ruff]
 indent-width = 4
