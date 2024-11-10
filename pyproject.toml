@@ -31,8 +31,11 @@ classifiers = [
     "Topic :: Software Development",
     "Typing :: Typed",
 ]
-dependencies = ["hatchling"]
-dynamic = ["description", "version"]
+dependencies = ["hatchling", "typed_classproperties"]
+dynamic = [
+    "description",
+    "version",
+] # TODO: Convert README.adoc using GitHub actions for this project
 keywords = [
     "AsciiDoc",
     "Hatch",
@@ -45,18 +48,19 @@ keywords = [
     "pypi",
     "pyproject.toml",
 ]
-name = "pydowndoc"
+name = "Pydowndoc"
 requires-python = ">=3.9"
 
 [project.entry-points.hatch]
 downdoc-readme = "pydowndoc.hatch_hooks"
 
 [project.scripts]
-downdoc = "pydowndoc.console:run"
+Pydowndoc = "pydowndoc:run_with_sys_argv"
+downdoc = "pydowndoc:run_with_sys_argv"
 
 [project.urls]
-Issues = "https://github.com/CarrotManMatt/pydowndoc/issues"
-Repository = "https://github.com/CarrotManMatt/pydowndoc"
+Issues = "https://github.com/CarrotManMatt/Pydowndoc/issues"
+Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
 [tool.hatch.build]
 only-packages = true
