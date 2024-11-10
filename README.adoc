@@ -1,0 +1,253 @@
+= PyDowndoc
+Matt Norton <matt@carrotmanmatt.com>
+v1.0, 10/11/2024
+
+:docinfodir: .asciidoctor
+:docinfo: shared
+:project-root: .
+
+:!example-caption:
+:!table-caption:
+:icons: font
+:experimental:
+
+:_url-wikipedia: https://wikipedia.org/wiki
+:_url-github: https://github.com
+:_url-github-wiki: https://docs.github.com
+:_url-pypi: https://pypi.org
+
+:url-project-repository: {_url-github}/CarrotManMatt/Pydowndoc
+:url-project-pypi: {_url-pypi}/project/Pydowndoc
+:url-python-home: https://python.org
+:url-python: {url-python-home}
+:url-python-download: {url-python-home}/downloads
+:url-python-wiki: https://docs.python.org/3
+:url-python-wiki-virtual-environments: {url-python-wiki}/tutorial/venv
+:url-ruff-home: https://ruff.rs
+:url-ruff: {url-ruff-home}
+:url-mypy-home: https://mypy-lang.org
+:url-mypy: {url-mypy-home}
+:url-github-wiki-readme: {_url-github-wiki}/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes
+:url-downdoc-repository: {_url-github}/opendevise/downdoc
+:url-wiki-markdown: {_url-wikipedia}/Markdown
+:url-downdoc: {url-downdoc-repository}
+:url-asciidoc-home: https://asciidoc.org
+:url-asciidoc: {url-asciidoc-home}
+:url-asciidoc-asciidoctor: https://asciidoctor.org
+:url-pypi-home: {_url-pypi}
+:url-pypi: https://pypi.org
+:url-hatch-home: https://hatch.pypa.io
+:url-hatch: {url-hatch-home}
+:url-uv-home: https://astral.sh/uv
+:url-uv: {url-uv-home}
+:url-uv-wiki: https://docs.astral.sh/uv
+:url-uv-wiki-tools: {url-uv-wiki}/guides/tools
+:url-uv-wiki-tools-installing: {url-uv-wiki-tools}#installing-tools
+:url-uv-wiki-tools-upgrading: {url-uv-wiki-tools}#upgrading-tools
+:url-uv-wiki-dependencies-adding: {url-uv-wiki}/concepts/projects#managing-dependencies
+:url-pip-home: https://pip.pypa.io
+:url-pip: {url-pip-home}
+
+:labelled-url-python: {url-python}[Python]
+:labelled-url-downdoc: {url-downdoc}[downdoc]
+:labelled-url-asciidoc: {url-asciidoc}[AsciiDoc]
+:labelled-url-wiki-markdown: {url-wiki-markdown}[Markdown]
+:labelled-url-wiki-readme: {url-github-wiki-readme}[README]
+:labelled-url-pypi: {url-pypi}[PyPI]
+:labelled-url-hatch: {url-hatch}[Hatch]
+:labelled-url-pip: {url-pip}[pip]
+:labelled-url-uv: {url-uv}[uv]
+
+image:https://img.shields.io/endpoint?url=https%3A%2F%2Ftoml-version-extractor.carrotmanmatt.com%2Fuv%2FCarrotManMatt%2FPydowndoc&label=Pydowndoc[Current Version,link={url-project-repo}]
+image:https://img.shields.io/pypi/v/Pydowndoc[PyPI Version,link={url-project-pypi}]
+image:https://img.shields.io/pypi/pyversions/Pydowndoc?logo=Python&logoColor=white&label=Python[Python Version,link={url-python-download}]
+image:https://img.shields.io/github/v/tag/opendevise/downdoc?label=downdoc&logo=asciidoctor[downdoc Version,link={url-downdoc}]
+image:{url-project-repo}/actions/workflows/check_build_publish.yaml/badge.svg[Tests Status,link={url-project-repo}/actions/workflows/check_build_publish.yaml]
+image:https://img.shields.io/badge/mypy-checked-%232EBB4E&label=mypy[mypy Status,link={url-mypy}]
+image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json[Ruff,link={url-ruff}]
+
+****
+Rapidly convert your {labelled-url-asciidoc} files to {labelled-url-wiki-markdown}, using {labelled-url-python}
+****
+
+A {labelled-url-python} wrapper around the latest-built binary of {labelled-url-downdoc}; a rapid {labelled-url-asciidoc} to {labelled-url-wiki-markdown} converter.
+
+== Features
+
+* Use {labelled-url-pypi} as the single installation location of your {labelled-url-python} project tooling
+* Run {labelled-url-downdoc} from the CLI within your {url-python-wiki-virtual-environments}[virtual environment]
+* Use link:pydowndoc/__init__.py[the API] to convert files using your own {labelled-url-python} code/scripts
+* Use the {labelled-url-hatch} plugin to convert your project's README.adoc file to {labelled-url-wiki-markdown}, when building your package
+
+== Installation
+
+.Run as a {url-uv-wiki-tools}[uv tool]
+[source,bash]
+uvx Pydowndoc --version
+
+.Add to your {url-uv-wiki-dependencies-adding}[uv project/script's dependencies]
+[source,bash]
+uv add Pydowndoc
+
+.{url-uv-wiki-tools-installing}[Install permenantly as a uv tool]
+[source,bash]
+uv tool install Pydowndoc
+
+.Install using {labelled-url-pip}
+[source,bash]
+python -m pip install Pydowndoc
+
+== CLI Usage
+
+[TIP]
+--
+.If installed using {labelled-url-pip}, or as a {url-uv-wiki-tools-installing}[permenantly installed uv tool], an alias to the original command name (`+downdoc+`) is available
+[%collapsible]
+====
+[source,bash]
+downdoc --version
+====
+--
+
+.Get the currently installed version
+[source,bash]
+uvx Pydowndoc --version
+
+.Run using the command alias
+[source,bash]
+uvx --from Pydowndoc downdoc --version
+
+.Output the help message
+[source,bash]
+uvx Pydowndoc --help
+
+.Convert a given file (filename will be kept the same, with `+.md+` file-format)
+[source,bash]
+uvx Pydowndoc MyNotes.adoc
+
+.Output the converted file to the given filename
+[source,bash]
+uvx Pydowndoc MyNotes.adoc -o output.md
+
+.Output the converted file to stdout
+[source,bash]
+uvx Pydowndoc MyNotes.adoc -o -
+
+.Read the input AsciiDoc file from stdin
+[source,bash]
+cat MyNotes.adoc | uvx Pydowndoc - -o MyNotes.md
+
+== API Usage
+
+.Convert a given file (the filename will be kept the same, with a `+.md+` file-format)
+[source,python]
+----
+from pathlib import Path
+
+import pydowndoc
+
+pydowndoc.run(Path("MyNotes.adoc"))
+----
+
+.Retrieve the converted file as a string
+[source,python]
+----
+from pathlib import Path
+
+import pydowndoc
+
+converted_file_contents: str = pydowndoc.run(
+    Path("MyNotes.adoc"),
+    output="-",
+    process_capture_output=True,
+).stdout.decode()
+----
+
+.Ensure the conversion process executes successfully
+[source,python]
+----
+from pathlib import Path
+
+import pydowndoc
+
+converted_file_contents: str = pydowndoc.run(
+    Path("MyNotes.adoc"),
+    output=Path("output.md"),
+    process_check_return_code=True,
+).stdout.decode()
+----
+
+== Using as a Hatch build hook
+
+. Ensure the `+readme+` field is added to your `+project.dynamic+` list within your `+pyproject.toml+` file
++
+[source,toml]
+----
+[project]
+name = "my-cool-project"
+version = "0.1.0"
+dynamic = ["readme"]
+----
+
+. Set up your build backend, within your `+pyproject.toml+` file
++
+[source,toml]
+----
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling", "Pydowndoc"]
+----
+
+. Include the hook name, so that processing ocurrs
++
+[source,toml]
+----
+[tool.hatch.metadata.hooks.downdoc-readme]
+----
+
+.. Using a path to a custom {labelled-url-wiki-readme} file
++
+[source,toml]
+----
+[tool.hatch.metadata.hooks.downdoc-readme]
+path = "README2.adoc"
+----
+
+.Configuration Options
+[cols="1,1,1,3"]
+|===
+|Option |Type |Default |Description
+
+|`+path+`
+|`+str+`
+|`+README.adoc+`
+|The location of the file to convert to {labelled-url-wiki-markdown}, to be used as the project's {labelled-url-wiki-readme} file
+|===
+
+== Upgrading
+
+.If {url-uv-wiki-tools-upgrading}[installed as a uv tool]
+[source,bash]
+uv tool upgrade Pydowndoc
+
+.If installed using {labelled-url-uv}
+[source,bash]
+uv sync --upgrade-package Pydowndoc
+
+.If installed using {labelled-url-pip}
+[source,bash]
+python -m pip install --upgrade Pydowndoc
+
+== Uninstallation
+
+.If added as a {url-uv-wiki-dependencies-adding}[uv project dependency]
+[source,bash]
+uv remove Pydowndoc
+
+.If installed as a {url-uv-wiki-tools}[uv tool]
+[source,bash]
+uv tool uninstall Pydowndoc
+
+.If installed with {labelled-url-pip}
+[source,bash]
+python -m pip uninstall Pydowndoc
