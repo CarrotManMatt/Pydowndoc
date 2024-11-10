@@ -158,7 +158,7 @@ property-decorators = [
 
 [tool.ruff.lint.pylint]
 allow-magic-value-types = ["bytes", "int", "str"]
-max-args = 7
+max-args = 8
 max-branches = 19
 max-returns = 10
 
