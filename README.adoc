@@ -213,7 +213,27 @@ requires = ["hatchling", "Pydowndoc"]
 path = "README2.adoc"
 ----
 
-.Configuration Options
+.A full example of a `+pyproject.toml+` file
+[%collapsible]
+====
+[source,toml]
+----
+[project]
+name = "my-cool-project"
+version = "0.1.0"
+dynamic = ["readme"]
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling", "Pydowndoc"]
+
+[tool.hatch.metadata.hooks.downdoc-readme]
+path = "README2.adoc"
+----
+====
+
+=== Configuration Options
+
 [cols="1,1,1,3"]
 |===
 |Option |Type |Default |Description
@@ -230,7 +250,7 @@ path = "README2.adoc"
 [source,bash]
 uv tool upgrade Pydowndoc
 
-.If installed using {labelled-url-uv}
+.If added as a {url-uv-wiki-dependencies-adding}[uv project dependency]
 [source,bash]
 uv sync --upgrade-package Pydowndoc
 
