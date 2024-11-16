@@ -1,4 +1,4 @@
-name: Build NPM Binaries
+name: Upload Downdoc Binaries
 
 on:
     workflow_dispatch:
@@ -8,7 +8,7 @@ jobs:
     inspect-versions-to-download:
         runs-on: ubuntu-latest
         outputs:
-            download-versions: ${{ steps.get-download-versions.outputs }}
+            download-versions: ${{ steps.get-download-versions.outputs.download-versions }}
 
         steps:
             - uses: actions/checkout@v4
