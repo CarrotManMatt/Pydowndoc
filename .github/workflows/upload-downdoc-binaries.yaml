@@ -45,6 +45,10 @@ jobs:
               with:
                 node-version: 18
 
+            - uses: MOZGIII/install-ldid-action@v1
+              with:
+                tag: v2.1.5-procursus7
+
             - run: npx pkg -t ${{needs.inspect-versions-to-download.outputs.download-versions}} .
                 --out-path downdoc-binaries
 
