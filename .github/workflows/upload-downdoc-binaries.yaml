@@ -45,7 +45,8 @@ jobs:
               with:
                 node-version: 18
 
-            - run: npx pkg -t ${{needs.inspect-versions-to-download.outputs.download-versions}} downdoc-binaries
+            - run: npx pkg -t ${{needs.inspect-versions-to-download.outputs.download-versions}} .
+                --out-path downdoc-binaries
 
             - uses: actions/upload-artifact@v4
               with:
