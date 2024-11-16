@@ -148,6 +148,10 @@ cover/
 
 ### Local Config & Settings
 
+# Local Build Files
+*-binary
+README.md
+
 # VSCode settings
 .vscode
 
