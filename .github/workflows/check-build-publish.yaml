@@ -7,37 +7,30 @@ on:
         branches: [main]
 
 jobs:
+    upload-downdoc-binaries:
+        uses: ./.github/workflows/upload-downdoc-binaries.yaml
+
     convert-readme:
+        needs: [upload-downdoc-binaries]
         runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install uv
-              uses: astral-sh/setup-uv@v3
+            - name: Download downdoc Binaries
+              uses: actions/download-artifact@v4
               with:
-                enable-cache: true
-                cache-dependency-glob: uv.lock
-
-            - name: Set Up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version-file: .python-version
-
-            - name: Install project
-              run: uv sync --no-python-downloads --no-group dev --frozen
+                name: downdoc-binaries
+                path: downloads/
 
             - name: Run downdoc
-              run: uv downdoc README.adoc
+              run: downloads/downdoc-linux-x64 README.adoc
 
             - name: Save Converted README
               uses: actions/upload-artifact@v4
               with:
                 name: converted-readme
                 path: README.md
-
-    upload-downdoc-binaries:
-        uses: ./.github/workflows/upload-downdoc-binaries.yaml
 
     build:
         needs: [convert-readme, upload-downdoc-binaries]
