@@ -45,7 +45,6 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                 name: converted-readme
-                path: README.md
 
             - name: Download downdoc Binaries
               uses: actions/download-artifact@v4
