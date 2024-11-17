@@ -25,15 +25,16 @@ __all__: "Sequence[str]" = (
 )
 
 
+type BuildHookConfig = Mapping[Literal["operating-systems", "architectures"], Iterable[str]]
+
+
 if TYPE_CHECKING:
 
     class _ProtocolBuildFunc(Protocol):
         def __call__(self, directory: str, **build_data: object) -> str: ...
 
 
-def _get_artefact_targets(
-    config: "Mapping[str, object]",
-) -> "Mapping[Literal['operating-systems', 'architectures'], Iterable[str]]":
+def _get_artefact_targets(config: "Mapping[str, object]") -> BuildHookConfig:
     operating_systems: object | Iterable[str] = config.get("operating-systems", [sys.platform])
     if not isinstance(operating_systems, Iterable):
         raise TypeError
@@ -46,9 +47,7 @@ def _get_artefact_targets(
 
 
 def _fetch_downdoc_executables(config: "Mapping[str, object]") -> None:
-    artefact_targets: Mapping[Literal["operating-systems", "architectures"], Iterable[str]] = (
-        _get_artefact_targets(config)
-    )
+    artefact_targets: BuildHookConfig = _get_artefact_targets(config)
     sys.stdout.write(
         ",".join(
             (
@@ -120,9 +119,29 @@ class MultiArtefactWheelBuilder(WheelBuilder):
     class _BuildHook(BuildHookInterface[WheelBuilderConfig]):
         @override
         def initialize(self, version: str, build_data: dict[str, object]) -> None:
-            build_data["artifacts"].append(
-                Path(self.root) / f"downloads/downdoc-{version.replace("darwin")}"
+            downdoc_binary_filepath: Path = (
+                Path(self.root)
+                / f"downloads/downdoc-{
+                    version.replace("darwin", "macos").replace("win32", "win").replace(
+                        "x86_64",
+                        "x64",
+                    ).replace("_", "-")
+                }{".exe" if "win32" in version else ""}"
             )
+
+            if not downdoc_binary_filepath.is_file():
+                raise FileNotFoundError(downdoc_binary_filepath)
+
+            force_include: object | Mapping[str, str] = build_data.get("force_include", {})
+            if not isinstance(force_include, Mapping):
+                raise TypeError
+
+            build_data["force_include"] = {
+                str(downdoc_binary_filepath.resolve()): "pydowndoc/downdoc-binary",
+                **force_include,
+            }
+            build_data["other"] = build_data.get("force_include", {})
+
             build_data["tag"] = f"py3-none-{version}"
 
     @override
@@ -178,13 +197,11 @@ class MultiArtefactWheelBuilder(WheelBuilder):
 
     @override
     def get_version_api(self) -> dict[str, "_ProtocolBuildFunc"]:
-        artefact_targets: Mapping[
-            Literal["operating-systems", "architectures"], Iterable[[str]]
-        ] = _get_artefact_targets(self.target_config)
+        artefact_targets: BuildHookConfig = _get_artefact_targets(self.target_config)
 
         return {
             f"{operating_system}_{architecture}": self.build_standard
-            for operating_system in artefact_targets["operating_systems"]
+            for operating_system in artefact_targets["operating-systems"]
             for architecture in artefact_targets["architectures"]
         }
 
@@ -192,9 +209,6 @@ class MultiArtefactWheelBuilder(WheelBuilder):
     def build_standard(self, directory: str, **build_data: object) -> str:
         build_data["infer_tag"] = False
         build_data["pure_python"] = False
-        print("DEBUG:", directory)
-        print("DEBUG:", build_data)
-        print("DEBUG:", self.target_config)
         return super().build_standard(directory, **build_data)
 
 

@@ -1,6 +1,8 @@
 """Python wrapper for converting/reducing AsciiDoc files back to Markdown."""
 
+import importlib.resources
 import itertools
+import platform
 import shlex
 import subprocess
 import sys
@@ -90,8 +92,25 @@ def run_with_sys_argv() -> int:
 def _call_binary_with_arguments(
     arguments: "Sequence[str]", *, capture_output: bool = False, check: bool = False
 ) -> "CompletedProcess[bytes]":
+    if importlib.resources.is_resource("pydowndoc", "downdoc-binary"):
+        downdoc_binary_path: Path
+        with importlib.resources.path("pydowndoc", "downdoc-binary") as downdoc_binary_path:
+            return subprocess.run(
+                (downdoc_binary_path, *arguments), check=check, capture_output=capture_output
+            )
+
     return subprocess.run(
-        (f"{Path(__file__).parent.parent}/downloads/downdoc-linux", *arguments),
+        (
+            Path(__file__).parent.parent
+            / (
+                "downloads/"
+                "downdoc-"
+                f"{sys.platform.replace("darwin", "macos").replace("win32", "win")}-"
+                f"{platform.machine().replace("x86_64", "x64")}"
+                f"{".exe" if sys.platform == "win32" else ""}"
+            ),
+            *arguments,
+        ),
         check=check,
         capture_output=capture_output,
     )

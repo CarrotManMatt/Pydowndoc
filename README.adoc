@@ -1,4 +1,4 @@
-= PyDowndoc
+= Pydowndoc
 Matt Norton <matt@carrotmanmatt.com>
 v1.0, 10/11/2024
 

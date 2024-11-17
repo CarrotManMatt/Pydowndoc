@@ -1,4 +1,4 @@
-name: Upload Downdoc Binaries
+name: Upload downdoc Binaries
 
 on:
     workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
                 hatch_build; hatch_build.fetch_downdoc_executables()')" >>"$GITHUB_OUTPUT"
 
     upload-downdoc-binaries:
-        needs: inspect-versions-to-download
+        needs: [inspect-versions-to-download]
         runs-on: ubuntu-latest
 
         steps:

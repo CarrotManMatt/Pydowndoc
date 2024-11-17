@@ -64,7 +64,6 @@ Issues = "https://github.com/CarrotManMatt/Pydowndoc/issues"
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
 [tool.hatch.build]
-artifacts = ["downloads/"] # TODO: Fix inclusion of files (only correct build binary)
 only-packages = true
 
 [tool.hatch.build.targets.sdist]
