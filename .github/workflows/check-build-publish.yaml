@@ -24,7 +24,7 @@ jobs:
                 path: downloads/
 
             - name: Run downdoc
-              run: downloads/downdoc-linux-x64 README.adoc
+              run: chmod +x downloads/downdoc-linux && downloads/downdoc-linux-x64 README.adoc
 
             - name: Save Converted README
               uses: actions/upload-artifact@v4
