@@ -560,7 +560,7 @@ wheels = [
 
 [[package]]
 name = "pydowndoc"
-version = "0.0.1.dev21"
+version = "0.0.1.dev22"
 source = { editable = "." }
 dependencies = [
     { name = "hatchling", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32')" },
