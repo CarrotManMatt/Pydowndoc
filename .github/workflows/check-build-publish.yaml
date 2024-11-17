@@ -58,7 +58,7 @@ jobs:
             - name: Download Converted README
               uses: actions/download-artifact@v4
               with:
-                name: converted-README
+                name: converted-readme
                 path: README.md
 
             - name: Download downdoc Binaries
