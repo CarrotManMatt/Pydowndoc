@@ -1,9 +1,14 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
+requires = [
+    "hatch-docstring-description",
+    "hatch-vcs",
+    "hatchling",
+    "typed-classproperties>1.0.2",
+]
 
 [dependency-groups]
-build = ["hatch"]
+build = ["auditwheel", "hatch"]
 dev = [
     { include-group = "lint-format" },
     { include-group = "pre-commit" },
@@ -34,7 +39,7 @@ classifiers = [
     "Topic :: Software Development",
     "Typing :: Typed",
 ]
-dependencies = ["hatchling", "typed_classproperties"]
+dependencies = ["hatchling", "typed_classproperties>1.0.2"]
 dynamic = ["description", "version"]
 keywords = [
     "AsciiDoc",
@@ -48,6 +53,8 @@ keywords = [
     "pypi",
     "pyproject.toml",
 ]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 name = "Pydowndoc"
 readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
 requires-python = ">=3.9"
@@ -74,7 +81,7 @@ docstring-description = {}
 
 [tool.hatch.build.targets.custom]
 architectures = ["arm64", "x86_64"]
-operating-systems = ["darwin", "linux", "win32"]
+operating-systems = ["linux", "macosx", "win32"]
 
 [tool.hatch.version]
 raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
@@ -103,6 +110,7 @@ warn_unused_ignores = true
 [tool.ruff]
 indent-width = 4
 line-length = 95
+output-format = "concise"
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -184,4 +192,5 @@ environments = [
     "sys_platform == 'win32' and platform_machine == 'arm64'",
     "sys_platform == 'win32' and platform_machine == 'x86_64'",
 ]
+package = false
 trusted-publishing = "always"

@@ -30,7 +30,7 @@ jobs:
             - name: Get Download Versions
               id: get-download-versions
               run: echo "download-versions=$(uv run --no-sync --no-python-downloads python -c 'import
-                hatch_build; hatch_build.fetch_downdoc_executables()')" >>"$GITHUB_OUTPUT"
+                hatch_build; hatch_build.print_downdoc_executables()')" >>"$GITHUB_OUTPUT"
 
     upload-downdoc-binaries:
         needs: [inspect-versions-to-download]

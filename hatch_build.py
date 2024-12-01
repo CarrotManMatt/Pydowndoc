@@ -1,6 +1,7 @@
 """Project build script to package binary artefacts into platform-specific builds."""
 
 import platform
+import re
 import sys
 from collections.abc import Iterable, Mapping
 from pathlib import Path
@@ -19,9 +20,9 @@ if TYPE_CHECKING:
     from hatchling.plugin.manager import PluginManager
 
 __all__: "Sequence[str]" = (
-    "get_builder",
     "MultiArtefactWheelBuilder",
-    "fetch_downdoc_executables",
+    "get_builder",
+    "print_downdoc_executables",
 )
 
 
@@ -46,29 +47,47 @@ def _get_artefact_targets(config: "Mapping[str, object]") -> BuildHookConfig:
     return {"architectures": architectures, "operating-systems": operating_systems}
 
 
-def _fetch_downdoc_executables(config: "Mapping[str, object]") -> None:
+def _print_downdoc_executables(config: "Mapping[str, object]") -> None:
     artefact_targets: BuildHookConfig = _get_artefact_targets(config)
     sys.stdout.write(
-        ",".join(
-            (
-                f"{operating_system.replace("darwin", "macos").replace("win32", "win")}-"
-                f"{architecture.replace("x86_64", "x64")}"
-            )
-            for operating_system in artefact_targets["operating-systems"]
-            for architecture in artefact_targets["architectures"]
-        )
+        re.sub(
+            ",,+",
+            ",",
+            ",".join(
+                (
+                    f"{
+                    "linux-"
+                    if "linux" in operating_system
+                    else "macos-"
+                    if "macos" in operating_system or "darwin" in operating_system
+                    else "win-"
+                    if "win" in operating_system and "darwin" not in operating_system
+                    else ""
+                }"
+                    f"{
+                    "x64"
+                    if "x86_64" in architecture
+                    else "arm64"
+                    if "arm64" in architecture
+                    else ""
+                }"
+                )
+                for operating_system in artefact_targets["operating-systems"]
+                for architecture in artefact_targets["architectures"]
+            ),
+        ).strip(",")
     )
     sys.stdout.write("\n")
 
 
-def fetch_downdoc_executables() -> None:
-    """"""
+def print_downdoc_executables() -> None:
+    """Output the total set of pydowndoc binary file names for every OS & architecture."""
     tool_dict: object | None = tomllib.loads(
         (Path(__file__).parent / "pyproject.toml").read_text()
     ).get("tool", None)
 
     if tool_dict is None:
-        _fetch_downdoc_executables({})
+        _print_downdoc_executables({})
         return
 
     if not isinstance(tool_dict, Mapping):
@@ -77,7 +96,7 @@ def fetch_downdoc_executables() -> None:
     hatch_dict: object | None = tool_dict.get("hatch", None)
 
     if hatch_dict is None:
-        _fetch_downdoc_executables({})
+        _print_downdoc_executables({})
         return
 
     if not isinstance(hatch_dict, Mapping):
@@ -86,7 +105,7 @@ def fetch_downdoc_executables() -> None:
     build_dict: object | None = hatch_dict.get("build", None)
 
     if build_dict is None:
-        _fetch_downdoc_executables({})
+        _print_downdoc_executables({})
         return
 
     if not isinstance(build_dict, Mapping):
@@ -95,7 +114,7 @@ def fetch_downdoc_executables() -> None:
     targets_dict: object | None = build_dict.get("targets", None)
 
     if targets_dict is None:
-        _fetch_downdoc_executables({})
+        _print_downdoc_executables({})
         return
 
     if not isinstance(targets_dict, Mapping):
@@ -104,29 +123,34 @@ def fetch_downdoc_executables() -> None:
     custom_dict: object | None = targets_dict.get("custom", None)
 
     if custom_dict is None:
-        _fetch_downdoc_executables({})
+        _print_downdoc_executables({})
         return
 
     if not isinstance(custom_dict, Mapping):
         raise TypeError
 
-    _fetch_downdoc_executables(custom_dict)
+    _print_downdoc_executables(custom_dict)
 
 
 class MultiArtefactWheelBuilder(WheelBuilder):
-    """"""
+    """Build multiple wheels at once with each set of binary executables."""
 
     class _BuildHook(BuildHookInterface[WheelBuilderConfig]):
         @override
         def initialize(self, version: str, build_data: dict[str, object]) -> None:
-            downdoc_binary_filepath: Path = (
-                Path(self.root)
-                / f"downloads/downdoc-{
-                    version.replace("darwin", "macos").replace("win32", "win").replace(
-                        "x86_64",
-                        "x64",
-                    ).replace("_", "-")
-                }{".exe" if "win32" in version else ""}"
+            downdoc_binary_filepath: Path = Path(self.root) / (
+                "downloads/downdoc-"
+                f"{
+                    "linux-"
+                    if "linux" in version
+                    else "macos-"
+                    if "macos" in version or "darwin" in version
+                    else "win-"
+                    if "win" in version and "darwin" not in version
+                    else ""
+                }"
+                f"{"x64" if "x86_64" in version else "arm64" if "arm64" in version else ""}"
+                f"{".exe" if "win" in version and "darwin" not in version else ""}"
             )
 
             if not downdoc_binary_filepath.is_file():
@@ -216,5 +240,5 @@ def get_builder() -> (
     "type[BuilderInterface[BuilderConfig, PluginManager]] | "
     "Iterable[type[BuilderInterface[BuilderConfig, PluginManager]]]"
 ):
-    """"""
+    """Retrieve the correct hatch builder hook class."""
     return MultiArtefactWheelBuilder

@@ -2,12 +2,13 @@
 
 import importlib.resources
 import itertools
-import platform
 import shlex
 import subprocess
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from . import _utils
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -103,11 +104,10 @@ def _call_binary_with_arguments(
         (
             Path(__file__).parent.parent
             / (
-                "downloads/"
-                "downdoc-"
-                f"{sys.platform.replace("darwin", "macos").replace("win32", "win")}-"
-                f"{platform.machine().replace("x86_64", "x64")}"
-                f"{".exe" if sys.platform == "win32" else ""}"
+                "downloads/downdoc-"
+                f"{_utils.get_downdoc_binary_operating_system()}-"
+                f"{_utils.get_downdoc_binary_architecture()}"
+                f"{_utils.get_downdoc_binary_file_extension()}"
             ),
             *arguments,
         ),
