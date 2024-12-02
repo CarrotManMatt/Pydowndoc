@@ -17,10 +17,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Download downdoc Binaries
+            - name: Download Linux x86-64 downdoc Binaries
               uses: actions/download-artifact@v4
               with:
-                name: downdoc-binaries
+                name: downdoc-linux-x86-64-binary
                 path: downloads/
 
             - name: Run downdoc
@@ -49,7 +49,7 @@ jobs:
             - name: Download downdoc Binaries
               uses: actions/download-artifact@v4
               with:
-                name: downdoc-linux-x86-64-binary
+                pattern: downdoc-*-binary*
                 path: downloads/
 
             - name: Install uv
