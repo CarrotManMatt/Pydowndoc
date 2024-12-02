@@ -1,135 +1,34 @@
 """Project build script to package binary artefacts into platform-specific builds."""
 
-import platform
 import re
-import sys
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
-import tomllib
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
 
+from pydowndoc._utils import (
+    get_downdoc_binary_architecture,
+    get_downdoc_binary_file_extension,
+    get_downdoc_binary_operating_system,
+)
+
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-    from typing import Literal, Protocol
+    from collections.abc import Iterable, Sequence
+    from typing import Final, Protocol
 
     from hatchling.builders.config import BuilderConfig
     from hatchling.builders.plugin.interface import BuilderInterface
     from hatchling.plugin.manager import PluginManager
 
-__all__: "Sequence[str]" = (
-    "MultiArtefactWheelBuilder",
-    "get_builder",
-    "print_downdoc_executables",
-)
-
-
-type BuildHookConfig = Mapping[Literal["operating-systems", "architectures"], Iterable[str]]
+__all__: "Sequence[str]" = ("MultiArtefactWheelBuilder", "get_builder")
 
 
 if TYPE_CHECKING:
 
     class _ProtocolBuildFunc(Protocol):
         def __call__(self, directory: str, **build_data: object) -> str: ...
-
-
-def _get_artefact_targets(config: "Mapping[str, object]") -> BuildHookConfig:
-    operating_systems: object | Iterable[str] = config.get("operating-systems", [sys.platform])
-    if not isinstance(operating_systems, Iterable):
-        raise TypeError
-
-    architectures: object | Iterable[str] = config.get("architectures", [platform.machine()])
-    if not isinstance(architectures, Iterable):
-        raise TypeError
-
-    return {"architectures": architectures, "operating-systems": operating_systems}
-
-
-def _print_downdoc_executables(config: "Mapping[str, object]") -> None:
-    artefact_targets: BuildHookConfig = _get_artefact_targets(config)
-    sys.stdout.write(
-        re.sub(
-            ",,+",
-            ",",
-            ",".join(
-                (
-                    f"{
-                    "linux-"
-                    if "linux" in operating_system
-                    else "macos-"
-                    if "macos" in operating_system or "darwin" in operating_system
-                    else "win-"
-                    if "win" in operating_system and "darwin" not in operating_system
-                    else ""
-                }"
-                    f"{
-                    "x64"
-                    if "x86_64" in architecture
-                    else "arm64"
-                    if "arm64" in architecture
-                    else ""
-                }"
-                )
-                for operating_system in artefact_targets["operating-systems"]
-                for architecture in artefact_targets["architectures"]
-            ),
-        ).strip(",")
-    )
-    sys.stdout.write("\n")
-
-
-def print_downdoc_executables() -> None:
-    """Output the total set of pydowndoc binary file names for every OS & architecture."""
-    tool_dict: object | None = tomllib.loads(
-        (Path(__file__).parent / "pyproject.toml").read_text()
-    ).get("tool", None)
-
-    if tool_dict is None:
-        _print_downdoc_executables({})
-        return
-
-    if not isinstance(tool_dict, Mapping):
-        raise TypeError
-
-    hatch_dict: object | None = tool_dict.get("hatch", None)
-
-    if hatch_dict is None:
-        _print_downdoc_executables({})
-        return
-
-    if not isinstance(hatch_dict, Mapping):
-        raise TypeError
-
-    build_dict: object | None = hatch_dict.get("build", None)
-
-    if build_dict is None:
-        _print_downdoc_executables({})
-        return
-
-    if not isinstance(build_dict, Mapping):
-        raise TypeError
-
-    targets_dict: object | None = build_dict.get("targets", None)
-
-    if targets_dict is None:
-        _print_downdoc_executables({})
-        return
-
-    if not isinstance(targets_dict, Mapping):
-        raise TypeError
-
-    custom_dict: object | None = targets_dict.get("custom", None)
-
-    if custom_dict is None:
-        _print_downdoc_executables({})
-        return
-
-    if not isinstance(custom_dict, Mapping):
-        raise TypeError
-
-    _print_downdoc_executables(custom_dict)
 
 
 class MultiArtefactWheelBuilder(WheelBuilder):
@@ -140,17 +39,9 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         def initialize(self, version: str, build_data: dict[str, object]) -> None:
             downdoc_binary_filepath: Path = Path(self.root) / (
                 "downloads/downdoc-"
-                f"{
-                    "linux-"
-                    if "linux" in version
-                    else "macos-"
-                    if "macos" in version or "darwin" in version
-                    else "win-"
-                    if "win" in version and "darwin" not in version
-                    else ""
-                }"
-                f"{"x64" if "x86_64" in version else "arm64" if "arm64" in version else ""}"
-                f"{".exe" if "win" in version and "darwin" not in version else ""}"
+                f"{get_downdoc_binary_operating_system()}-"
+                f"{get_downdoc_binary_architecture()}"
+                f"{get_downdoc_binary_file_extension()}"
             )
 
             if not downdoc_binary_filepath.is_file():
@@ -165,8 +56,6 @@ class MultiArtefactWheelBuilder(WheelBuilder):
                 **force_include,
             }
             build_data["other"] = build_data.get("force_include", {})
-
-            build_data["tag"] = f"py3-none-{version}"
 
     @override
     def get_build_hooks(
@@ -196,12 +85,15 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         }
 
     @override
-    def get_default_tag(self) -> str:
-        raise NotImplementedError
-
-    @override
     def get_best_matching_tag(self) -> str:
-        raise NotImplementedError
+        tag_match: re.Match[str] | None = re.fullmatch(
+            r"\A[^-]+-[^-]+-(?P<platform>.+)\Z", super().get_best_matching_tag()
+        )
+        if tag_match is None:
+            INVALID_BUILD_TAG_MESSAGE: Final[str] = "No build tag match"
+            raise ValueError(INVALID_BUILD_TAG_MESSAGE)
+
+        return f"py3-none-{tag_match.group("platform")}"
 
     @override
     def build_editable_explicit(self, directory: str, **build_data: object) -> str:
@@ -216,22 +108,12 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         raise NotImplementedError
 
     @override
-    def get_default_versions(self) -> list[str]:
-        return list(self.get_version_api())
-
-    @override
     def get_version_api(self) -> dict[str, "_ProtocolBuildFunc"]:
-        artefact_targets: BuildHookConfig = _get_artefact_targets(self.target_config)
-
-        return {
-            f"{operating_system}_{architecture}": self.build_standard
-            for operating_system in artefact_targets["operating-systems"]
-            for architecture in artefact_targets["architectures"]
-        }
+        return {"standard": self.build_standard}
 
     @override
     def build_standard(self, directory: str, **build_data: object) -> str:
-        build_data["infer_tag"] = False
+        build_data["infer_tag"] = True
         build_data["pure_python"] = False
         return super().build_standard(directory, **build_data)
 

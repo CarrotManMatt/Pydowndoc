@@ -5,36 +5,9 @@ on:
     workflow_call:
 
 jobs:
-    inspect-versions-to-download:
+    upload-linux-x86-64-downdoc-binary:
         runs-on: ubuntu-latest
-        outputs:
-            download-versions: ${{ steps.get-download-versions.outputs.download-versions }}
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Install uv
-              uses: astral-sh/setup-uv@v3
-              with:
-                enable-cache: true
-                cache-dependency-glob: uv.lock
-
-            - name: Set Up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version-file: .python-version
-
-            - name: Install Build Dependencies From Lock File
-              run: uv sync --no-python-downloads --only-group build --frozen
-
-            - name: Get Download Versions
-              id: get-download-versions
-              run: echo "download-versions=$(uv run --no-sync --no-python-downloads python -c 'import
-                hatch_build; hatch_build.print_downdoc_executables()')" >>"$GITHUB_OUTPUT"
-
-    upload-downdoc-binaries:
-        needs: [inspect-versions-to-download]
-        runs-on: ubuntu-latest
+        container: {image: quay.io/pypa/manylinux_2_34_x86_64}
 
         steps:
             - uses: actions/checkout@v4
@@ -49,10 +22,9 @@ jobs:
               with:
                 tag: v2.1.5-procursus7
 
-            - run: npx pkg -t ${{needs.inspect-versions-to-download.outputs.download-versions}} .
-                --out-path downdoc-binaries
+            - run: npx pkg -t linux-x64 . --out-path downloads
 
             - uses: actions/upload-artifact@v4
               with:
-                name: downdoc-binaries
-                path: downdoc-binaries/
+                name: downdoc-linux-x86-64-binary
+                path: downloads/downdoc-linux-x86-64
