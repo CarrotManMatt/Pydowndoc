@@ -23,4 +23,4 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                 name: downdoc-linux-x86-64-binary
-                path: downloads/downdoc-linux-x86-64
+                path: downloads/downdoc-linux-x64
