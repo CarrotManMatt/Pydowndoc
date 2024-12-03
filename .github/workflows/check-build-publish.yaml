@@ -21,7 +21,7 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                 name: downdoc-linux-x86-64-binary
-                path: downloads/
+                path: downloads/downdoc-linux-x86-64-binary
 
             - name: Run downdoc
               run: chmod +x downloads/downdoc-linux-x64 && downloads/downdoc-linux-x64 README.adoc
