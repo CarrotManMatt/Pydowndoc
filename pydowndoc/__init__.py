@@ -3,6 +3,7 @@
 import importlib.resources
 import itertools
 import shlex
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -90,27 +91,38 @@ def run_with_sys_argv() -> int:
     ).returncode
 
 
+def _nested_call_binary(
+    downdoc_binary_path: Path,
+    arguments: "Sequence[str]",
+    *,
+    capture_output: bool = False,
+    check: bool = False,
+) -> "CompletedProcess[bytes]":
+    downdoc_binary_path.chmod(downdoc_binary_path.stat().st_mode | stat.S_IEXEC)
+    return subprocess.run(
+        (downdoc_binary_path, *arguments), check=check, capture_output=capture_output
+    )
+
+
 def _call_binary_with_arguments(
     arguments: "Sequence[str]", *, capture_output: bool = False, check: bool = False
 ) -> "CompletedProcess[bytes]":
     if importlib.resources.is_resource("pydowndoc", "downdoc-binary"):
         downdoc_binary_path: Path
         with importlib.resources.path("pydowndoc", "downdoc-binary") as downdoc_binary_path:
-            return subprocess.run(
-                (downdoc_binary_path, *arguments), check=check, capture_output=capture_output
+            return _nested_call_binary(
+                downdoc_binary_path, arguments, check=check, capture_output=capture_output
             )
 
-    return subprocess.run(
-        (
-            Path(__file__).parent.parent
-            / (
-                "downloads/downdoc-"
-                f"{_utils.get_downdoc_binary_operating_system()}-"
-                f"{_utils.get_downdoc_binary_architecture()}"
-                f"{_utils.get_downdoc_binary_file_extension()}"
-            ),
-            *arguments,
+    return _nested_call_binary(
+        Path(__file__).parent.parent
+        / (
+            "downloads/downdoc-"
+            f"{_utils.get_downdoc_binary_operating_system()}-"
+            f"{_utils.get_downdoc_binary_architecture()}"
+            f"{_utils.get_downdoc_binary_file_extension()}"
         ),
+        arguments,
         check=check,
         capture_output=capture_output,
     )
