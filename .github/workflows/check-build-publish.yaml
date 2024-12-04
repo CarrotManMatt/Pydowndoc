@@ -65,7 +65,10 @@ jobs:
               run: uv run hatch build -t custom
 
             - name: Repair Linux Packages
-              run: uv run auditwheel repair $(find dist/ -type f -iname "*linux*.whl")
+              run: uv run auditwheel repair $(find dist/ -type f -iname "*linux*.whl") -w dist
+
+            - name: Remove Unrepaired Linux Packages
+              run: rm dist/*-linux_x86_64.whl
 
             - name: Save Build Artifacts
               uses: actions/upload-artifact@v4
