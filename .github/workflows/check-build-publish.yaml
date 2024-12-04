@@ -39,6 +39,7 @@ jobs:
     build:
         needs: [convert-readme, upload-downdoc-binaries]
         runs-on: ubuntu-latest
+        container: {image: quay.io/pypa/manylinux_2_34_x86_64}
 
         steps:
             - uses: actions/checkout@v4
