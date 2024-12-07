@@ -275,6 +275,6 @@ python -m pip uninstall Pydowndoc
 
 == Reporting Issues
 
-If there are issues with the Python API for this package, or you are encountering installation problems, please report these to ({url-project-bug-tracker})[the GitHub issues tracker for this project].
+If there are issues with the Python API for this package, or you are encountering installation problems, please report these to {url-project-bug-tracker}[the GitHub issues tracker for this project].
 
-If you have problems with the conversion process of your AsciiDoc files to Markdown, please report these ({url-downdoc-repository}/issues)[upstream], directly to the ({url-downdoc})[downdoc project].
+If you have problems with the conversion process of your AsciiDoc files to Markdown, please report these {url-downdoc-repository}/issues[upstream], directly to the {url-downdoc}[downdoc project].
