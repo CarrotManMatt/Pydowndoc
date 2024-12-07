@@ -1,26 +1,21 @@
 """Python wrapper for converting/reducing AsciiDoc files back to Markdown."""
 
-import importlib.resources
 import itertools
 import shlex
-import stat
 import subprocess
-import sys
-from pathlib import Path
 from typing import TYPE_CHECKING
-
-from . import _utils
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
+    from pathlib import Path
     from subprocess import CompletedProcess
     from typing import Literal
 
-__all__: "Sequence[str]" = ("run", "run_with_sys_argv")
+__all__: "Sequence[str]" = ("run",)
 
 
 def run(
-    *in_file_paths: Path,
+    *in_file_paths: "Path",
     attributes: "Mapping[str, str] | None" = None,
     output: "Path | Literal['-'] | None" = None,
     postpublish: bool = False,
@@ -79,50 +74,8 @@ def run(
 
     arguments.extend(shlex.quote(str(in_file_path)) for in_file_path in in_file_paths)
 
-    return _call_binary_with_arguments(
-        arguments, capture_output=process_capture_output, check=process_check_return_code
-    )
-
-
-def run_with_sys_argv() -> int:
-    """Execute the conversion subprocess with the exact args held by `sys.argv`."""
-    return _call_binary_with_arguments(
-        sys.argv[1:], capture_output=False, check=False
-    ).returncode
-
-
-def _nested_call_binary(
-    downdoc_binary_path: Path,
-    arguments: "Sequence[str]",
-    *,
-    capture_output: bool = False,
-    check: bool = False,
-) -> "CompletedProcess[bytes]":
-    downdoc_binary_path.chmod(downdoc_binary_path.stat().st_mode | stat.S_IEXEC)
     return subprocess.run(
-        (downdoc_binary_path, *arguments), check=check, capture_output=capture_output
-    )
-
-
-def _call_binary_with_arguments(
-    arguments: "Sequence[str]", *, capture_output: bool = False, check: bool = False
-) -> "CompletedProcess[bytes]":
-    if importlib.resources.is_resource("pydowndoc", "downdoc-binary"):
-        downdoc_binary_path: Path
-        with importlib.resources.path("pydowndoc", "downdoc-binary") as downdoc_binary_path:
-            return _nested_call_binary(
-                downdoc_binary_path, arguments, check=check, capture_output=capture_output
-            )
-
-    return _nested_call_binary(
-        Path(__file__).parent.parent
-        / (
-            "downloads/downdoc-"
-            f"{_utils.get_downdoc_binary_operating_system()}-"
-            f"{_utils.get_downdoc_binary_architecture()}"
-            f"{_utils.get_downdoc_binary_file_extension()}"
-        ),
-        arguments,
-        check=check,
-        capture_output=capture_output,
+        ("downdoc", *arguments),
+        check=process_check_return_code,
+        capture_output=process_capture_output,
     )

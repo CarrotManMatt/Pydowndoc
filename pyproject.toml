@@ -1,11 +1,6 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = [
-    "hatch-docstring-description",
-    "hatch-vcs",
-    "hatchling",
-    "typed-classproperties>1.0.2",
-]
+requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
 
 [dependency-groups]
 build = ["hatch"]
@@ -25,10 +20,12 @@ type-check = ["mypy>=1.10"]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
     "Framework :: Hatch",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -61,19 +58,12 @@ requires-python = ">=3.9"
 [project.entry-points.hatch]
 downdoc-readme = "pydowndoc.hatch_hooks"
 
-[project.scripts]
-Pydowndoc = "pydowndoc:run_with_sys_argv"
-downdoc = "pydowndoc:run_with_sys_argv"
-
 [project.urls]
 Issues = "https://github.com/CarrotManMatt/Pydowndoc/issues"
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
 [tool.hatch.build]
 only-packages = true
-
-[tool.hatch.build.targets.sdist]
-artifacts = ["downloads/"]
 
 [tool.hatch.metadata.hooks]
 docstring-description = {}
@@ -112,12 +102,9 @@ docstring-code-format = true
 indent-style = "space"
 line-ending = "lf"
 quote-style = "double"
-skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
 ignore = [
-    "ANN101",
-    "ANN102",
     "C90",
     "COM812",
     "COM819",

@@ -1,18 +1,13 @@
 """Project build script to package binary artefacts into platform-specific builds."""
 
+import platform
 import re
-from collections.abc import Mapping
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
-
-from pydowndoc._utils import (
-    get_downdoc_binary_architecture,
-    get_downdoc_binary_file_extension,
-    get_downdoc_binary_operating_system,
-)
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -39,23 +34,15 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         def initialize(self, version: str, build_data: dict[str, object]) -> None:
             downdoc_binary_filepath: Path = Path(self.root) / (
                 "downloads/downdoc-"
-                f"{get_downdoc_binary_operating_system()}-"
-                f"{get_downdoc_binary_architecture()}"
-                f"{get_downdoc_binary_file_extension()}"
+                f"{_get_downdoc_binary_operating_system()}-"
+                f"{_get_downdoc_binary_architecture()}"
+                f"{_get_downdoc_binary_file_extension()}"
             )
 
             if not downdoc_binary_filepath.is_file():
                 raise FileNotFoundError(downdoc_binary_filepath)
 
-            force_include: object | Mapping[str, str] = build_data.get("force_include", {})
-            if not isinstance(force_include, Mapping):
-                raise TypeError
-
-            build_data["force_include"] = {
-                str(downdoc_binary_filepath.resolve()): "pydowndoc/downdoc-binary",
-                **force_include,
-            }
-            build_data["other"] = build_data.get("force_include", {})
+            build_data["downdoc_binary_filepath"] = downdoc_binary_filepath
 
     @override
     def get_build_hooks(
@@ -78,7 +65,6 @@ class MultiArtefactWheelBuilder(WheelBuilder):
     def get_default_build_data(self) -> dict[str, object]:
         return {
             "dependencies": [],
-            "force_include_editable": {},
             "extra_metadata": {},
             "shared_data": {},
             "shared_scripts": {},
@@ -115,6 +101,19 @@ class MultiArtefactWheelBuilder(WheelBuilder):
     def build_standard(self, directory: str, **build_data: object) -> str:
         build_data["infer_tag"] = True
         build_data["pure_python"] = False
+
+        downdoc_binary_filepath: Path | None = build_data.pop("downdoc_binary_filepath", None)
+        if downdoc_binary_filepath is None:
+            MISSING_DOWNDOC_BINARY_FILEPATH_MESSAGE: Final[str] = (
+                "Missing downdoc binary filepath."
+            )
+            raise ValueError(MISSING_DOWNDOC_BINARY_FILEPATH_MESSAGE)
+
+        build_data["shared_scripts"] = {
+            str(downdoc_binary_filepath.resolve()): "downdoc-binary",
+            **build_data["shared_scripts"],
+        }
+
         return super().build_standard(directory, **build_data)
 
 
@@ -124,3 +123,42 @@ def get_builder() -> (
 ):
     """Retrieve the correct hatch builder hook class."""
     return MultiArtefactWheelBuilder
+
+
+def _get_downdoc_binary_operating_system() -> str:
+    """Retriee the string representation of the current operating system."""
+    raw_operating_system: str = sys.platform
+
+    if "linux" in raw_operating_system:
+        return "linux"
+
+    if "darwin" in raw_operating_system or "macos" in raw_operating_system:
+        return "macos"
+
+    if "win" in raw_operating_system and "darwin" not in raw_operating_system:
+        return "win"
+
+    raise NotImplementedError(raw_operating_system)
+
+
+def _get_downdoc_binary_architecture() -> str:
+    """Retreive the string representation of the current platform architecture."""
+    raw_architecture: str = platform.machine()
+
+    if "arm64" in raw_architecture:
+        return "arm64"
+
+    if "x86_64" in raw_architecture:
+        return "x64"
+
+    raise NotImplementedError(raw_architecture)
+
+
+def _get_downdoc_binary_file_extension() -> str:
+    """Retrive the file extension for the executable on the current operating system."""
+    raw_operating_system: str = sys.platform
+
+    if "win" in raw_operating_system and "darwin" not in raw_operating_system:
+        return ".exe"
+
+    return ""
