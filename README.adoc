@@ -18,6 +18,7 @@ v1.0, 10/11/2024
 
 :url-project-repository: {_url-github}/CarrotManMatt/Pydowndoc
 :url-project-pypi: {_url-pypi}/project/Pydowndoc
+:url-project-bug-tracker: {url-project-repository}/issues
 :url-python-home: https://python.org
 :url-python: {url-python-home}
 :url-python-download: {url-python-home}/downloads
@@ -271,3 +272,9 @@ uv tool uninstall Pydowndoc
 .If installed with {labelled-url-pip}
 [source,bash]
 python -m pip uninstall Pydowndoc
+
+== Reporting Issues
+
+If there are issues with the Python API for this package, or you are encountering installation problems, please report these to ({url-project-bug-tracker})[the GitHub issues tracker for this project].
+
+If you have problems with the conversion process of your AsciiDoc files to Markdown, please report these ({url-downdoc-repository}/issues)[upstream], directly to the ({url-downdoc})[downdoc project].
