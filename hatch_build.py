@@ -2,6 +2,7 @@
 
 import platform
 import re
+import stat
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, override
@@ -42,7 +43,14 @@ class MultiArtefactWheelBuilder(WheelBuilder):
             if not downdoc_binary_filepath.is_file():
                 raise FileNotFoundError(downdoc_binary_filepath)
 
-            build_data["downdoc_binary_filepath"] = downdoc_binary_filepath
+            downdoc_binary_filepath.chmod(
+                downdoc_binary_filepath.stat().st_mode | stat.S_IEXEC
+            )
+
+            build_data["shared_scripts"] = {
+                str(downdoc_binary_filepath.resolve()): "downdoc",
+                **build_data["shared_scripts"],
+            }
 
     @override
     def get_build_hooks(
@@ -101,18 +109,6 @@ class MultiArtefactWheelBuilder(WheelBuilder):
     def build_standard(self, directory: str, **build_data: object) -> str:
         build_data["infer_tag"] = True
         build_data["pure_python"] = False
-
-        downdoc_binary_filepath: Path | None = build_data.pop("downdoc_binary_filepath", None)
-        if downdoc_binary_filepath is None:
-            MISSING_DOWNDOC_BINARY_FILEPATH_MESSAGE: Final[str] = (
-                "Missing downdoc binary filepath."
-            )
-            raise ValueError(MISSING_DOWNDOC_BINARY_FILEPATH_MESSAGE)
-
-        build_data["shared_scripts"] = {
-            str(downdoc_binary_filepath.resolve()): "downdoc-binary",
-            **build_data["shared_scripts"],
-        }
 
         return super().build_standard(directory, **build_data)
 
