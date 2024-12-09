@@ -3,6 +3,7 @@
 import itertools
 import shlex
 import subprocess
+import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -79,3 +80,10 @@ def run(
         check=process_check_return_code,
         capture_output=process_capture_output,
     )
+
+
+def run_with_sys_argv() -> int:
+    """Execute the conversion subprocess with the exact args held by `sys.argv`."""
+    return run(
+        sys.argv[1:], process_capture_output=False, process_check_return_code=False
+    ).returncode
