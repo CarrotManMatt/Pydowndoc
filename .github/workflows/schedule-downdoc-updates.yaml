@@ -42,4 +42,6 @@ jobs:
                 subject: "Pydowndoc: New upstream version ${{needs.check-for-new-upstream-tag.outputs.new_downdoc_version}}"
                 to: ${{secrets.EMAIL_NOTIFICATION_RECIPIENTS}}
                 from: Pydowndoc Development Notifier
-                body: ""  # TODO: Add notification body
+                body: "The upstream project \"downdoc\" has released a new version.\nCreate & push
+                    a new tag for your project ${{github.repository}} to update the wrapped downdoc
+                    version."
