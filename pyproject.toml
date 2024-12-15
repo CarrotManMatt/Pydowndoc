@@ -17,11 +17,12 @@ test = []
 type-check = ["mypy>=1.10"]
 
 [project]
-authors = [ # TODO: Add downdoc upstream authors
+authors = [
+    { name = "Dan Allen", email = "dan@opendevise.com" },
     { name = "Matt Norton", email = "matt@carrotmanmatt.com" },
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Framework :: Hatch",
     "Intended Audience :: Developers",
@@ -55,8 +56,9 @@ keywords = [
     "pypi",
     "pyproject.toml",
 ]
-license = "Apache-2.0"
-license-files = ["LICENSE"]
+license = "Apache-2.0 AND MIT"
+license-files = ["LICENSE", "downdoc-binary-LICENSE"]
+maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 name = "Pydowndoc"
 readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
 requires-python = ">=3.9"

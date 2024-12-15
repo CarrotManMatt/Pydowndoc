@@ -278,3 +278,9 @@ python -m pip uninstall Pydowndoc
 If there are issues with the Python API for this package, or you are encountering installation problems, please report these to {url-project-bug-tracker}[the GitHub issues tracker for this project].
 
 If you have problems with the conversion process of your AsciiDoc files to Markdown, please report these {url-downdoc-repository}/issues[upstream], directly to the {url-downdoc}[downdoc project].
+
+== Licencing
+
+The compiled binary of the distributed downdoc software is shared under the MIT licence as described in {url-downdoc-repository}?tab=MIT-1-ov-file#readme[the upstream project's licence file].
+
+All other code in this project is distrubuted under link:./LICENSE[the Apache-2.0 licence].
