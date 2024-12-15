@@ -516,11 +516,12 @@ wheels = [
 
 [[package]]
 name = "pydowndoc"
-version = "0.0.1.dev55"
+version = "0.0.1.dev56"
 source = { virtual = "." }
 dependencies = [
     { name = "hatchling", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "typed-classproperties", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12' and platform_machine == 'x86_64' and sys_platform == 'linux'" },
 ]
 
 [package.dev-dependencies]
@@ -552,6 +553,7 @@ type-check = [
 requires-dist = [
     { name = "hatchling" },
     { name = "typed-classproperties", specifier = ">1.0.2" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
 
 [package.metadata.requires-dev]

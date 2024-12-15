@@ -6,9 +6,15 @@ https://packaging.python.org/en/latest/specifications/pyproject-toml/#readme
 """
 
 import inspect
+import sys
 from collections.abc import Collection
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING
+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
 from hatchling.plugin import hookimpl
@@ -24,7 +30,7 @@ __all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadat
 
 
 class DowndocReadmeMetadataHook(MetadataHookInterface):
-    """"""
+    """Hatchling metadata hook for converting AsciiDoc README files to Markdown format."""
 
     @classproperty
     @override  # type: ignore[override]
@@ -79,8 +85,10 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
             process_check_return_code=True,
         ).stdout.decode()
 
-        print(metadata)
-        print(markdown_readme)
+        sys.stdout.write(f"{metadata}\n")
+        sys.stdout.flush()
+        sys.stdout.write(f"{markdown_readme}\n")
+        sys.stdout.flush()
 
 
 @hookimpl
