@@ -4,6 +4,7 @@ import platform
 import re
 import stat
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
@@ -47,9 +48,15 @@ class MultiArtefactWheelBuilder(WheelBuilder):
                 downdoc_binary_filepath.stat().st_mode | stat.S_IEXEC
             )
 
+            existing_shared_scripts: object | dict[str, str] = build_data.get(
+                "shared_scripts", {}
+            )
+            if not isinstance(existing_shared_scripts, Mapping):
+                raise TypeError
+
             build_data["shared_scripts"] = {
                 str(downdoc_binary_filepath.resolve()): "downdoc",
-                **build_data["shared_scripts"],
+                **existing_shared_scripts,
             }
 
     @override

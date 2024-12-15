@@ -4,11 +4,11 @@ import itertools
 import shlex
 import subprocess
 import sys
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
-    from pathlib import Path
     from subprocess import CompletedProcess
     from typing import Literal
 
@@ -85,5 +85,7 @@ def run(
 def run_with_sys_argv() -> int:
     """Execute the conversion subprocess with the exact args held by `sys.argv`."""
     return run(
-        sys.argv[1:], process_capture_output=False, process_check_return_code=False
+        *(Path(argument) for argument in sys.argv[1:]),
+        process_capture_output=False,
+        process_check_return_code=False,
     ).returncode
