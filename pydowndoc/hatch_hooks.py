@@ -39,7 +39,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
-        raw_readme_path: object | str = config.get("path", "")
+        raw_readme_path: "object | str" = config.get("path", "")  # noqa: UP037
 
         if not isinstance(raw_readme_path, str):
             INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
@@ -55,7 +55,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
         if "readme" in metadata:
             return True
 
-        dynamic: object | Collection[object] = metadata.get("dynamic", [])
+        dynamic: "object | Collection[object]" = metadata.get("dynamic", [])  # noqa: UP037
         if not isinstance(dynamic, Collection):
             INVALID_DYNAMIC_TYPE_MESSAGE: Final[str] = (
                 "'dynamic' field within `[project]` must be an array."
@@ -93,7 +93,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
 @hookimpl
 def hatch_register_metadata_hook() -> (
-    type[MetadataHookInterface] | list[type[MetadataHookInterface]]
+    "type[MetadataHookInterface] | list[type[MetadataHookInterface]]"
 ):
     """Export the correct metadata hook class for hatch projects."""
     return DowndocReadmeMetadataHook
