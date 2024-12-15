@@ -63,7 +63,7 @@ image:https://img.shields.io/endpoint?url=https%3A%2F%2Ftoml-version-extractor.c
 image:https://img.shields.io/pypi/v/Pydowndoc[PyPI Version,link={url-project-pypi}]
 image:https://img.shields.io/pypi/pyversions/Pydowndoc?logo=Python&logoColor=white&label=Python[Python Version,link={url-python-download}]
 image:https://img.shields.io/github/v/tag/opendevise/downdoc?label=downdoc&logo=asciidoctor[downdoc Version,link={url-downdoc}]
-image:{url-project-repo}/actions/workflows/check-build-publish.yaml/badge.svg[Tests Status,link={url-project-repo}/actions/workflows/check-build-publish.yaml]
+image:{url-project-repository}/actions/workflows/check-build-publish.yaml/badge.svg[Tests Status,link={url-project-repository}/actions/workflows/check-build-publish.yaml]
 image:https://img.shields.io/badge/mypy-checked-%232EBB4E&label=mypy[mypy Status,link={url-mypy}]
 image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json[Ruff,link={url-ruff}]
 
