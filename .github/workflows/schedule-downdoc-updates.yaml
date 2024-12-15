@@ -1,0 +1,45 @@
+name: Schedule downdoc Updates
+
+on:
+    schedule:
+        - cron: "0 18 * * 1"
+
+jobs:
+    check-for-new-upstream-tag:
+        runs-on: ubuntu-latest
+        outputs:
+            new_downdoc_version: ${{ steps.compare_and_set_output.outputs.new_downdoc_version }}
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                repository: opendevise/downdoc
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+
+            - id: compare_and_set_output
+              run: |
+                if { git describe --tags --abbrev=0; uvx --from Pydowndoc downdoc -V; } | sort --version-sort --reverse --check; then
+                    echo "new_downdoc_version=$(git describe --tags --abbrev=0)\n" >> $GITHUB_OUTPUT
+                else
+                    echo "new_downdoc_version=false\n" >> $GITHUB_OUTPUT
+                fi
+
+    create-new-tag:
+        runs-on: ubuntu-latest
+        needs: [check-for-new-upstream-tag]
+        if: needs.check-for-new-upstream-tag.outputs.new_downdoc_version != 'false'
+
+        steps:
+            - uses: dawidd6/action-send-mail@v4
+              with:
+                server_address: smtppro.zoho.eu
+                server_port: 465
+                secure: true
+                username: ${{secrets.EMAIL_NOTIFICATION_USERNAME}}
+                password: ${{secrets.EMAIL_NOTIFICATION_PASSWORD}}
+                subject: "Pydowndoc: New upstream version ${{needs.check-for-new-upstream-tag.outputs.new_downdoc_version}}"
+                to: ${{secrets.EMAIL_NOTIFICATION_RECIPIENTS}}
+                from: Pydowndoc Development Notifier
+                body: ""  # TODO: Add notification body
