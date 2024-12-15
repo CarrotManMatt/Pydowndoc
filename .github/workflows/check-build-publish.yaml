@@ -39,12 +39,14 @@ jobs:
 
     uv-check:
         runs-on: ubuntu-latest
-        needs: [convert-readme]
 
         steps:
             - uses: actions/checkout@v4
               with:
                 fetch-depth: 0
+
+            - name: Create Blank README.md
+              run: touch README.md
 
             - name: Install uv
               uses: astral-sh/setup-uv@v3
@@ -72,6 +74,9 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
+
+            - name: Create Blank README.md
+              run: touch README.md
 
             - name: Install uv
               uses: astral-sh/setup-uv@v3
@@ -158,7 +163,7 @@ jobs:
             - name: Set Up Python
               uses: actions/setup-python@v5
               with:
-                python-version: .python-version
+                python-version-file: .python-version
 
             - name: Install ruff From Locked Dependencies
               run: uv sync --no-python-downloads --only-group lint-format --frozen
@@ -192,7 +197,7 @@ jobs:
             - name: Set Up Python
               uses: actions/setup-python@v5
               with:
-                python-version: .python-version
+                python-version-file: .python-version
 
             - name: Install ruff From Locked Dependencies
               run: uv sync --no-python-downloads --only-group lint-format --frozen
@@ -231,7 +236,7 @@ jobs:
               run: uv sync --no-python-downloads --only-group lint-format --frozen
 
             - name: Run Taplo Formatter
-              run: uv run taplo format . --check  # TODO: Add GitHub workflows output format
+              run: uv run --no-sync --no-python-downloads taplo format . --check  # TODO: Add GitHub workflows output format
 
     taplo-lint:
         needs: [taplo-format]
@@ -255,7 +260,7 @@ jobs:
               run: uv sync --no-python-downloads --only-group lint-format --frozen
 
             - name: Run Taplo Linter
-              run: uv run taplo lint . --default-schema-catalogs  # TODO: Add GitHub workflows output format
+              run: uv run --no-sync --no-python-downloads taplo lint . --default-schema-catalogs  # TODO: Add GitHub workflows output format
 
     yamlfmt:
         runs-on: ubuntu-latest
