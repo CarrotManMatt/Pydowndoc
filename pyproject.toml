@@ -17,9 +17,11 @@ test = []
 type-check = ["mypy>=1.10"]
 
 [project]
-authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
+authors = [ # TODO: Add downdoc upstream authors
+    { name = "Matt Norton", email = "matt@carrotmanmatt.com" },
+]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Framework :: Hatch",
     "Intended Audience :: Developers",
@@ -169,3 +171,9 @@ default-groups = ["dev"]
 environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
 package = false
 trusted-publishing = "always"
+
+[[tool.uv.index]]
+explicit = true
+name = "TestPyPI"
+publish-url = "https://test.pypi.org/legacy/"
+url = "https://test.pypi.org/simple/"

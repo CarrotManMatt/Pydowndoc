@@ -399,7 +399,7 @@ jobs:
                 path: dist/
 
             - name: Publish to Test-PyPI
-              run: uv publish --publish-url https://test.pypi.org/legacy/
+              run: uv publish --index TestPyPI
 
     release:
         needs: [publish]
