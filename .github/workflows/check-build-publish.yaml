@@ -64,7 +64,7 @@ jobs:
             - name: Check uv.lock (ensure all dependencies up to date)
               run: uv lock --check
 
-    mypy:
+    mypy-package:
         needs: [uv-check]
         runs-on: ubuntu-latest
 
@@ -101,11 +101,44 @@ jobs:
             - uses: actions/cache@v4
               with:
                 path: ./.mypy_cache
-                key: mypy|${{steps.save_hashed_python_version.outputs.hashed_python_version}}
+                key: mypy|${{steps.save_hashed_python_version.outputs.hashed_python_version}}|package
 
             - name: Run mypy
               run: uv run --python ${{matrix.python-version}} --no-sync --no-python-downloads mypy
-                .  # TODO: Add GitHub workflows output format
+                pydowndoc/  # TODO: Add GitHub workflows output format
+
+    mypy-build-script:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: .python-version
+
+            - name: Install mypy From Locked Dependencies
+              run: uv sync --no-python-downloads --only-group type-check --only-group build-dev --frozen
+
+            - name: Save Hashed Python Version
+              id: save_hashed_python_version
+              run: echo "HASHED_PYTHON_VERSION=$(uv run --no-sync --no-python-downloads python -VV
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+
+            - uses: actions/cache@v4
+              with:
+                path: ./.mypy_cache
+                key: mypy|${{steps.save_hashed_python_version.outputs.hashed_python_version}}|build-script
+
+            - name: Run mypy
+              run: uv run --no-sync --no-python-downloads mypy hatch_build.py  # TODO: Add GitHub workflows output format
 
     pre-commit:
         runs-on: ubuntu-latest
@@ -280,8 +313,8 @@ jobs:
               run: yamlfmt . -lint  # TODO: Add GitHub workflows output format
 
     build:
-        needs: [convert-readme, upload-downdoc-binaries, mypy, pre-commit, ruff-lint, taplo-format,
-            taplo-lint, yamlfmt, uv-check]
+        needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-build-script, pre-commit,
+            ruff-lint, taplo-format, taplo-lint, yamlfmt, uv-check]
         runs-on: ubuntu-latest
         container: {image: quay.io/pypa/manylinux_2_34_x86_64}
 
