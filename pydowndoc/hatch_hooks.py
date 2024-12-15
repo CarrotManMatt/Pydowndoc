@@ -7,7 +7,7 @@ https://packaging.python.org/en/latest/specifications/pyproject-toml/#readme
 
 import inspect
 import sys
-from collections.abc import Collection
+from collections.abc import Collection, Iterable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -78,17 +78,18 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
             )
             raise TypeError(MISSING_DYNAMIC_MESSAGE)
 
-        markdown_readme: str = pydowndoc.run(
-            self._get_readme_path(self.config, Path(self.root)),
-            output="-",
-            process_capture_output=True,
-            process_check_return_code=True,
-        ).stdout.decode()
+        metadata["readme"] = {
+            "content-type": "text/markdown",
+            "text": pydowndoc.run(
+                self._get_readme_path(self.config, Path(self.root)),
+                output="-",
+                process_capture_output=True,
+                process_check_return_code=True,
+            ).stdout.decode(),
+        }
 
-        sys.stdout.write(f"{metadata}\n")
-        sys.stdout.flush()
-        sys.stdout.write(f"{markdown_readme}\n")
-        sys.stdout.flush()
+        if isinstance(metadata["dynamic"], Iterable):
+            metadata["dynamic"] = [value for value in metadata["dynamic"] if value != "readme"]
 
 
 @hookimpl
