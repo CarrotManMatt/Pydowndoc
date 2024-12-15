@@ -122,7 +122,7 @@ jobs:
             - name: Set Up Python
               uses: actions/setup-python@v5
               with:
-                python-version: .python-version
+                python-version-file: .python-version
 
             - name: Install mypy From Locked Dependencies
               run: uv sync --no-python-downloads --only-group type-check --only-group build-dev --frozen
