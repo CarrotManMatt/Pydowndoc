@@ -96,7 +96,7 @@ jobs:
             - name: Save Hashed Python Version
               id: save_hashed_python_version
               run: echo "HASHED_PYTHON_VERSION=$(uv run --no-sync --no-python-downloads --python
-                ${{matrix.python-version}} python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+                ${{matrix.python-version}} python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
@@ -130,7 +130,7 @@ jobs:
             - name: Save Hashed Python Version
               id: save_hashed_python_version
               run: echo "hashed_python_version=$(uv run --no-sync --no-python-downloads python -VV
-                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
@@ -171,7 +171,7 @@ jobs:
             - name: Save Hashed Python Version
               id: save_hashed_python_version
               run: echo "hashed_python_version=$(uv run --no-sync --no-python-downloads python -VV
-                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
@@ -205,7 +205,7 @@ jobs:
             - name: Save Hashed Python Version
               id: save_hashed_python_version
               run: echo "hashed_python_version=$(uv run --no-sync --no-python-downloads python -VV
-                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
