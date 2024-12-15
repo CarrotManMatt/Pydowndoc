@@ -5,9 +5,9 @@ on:
         branches: [main]
     push:
         branches: [main]
-    workflow_call:
+        tags: ["v*"]
 
-jobs:  # TODO: Add test workflows
+jobs:
     upload-downdoc-binaries:
         uses: ./.github/workflows/upload-downdoc-binaries.yaml
 
@@ -37,8 +37,246 @@ jobs:  # TODO: Add test workflows
                 name: converted-readme
                 path: README.md
 
+    uv-check:
+        runs-on: ubuntu-latest
+        needs: [convert-readme]
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Install jq
+              run: sudo apt-get install jq
+
+            - name: Update local package only
+              run: uv lock --upgrade-package $(cat pyproject.toml | uvx --from yq tomlq .project.name
+                -M -r)
+
+            - name: Check uv.lock (ensure all dependencies up to date)
+              run: uv lock --check
+
+    mypy:
+        needs: [uv-check]
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: ${{matrix.python-version}}
+
+            - name: Install mypy From Locked Dependencies
+              run: uv sync --python ${{matrix.python-version}} --no-python-downloads --no-group dev
+                --group type-check --frozen
+
+            - name: Save Hashed Python Version
+              id: save_hashed_python_version
+              run: echo "HASHED_PYTHON_VERSION=$(uv run --no-sync --no-python-downloads --python
+                ${{matrix.python-version}} python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+
+            - uses: actions/cache@v4
+              with:
+                path: ./.mypy_cache
+                key: mypy|${{steps.save_hashed_python_version.outputs.hashed_python_version}}
+
+            - name: Run mypy
+              run: uv run --python ${{matrix.python-version}} --no-sync --no-python-downloads mypy
+                .  # TODO: Add GitHub workflows output format
+
+    pre-commit:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version-file: .python-version
+
+            - name: Install pre-commit From Locked Dependencies
+              run: uv sync --no-python-downloads --only-group pre-commit --frozen
+
+            - name: Save Hashed Python Version
+              id: save_hashed_python_version
+              run: echo "hashed_python_version=$(uv run --no-sync --no-python-downloads python -VV
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+
+            - uses: actions/cache@v4
+              with:
+                path: ~/.cache/pre-commit
+                key: pre-commit|${{steps.save_hashed_python_version.outputs.hashed_python_version}}|${{hashFiles('.pre-commit-config.yaml')}}
+
+            - name: Setup pre-commit Environments
+              run: uv run --no-sync --no-python-downloads pre-commit install-hooks
+
+            - name: Save pre-commit Checks Which Require Skipping
+              run: echo "SKIP=check-github-workflows,ruff,ruff-format,taplo-format,taplo-lint,uv-lock,yamlfmt"
+                >> $GITHUB_ENV
+
+            - name: Run pre-commit
+              run: uv run --no-sync --no-python-downloads pre-commit run --all-files --hook-stage
+                manual  # TODO: Add GitHub workflows output format
+
+    ruff-lint:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: .python-version
+
+            - name: Install ruff From Locked Dependencies
+              run: uv sync --no-python-downloads --only-group lint-format --frozen
+
+            - name: Save Hashed Python Version
+              id: save_hashed_python_version
+              run: echo "hashed_python_version=$(uv run --no-sync --no-python-downloads python -VV
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+
+            - uses: actions/cache@v4
+              with:
+                path: ./.ruff_cache
+                key: ruff|${{steps.save_hashed_python_version.outputs.hashed_python_version}}
+
+            - name: Run Ruff
+              run: uv run --no-sync --no-python-downloads ruff check --no-fix --output-format=github
+
+    ruff-format:
+        needs: [ruff-lint]
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: .python-version
+
+            - name: Install ruff From Locked Dependencies
+              run: uv sync --no-python-downloads --only-group lint-format --frozen
+
+            - name: Save Hashed Python Version
+              id: save_hashed_python_version
+              run: echo "hashed_python_version=$(uv run --no-sync --no-python-downloads python -VV
+                | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUTS
+
+            - uses: actions/cache@v4
+              with:
+                path: ./.ruff_cache
+                key: ruff|${{steps.save_hashed_python_version.outputs.hashed_python_version}}
+
+            - name: Run Ruff
+              run: uv run --no-sync --no-python-downloads ruff format --check
+
+    taplo-format:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version-file: .python-version
+
+            - name: Install Taplo From Locked Dependencies
+              run: uv sync --no-python-downloads --only-group lint-format --frozen
+
+            - name: Run Taplo Formatter
+              run: uv run taplo format . --check  # TODO: Add GitHub workflows output format
+
+    taplo-lint:
+        needs: [taplo-format]
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: uv.lock
+
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version-file: .python-version
+
+            - name: Install Taplo From Locked Dependencies
+              run: uv sync --no-python-downloads --only-group lint-format --frozen
+
+            - name: Run Taplo Linter
+              run: uv run taplo lint . --default-schema-catalogs  # TODO: Add GitHub workflows output format
+
+    yamlfmt:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Golang
+              uses: actions/setup-go@v5
+              with:
+                cache: false
+
+            - name: Install yamlfmt
+              run: go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+
+            - name: Run yamlfmt
+              run: yamlfmt . -lint  # TODO: Add GitHub workflows output format
+
     build:
-        needs: [convert-readme, upload-downdoc-binaries]
+        needs: [convert-readme, upload-downdoc-binaries, mypy, pre-commit, ruff-lint, taplo-format,
+            taplo-lint, yamlfmt, uv-check]
         runs-on: ubuntu-latest
         container: {image: quay.io/pypa/manylinux_2_34_x86_64}
 
@@ -77,6 +315,30 @@ jobs:  # TODO: Add test workflows
                 name: built-Pydowndoc-package
                 path: dist/
 
+    publish:
+        needs: [build]
+        runs-on: ubuntu-latest
+        environment: publish
+        permissions:
+            id-token: write
+
+        if: github.ref_type == 'tag'
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+
+            - name: Download Build Artifacts
+              uses: actions/download-artifact@v4
+              with:
+                name: built-Pydowndoc-package
+                path: dist/
+
+            - name: Publish to PyPI
+              run: uv publish
+
     test-publish:
         needs: [build]
         runs-on: ubuntu-latest
@@ -100,3 +362,30 @@ jobs:  # TODO: Add test workflows
 
             - name: Publish to Test-PyPI
               run: uv publish --publish-url https://test.pypi.org/legacy/
+
+    release:
+        needs: [publish]
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            id-token: write
+
+        if: github.ref_type == 'tag'
+
+        steps:
+            - name: Download Build Artifacts
+              uses: actions/download-artifact@v4
+              with:
+                name: built-Pydowndoc-package
+                path: dist/
+
+            - name: Sign Build Artifacts
+              uses: sigstore/gh-action-sigstore-python@v3.0.0
+              with:
+                inputs: ./dist/*.tar.gz ./dist/*.whl
+
+            - name: Create GitHub Release
+              env:
+                GITHUB_TOKEN: ${{github.token}}
+              run: gh release create '${{github.ref_name}}' dist/** --repo '${{github.repository}}'
+                --verify-tag --generate-notes
