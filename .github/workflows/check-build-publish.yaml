@@ -339,7 +339,7 @@ jobs:
 
     build:
         needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-build-script, pre-commit,
-            ruff-lint, taplo-format, taplo-lint, yamlfmt, uv-check]
+            ruff-format, ruff-lint, taplo-format, taplo-lint, yamlfmt, uv-check]
         runs-on: ubuntu-latest
         container: {image: quay.io/pypa/manylinux_2_34_x86_64}
         env:
