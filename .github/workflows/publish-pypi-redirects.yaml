@@ -1,0 +1,22 @@
+name: Publish PyPI Redirects
+
+on:
+    workflow_dispatch:
+
+jobs:
+    downdoc-redirect:
+        runs-on: ubuntu-latest
+        environment: redirect-publish-downdoc
+        permissions:
+            id-token: write
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+
+            - name: Build Package
+              run: uv build --project ./.pypi-redirects/downdoc --sdist
+
+            - name: Publish to PyPI
+              run: uv publish

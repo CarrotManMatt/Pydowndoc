@@ -68,9 +68,9 @@ jobs:
         needs: [uv-check]
         runs-on: ubuntu-latest
         env:
-            UV_NO_SYNC: "true"
-            UV_FROZEN: "true"
-            UV_NO_PYTHON_DOWNLOADS: "true"
+            UV_NO_SYNC: true
+            UV_FROZEN: true
+            UV_PYTHON_DOWNLOADS: never
 
         strategy:
             matrix:
@@ -449,7 +449,7 @@ jobs:
             - name: Sign Build Artifacts
               uses: sigstore/gh-action-sigstore-python@v3.0.0
               with:
-                inputs: ./dist/*.tar.gz ./dist/*.whl
+                inputs: ./dist/pydowndoc-*.whl
 
             - name: Create GitHub Release
               env:
