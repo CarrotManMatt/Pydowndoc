@@ -19,7 +19,9 @@ jobs:
               uses: astral-sh/setup-uv@v3
 
             - name: Build Package
-              run: uv build --project ./.pypi-redirects/downdoc --sdist
+              working-directory: ./.pypi-redirects/downdoc
+              run: uv build  --sdist
 
             - name: Publish to PyPI
+              working-directory: ./.pypi-redirects/downdoc
               run: uv publish
