@@ -9,7 +9,8 @@ classifiers = ["Development Status :: 7 - Inactive"]
 dependencies = ["Pydowndoc"]
 description = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"."
 name = "downdoc"
-version = "1.0.0"
+readme = { content-type = "text/markdown", text = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"." }
+version = "1.0.1"
 
 [tool.uv]
 managed = false
