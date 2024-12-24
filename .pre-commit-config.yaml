@@ -5,6 +5,12 @@ default_language_version:
     python: python3.13
 
 repos:
+    - repo: https://github.com/renovatebot/pre-commit-hooks
+      rev: 39.82.6
+      hooks:
+        - id: renovate-config-validator
+          args: [--strict]
+
     - repo: https://github.com/python-jsonschema/check-jsonschema
       rev: 0.30.0
       hooks:
@@ -17,7 +23,7 @@ repos:
         - id: gitlint-ci
 
     - repo: https://github.com/gitleaks/gitleaks
-      rev: v8.21.2
+      rev: v8.22.0
       hooks:
         - id: gitleaks
 
@@ -62,7 +68,7 @@ repos:
           stages: [manual]
 
     - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.8.3
+      rev: v0.8.4
       hooks:
         - id: ruff
           args: [--fix]
@@ -70,11 +76,10 @@ repos:
         - id: ruff-format
 
     - repo: https://github.com/astral-sh/uv-pre-commit
-      rev: 0.5.9
+      rev: 0.5.11
       hooks:
         - id: uv-lock
           always_run: true
-          args: [--upgrade]
 
     - repo: https://github.com/google/yamlfmt
       rev: v0.14.0

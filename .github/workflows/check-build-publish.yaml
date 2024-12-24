@@ -97,7 +97,7 @@ jobs:
 
             - name: Save Hashed Python Version
               id: save_hashed_python_version
-              run: echo "HASHED_PYTHON_VERSION=$(uv run python -VV | sha256sum | cut -d' ' -f1)"
+              run: echo "HASHED_PYTHON_VERSION=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
@@ -106,7 +106,7 @@ jobs:
                 key: mypy|${{steps.save_hashed_python_version.outputs.hashed_python_version}}|package
 
             - name: Run mypy
-              run: uv run mypy pydowndoc/  # TODO: Add GitHub workflows output format
+              run: uv run -- mypy pydowndoc/  # TODO: Add GitHub workflows output format
 
     mypy-build-script:
         runs-on: ubuntu-latest
@@ -133,7 +133,7 @@ jobs:
 
             - name: Save Hashed Python Version
               id: save_hashed_python_version
-              run: echo "HASHED_PYTHON_VERSION=$(uv run python -VV | sha256sum | cut -d' ' -f1)"
+              run: echo "HASHED_PYTHON_VERSION=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
@@ -142,7 +142,7 @@ jobs:
                 key: mypy|${{steps.save_hashed_python_version.outputs.hashed_python_version}}|build-script
 
             - name: Run mypy
-              run: uv run mypy hatch_build.py  # TODO: Add GitHub workflows output format
+              run: uv run -- mypy hatch_build.py  # TODO: Add GitHub workflows output format
 
     pre-commit:
         runs-on: ubuntu-latest
@@ -169,7 +169,7 @@ jobs:
 
             - name: Save Hashed Python Version
               id: save_hashed_python_version
-              run: echo "hashed_python_version=$(uv run python -VV | sha256sum | cut -d' ' -f1)"
+              run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
@@ -178,14 +178,13 @@ jobs:
                 key: pre-commit|${{steps.save_hashed_python_version.outputs.hashed_python_version}}|${{hashFiles('.pre-commit-config.yaml')}}
 
             - name: Setup pre-commit Environments
-              run: uv run pre-commit install-hooks
+              run: uv run -- pre-commit install-hooks
 
             - name: Save pre-commit Checks Which Require Skipping
-              run: echo "SKIP=check-github-workflows,ruff,ruff-format,taplo-format,taplo-lint,uv-lock,yamlfmt"
-                >> $GITHUB_ENV
+              run: echo "SKIP=check-github-workflows,ruff,uv-lock" >> $GITHUB_ENV
 
             - name: Run pre-commit
-              run: uv run pre-commit run --all-files --hook-stage manual  # TODO: Add GitHub workflows output format
+              run: uv run -- pre-commit run --all-files --hook-stage manual  # TODO: Add GitHub workflows output format
 
     ruff-lint:
         runs-on: ubuntu-latest
@@ -212,7 +211,7 @@ jobs:
 
             - name: Save Hashed Python Version
               id: save_hashed_python_version
-              run: echo "hashed_python_version=$(uv run python -VV | sha256sum | cut -d' ' -f1)"
+              run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
@@ -221,118 +220,11 @@ jobs:
                 key: ruff|${{steps.save_hashed_python_version.outputs.hashed_python_version}}
 
             - name: Run Ruff
-              run: uv run ruff check --no-fix --output-format=github
-
-    ruff-format:
-        needs: [ruff-lint]
-        runs-on: ubuntu-latest
-        env:
-            UV_NO_SYNC: true
-            UV_FROZEN: true
-            UV_PYTHON_DOWNLOADS: never
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Install uv
-              uses: astral-sh/setup-uv@v5
-              with:
-                enable-cache: true
-
-            - name: Set Up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version-file: .python-version
-
-            - name: Install ruff From Locked Dependencies
-              run: uv sync --only-group lint-format
-
-            - name: Save Hashed Python Version
-              id: save_hashed_python_version
-              run: echo "hashed_python_version=$(uv run python -VV | sha256sum | cut -d' ' -f1)"
-                >> $GITHUB_OUTPUT
-
-            - uses: actions/cache@v4
-              with:
-                path: ./.ruff_cache
-                key: ruff|${{steps.save_hashed_python_version.outputs.hashed_python_version}}
-
-            - name: Run Ruff
-              run: uv run ruff format --check
-
-    taplo-format:
-        runs-on: ubuntu-latest
-        env:
-            UV_NO_SYNC: true
-            UV_FROZEN: true
-            UV_PYTHON_DOWNLOADS: never
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Install uv
-              uses: astral-sh/setup-uv@v5
-              with:
-                enable-cache: true
-
-            - name: Set Up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version-file: .python-version
-
-            - name: Install Taplo From Locked Dependencies
-              run: uv sync --only-group lint-format
-
-            - name: Run Taplo Formatter
-              run: uv run taplo format . --check  # TODO: Add GitHub workflows output format
-
-    taplo-lint:
-        needs: [taplo-format]
-        runs-on: ubuntu-latest
-        env:
-            UV_NO_SYNC: true
-            UV_FROZEN: true
-            UV_PYTHON_DOWNLOADS: never
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Install uv
-              uses: astral-sh/setup-uv@v5
-              with:
-                enable-cache: true
-
-            - name: Set Up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version-file: .python-version
-
-            - name: Install Taplo From Locked Dependencies
-              run: uv sync --only-group lint-format
-
-            - name: Run Taplo Linter
-              run: uv run taplo lint . --default-schema-catalogs  # TODO: Add GitHub workflows output format
-
-    yamlfmt:
-        runs-on: ubuntu-latest
-
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Install Golang
-              uses: actions/setup-go@v5
-              with:
-                cache: false
-
-            - name: Install yamlfmt
-              run: go install github.com/google/yamlfmt/cmd/yamlfmt@latest
-
-            - name: Run yamlfmt
-              run: yamlfmt . -lint  # TODO: Add GitHub workflows output format
+              run: uv run -- ruff check --no-fix --output-format=github
 
     build:
         needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-build-script, pre-commit,
-            ruff-format, ruff-lint, taplo-format, taplo-lint, yamlfmt, uv-check]
+            ruff-lint, uv-check]
         runs-on: ubuntu-latest
         container: {image: quay.io/pypa/manylinux_2_34_x86_64}
         env:
@@ -361,10 +253,10 @@ jobs:
               run: uv sync --only-group build
 
             - name: Build Package
-              run: uv run hatch build -t custom
+              run: uv run -- hatch build -t custom
 
             - name: Repair Linux Packages
-              run: uv run auditwheel repair $(find dist/ -type f -iname "*linux*.whl") -w dist
+              run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux*.whl") -w dist
 
             - name: Remove Unrepaired Linux Packages
               run: rm dist/*-linux_x86_64.whl

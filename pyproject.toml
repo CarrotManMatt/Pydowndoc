@@ -3,7 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
 
 [dependency-groups]
-build = ["hatch"]
+build = ["hatch", "pip"]
 build-dev = ["auditwheel", { include-group = "build" }]
 dev = [
     { include-group = "lint-format" },
@@ -11,7 +11,7 @@ dev = [
     { include-group = "test" },
     { include-group = "type-check" },
 ]
-lint-format = ["ruff>=0.4", "taplo"]
+lint-format = ["ruff>=0.4"]
 pre-commit = ["pre-commit"]
 test = []
 type-check = ["mypy>=1.12"]
@@ -178,6 +178,8 @@ keep-runtime-typing = true
 [tool.uv]
 default-groups = ["dev"]
 environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+no-binary-package = ["Pydowndoc"]
+no-build = true
 package = false
 trusted-publishing = "always"
 
