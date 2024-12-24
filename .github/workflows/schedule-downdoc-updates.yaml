@@ -41,7 +41,7 @@ jobs:
             - uses: dawidd6/action-send-mail@v4
               with:
                 server_address: smtppro.zoho.eu
-                server_port: 465
+                server_port: 587
                 secure: true
                 username: ${{secrets.EMAIL_NOTIFICATION_USERNAME}}
                 password: ${{secrets.EMAIL_NOTIFICATION_PASSWORD}}
