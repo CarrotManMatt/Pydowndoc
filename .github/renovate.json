@@ -25,7 +25,7 @@
     ],
     "enabled": true,
     "enabledManagers": [
-        "regex",
+        "custom.regex",
         "github-actions",
         "pep621",
         "pep723",
