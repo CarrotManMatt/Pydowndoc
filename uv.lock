@@ -516,7 +516,7 @@ wheels = [
 
 [[package]]
 name = "pydowndoc"
-version = "1.0.3.dev3"
+version = "1.0.3.dev4"
 source = { virtual = "." }
 dependencies = [
     { name = "hatchling", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
