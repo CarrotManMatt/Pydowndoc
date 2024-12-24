@@ -14,7 +14,7 @@ dev = [
 lint-format = ["ruff>=0.4", "taplo"]
 pre-commit = ["pre-commit"]
 test = []
-type-check = ["mypy>=1.10"]
+type-check = ["mypy>=1.12"]
 
 [project]
 authors = [
@@ -183,6 +183,6 @@ trusted-publishing = "always"
 
 [[tool.uv.index]]
 explicit = true
-name = "TestPyPI"
+name = "Test-PyPI"
 publish-url = "https://test.pypi.org/legacy/"
 url = "https://test.pypi.org/simple/"

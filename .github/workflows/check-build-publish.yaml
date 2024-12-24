@@ -428,7 +428,7 @@ jobs:
                 path: dist/
 
             - name: Publish to Test-PyPI
-              run: uv publish --publish-url https://test.pypi.org/legacy/  # TODO: use `--index` once uv bug #9919 is fixed
+              run: uv publish --index Test-PyPI
 
     release:
         needs: [publish]
