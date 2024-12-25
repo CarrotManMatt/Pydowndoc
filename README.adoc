@@ -252,7 +252,7 @@ uv sync --upgrade-package Pydowndoc
 
 .If installed using {labelled-url-pip}
 [source,bash]
-python -m pip install --upgrade Pydowndoc
+path/to/venv/python -m pip install --upgrade Pydowndoc
 
 == Uninstallation
 
@@ -266,7 +266,7 @@ uv tool uninstall Pydowndoc
 
 .If installed with {labelled-url-pip}
 [source,bash]
-python -m pip uninstall Pydowndoc
+path/to/venv/python -m pip uninstall Pydowndoc
 
 == Reporting Issues
 
