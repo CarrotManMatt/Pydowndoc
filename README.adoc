@@ -66,6 +66,7 @@ image:https://img.shields.io/github/v/tag/opendevise/downdoc?label=downdoc&logo=
 image:{url-project-repository}/actions/workflows/check-build-publish.yaml/badge.svg[Tests Status,link={url-project-repository}/actions/workflows/check-build-publish.yaml]
 image:https://img.shields.io/badge/mypy-checked-%232EBB4E&label=mypy[mypy Status,link={url-mypy}]
 image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json[Ruff,link={url-ruff}]
+image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json[uv,link={url-uv}]
 
 ****
 Rapidly convert your {labelled-url-asciidoc} files to {labelled-url-wiki-markdown}, using {labelled-url-python}
@@ -82,9 +83,9 @@ A {labelled-url-python} wrapper around the latest-built binary of {labelled-url-
 
 == Installation
 
-.Run as a {url-uv-wiki-tools}[uv tool]
+.Run as a {url-uv-wiki-tools}[uv tool] (no installation necessary)
 [source,bash]
-uvx Pydowndoc --version
+uvx --from Pydowndoc -- downdoc --version
 
 .Add to your {url-uv-wiki-dependencies-adding}[uv project/script's dependencies]
 [source,bash]
@@ -92,55 +93,49 @@ uv add Pydowndoc
 
 .{url-uv-wiki-tools-installing}[Install permenantly as a uv tool]
 [source,bash]
+----
 uv tool install Pydowndoc
+----
 
 .Install using {labelled-url-pip}
 [source,bash]
-python -m pip install Pydowndoc
+path/to/venv/python -m pip install Pydowndoc
 
 == CLI Usage
 
-[TIP]
+[WARNING]
 --
-.If installed using {labelled-url-pip}, or as a {url-uv-wiki-tools-installing}[permenantly installed uv tool], an alias to the original command name (`+downdoc+`) is available
-[%collapsible]
-====
-[source,bash]
-downdoc --version
-====
+These commands will only work correctly either after installation as a {url-uv-wiki-tools-installing}[permenant uv tool], or after activating a virtual environment with Pydowndoc installed.
+Replace the command name `+downdoc+` with `+uvx --from Pydowndoc -- downdoc+`, to run any of the following commands in an ephemeral envrionment.
 --
 
 .Get the currently installed version
 [source,bash]
-uvx Pydowndoc --version
-
-.Run using the command alias
-[source,bash]
-uvx --from Pydowndoc downdoc --version
+downdoc --version
 
 .Output the help message
 [source,bash]
-uvx Pydowndoc --help
+downdoc --help
 
-.Convert a given file (filename will be kept the same, with `+.md+` file-format)
+.Convert a given file (filename will be kept the same, with `+.md+` file-extension)
 [source,bash]
-uvx Pydowndoc MyNotes.adoc
+downdoc MyNotes.adoc
 
 .Output the converted file to the given filename
 [source,bash]
-uvx Pydowndoc MyNotes.adoc -o output.md
+downdoc MyNotes.adoc -o output.md
 
 .Output the converted file to stdout
 [source,bash]
-uvx Pydowndoc MyNotes.adoc -o -
+downdoc MyNotes.adoc -o -
 
 .Read the input AsciiDoc file from stdin
 [source,bash]
-cat MyNotes.adoc | uvx Pydowndoc - -o MyNotes.md
+cat MyNotes.adoc | downdoc - -o MyNotes.md
 
 == API Usage
 
-.Convert a given file (the filename will be kept the same, with a `+.md+` file-format)
+.Convert a given file (the filename will be kept the same, with a `+.md+` file-extension)
 [source,python]
 ----
 from pathlib import Path
@@ -178,7 +173,7 @@ converted_file_contents: str = pydowndoc.run(
 ).stdout.decode()
 ----
 
-== Using as a Hatch build hook
+== Use as a Hatch build hook
 
 . Ensure the `+readme+` field is added to your `+project.dynamic+` list within your `+pyproject.toml+` file
 +
