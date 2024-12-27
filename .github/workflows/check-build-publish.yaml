@@ -186,7 +186,7 @@ jobs:
             - name: Setup pre-commit Environments
               run: uv run -- pre-commit install-hooks
 
-            - name: Save pre-commit Checks Which Require Skipping
+            - name: Store pre-commit Checks Which Require Skipping
               run: echo "SKIP=check-github-workflows,ruff,uv-lock" >> $GITHUB_ENV
 
             - name: Run pre-commit
