@@ -249,6 +249,15 @@ jobs:
                 merge-multiple: true
                 path: downloads/
 
+            - name: Install jq
+              if: github.ref_type != 'tag'
+              run: sudo apt-get install jq
+
+            - name: Update local package only
+              if: github.ref_type != 'tag'
+              run: uv lock --upgrade-package $(cat pyproject.toml | uvx --from yq tomlq .project.name
+                -M -r)
+
             - name: Install Build Dependencies From Lock File
               run: uv sync --only-group build
 
