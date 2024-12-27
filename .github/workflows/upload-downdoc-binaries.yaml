@@ -17,21 +17,22 @@ jobs:
                 ref: v1.0.2-stable
 
             - uses: actions/cache@v4
+              id: restore-binary-from-cache
               with:
                 path: downloads/downdoc-linux-x64
                 key: downdoc-linux-x64|${{steps.checkout-upstream-repository.outputs.ref}}
 
             - uses: actions/setup-node@v4
-              if: steps.cache.outputs.cache-hit != 'true'
+              if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               with:
                 node-version: 18
 
             - name: Build downdoc linux-x64 binary
-              if: steps.cache.outputs.cache-hit != 'true'
+              if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               run: npx pkg -t linux-x64 . --out-path downloads
 
             - name: Rename built downdoc binary
-              if: steps.cache.outputs.cache-hit != 'true'
+              if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               run: mv downloads/downdoc downloads/downdoc-linux-x64
 
             - uses: actions/upload-artifact@v4
