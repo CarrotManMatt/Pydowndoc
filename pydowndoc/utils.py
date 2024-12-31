@@ -1,19 +1,19 @@
 """Utility classes & funtions used throughout the Pydowndoc project."""
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Final,
+)
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
-    from typing import Final
+    from collections.abc import Sequence
 
 
 __all__: "Sequence[str]" = ("classproperty",)
 
 
-T_value = TypeVar("T_value")
-
-
-class classproperty(property, Generic[T_value]):
+class classproperty[T_class, T_value](property):
     """
     Decorator for a Class-level property.
 
@@ -22,11 +22,11 @@ class classproperty(property, Generic[T_value]):
     Credit to Denis Rhyzhkov on Stackoverflow: https://stackoverflow.com/a/13624858/1280629
     """
 
-    def __init__(self, func: "Callable[..., T_value]", /) -> None:  # type: ignore[misc]
+    def __init__(self, func: Callable[..., T_value], /) -> None:  # type: ignore[misc]
         """Initialise the classproperty object."""
         super().__init__(func)
 
-    def __get__(self, owner_self: object, owner_cls: "type | None" = None, /) -> T_value:
+    def __get__(self, owner_self: object, owner_cls: type | None = None, /) -> T_value:
         """Retrieve the value of the property."""
         if self.fget is None:
             BROKEN_OBJECT_MESSAGE: Final[str] = "Broken object 'classproperty'."
