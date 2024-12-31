@@ -38,7 +38,11 @@ classifiers = [
     "Topic :: Software Development",
     "Typing :: Typed",
 ]
-dependencies = ["hatchling", "typing-extensions; python_version < '3.12'"]
+dependencies = [
+    "hatchling",
+    "typed_classproperties>1.0.2",
+    "typing-extensions; python_version < '3.12'",
+]
 dynamic = ["description", "version"]
 keywords = [
     "AsciiDoc",
@@ -145,13 +149,11 @@ quote-annotations = true
 strict = true
 
 [tool.ruff.lint.pep8-naming]
-classmethod-decorators = ["pydowndoc.utils.classproperty"]
-extend-ignore-names = [
-    "BROKEN_*_MESSAGE",
-    "INVALID_*_MESSAGE",
-    "NO_*_MESSAGE",
-    "classproperty",
+classmethod-decorators = [
+    "typed_classproperties.cached_classproperty",
+    "typed_classproperties.classproperty",
 ]
+extend-ignore-names = ["BROKEN_*_MESSAGE", "INVALID_*_MESSAGE", "NO_*_MESSAGE"]
 
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true
@@ -159,7 +161,10 @@ max-doc-length = 95
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-property-decorators = ["pydowndoc.utils.classproperty"]
+property-decorators = [
+    "typed_classproperties.cached_classproperty",
+    "typed_classproperties.classproperty",
+]
 
 [tool.ruff.lint.pylint]
 allow-magic-value-types = ["bytes", "int", "str"]
