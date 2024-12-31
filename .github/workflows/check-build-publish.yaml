@@ -114,7 +114,7 @@ jobs:
             - name: Run mypy
               run: uv run -- mypy pydowndoc/  # TODO: Add GitHub workflows output format
 
-    mypy-build-script:
+    mypy-scripts:
         runs-on: ubuntu-latest
         env:
             UV_NO_SYNC: true
@@ -145,7 +145,7 @@ jobs:
             - uses: actions/cache@v4
               with:
                 path: ./.mypy_cache
-                key: mypy|${{steps.store-hashed-python-version.outputs.hashed_python_version}}|build-script
+                key: mypy|${{steps.store-hashed-python-version.outputs.hashed_python_version}}|scripts
 
             - name: Run mypy
               run: uv run -- mypy hatch_build.py  # TODO: Add GitHub workflows output format
@@ -229,7 +229,7 @@ jobs:
               run: uv run -- ruff check --no-fix --output-format=github
 
     build:
-        needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-build-script, pre-commit,
+        needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-scripts, pre-commit,
             ruff-lint, uv-check]
         runs-on: ubuntu-latest
         container: {image: quay.io/pypa/manylinux_2_34_x86_64}
