@@ -18,9 +18,10 @@ else:
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
 from hatchling.plugin import hookimpl
-from typed_classproperties import classproperty
 
 import pydowndoc
+
+from .utils import classproperty
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence

@@ -530,11 +530,10 @@ wheels = [
 
 [[package]]
 name = "pydowndoc"
-version = "1.0.4.dev13"
+version = "1.0.4.dev14"
 source = { virtual = "." }
 dependencies = [
     { name = "hatchling", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
-    { name = "typed-classproperties", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "typing-extensions", marker = "python_full_version < '3.12' and platform_machine == 'x86_64' and sys_platform == 'linux'" },
 ]
 
@@ -566,7 +565,6 @@ type-check = [
 [package.metadata]
 requires-dist = [
     { name = "hatchling" },
-    { name = "typed-classproperties", specifier = ">1.0.2" },
     { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
 
@@ -758,15 +756,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/99/85/92c2667cf221b37648041ce9319427f92fa76cbec634aad844e67e284706/trove_classifiers-2024.10.21.16.tar.gz", hash = "sha256:17cbd055d67d5e9d9de63293a8732943fabc21574e4c7b74edf112b4928cf5f3", size = 16153 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/35/35/5055ab8d215af853d07bbff1a74edf48f91ed308f037380a5ca52dd73348/trove_classifiers-2024.10.21.16-py3-none-any.whl", hash = "sha256:0fb11f1e995a757807a8ef1c03829fbd4998d817319abcef1f33165750f103be", size = 13546 },
-]
-
-[[package]]
-name = "typed-classproperties"
-version = "1.1.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/dc/f8/eca09b814d5111dfed1a83da49766a3bf4abfdba8e9bcbfd427eda08c092/typed_classproperties-1.1.1.tar.gz", hash = "sha256:da4de2e191872fef2caefdd8c65b848ac778b4f1af517f16af1111c7bb194c01", size = 6169 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3a/e1/2bb1405dd50424d4beebb3bc1c0cdc07cfe573d8b704150fd0360274fab1/typed_classproperties-1.1.1-py3-none-any.whl", hash = "sha256:44eb5e9384c9c92ae9cb1068e86f322c15c7c96a13f444aaf9dc784b88d5622b", size = 5034 },
 ]
 
 [[package]]
