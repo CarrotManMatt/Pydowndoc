@@ -60,7 +60,7 @@ keywords = [
     "pyproject.toml",
 ]
 license = "Apache-2.0 AND MIT"
-license-files = ["LICENSE", "downdoc-binary-LICENSE"]
+license-files = ["LICENSE", "LICENSE-downdoc-binary"]
 maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 name = "Pydowndoc"
 readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
