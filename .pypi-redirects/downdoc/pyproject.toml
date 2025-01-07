@@ -2,7 +2,6 @@
 build-backend = "hatchling.build"
 requires = ["hatchling"]
 
-
 [project]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 classifiers = ["Development Status :: 7 - Inactive"]
@@ -11,6 +10,10 @@ description = "You tried to install \"downdoc\". The correct package name is \"P
 name = "downdoc"
 readme = { content-type = "text/markdown", text = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"." }
 version = "1.0.1"
+
+[project.urls]
+Repository = "https://github.com/CarrotManMatt/Pydowndoc"
+
 
 [tool.uv]
 managed = false
