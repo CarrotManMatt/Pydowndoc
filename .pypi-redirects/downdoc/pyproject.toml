@@ -9,7 +9,7 @@ dependencies = ["Pydowndoc"]
 description = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"."
 name = "downdoc"
 readme = { content-type = "text/markdown", text = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"." }
-version = "1.0.1"
+version = "1.0.2"
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
