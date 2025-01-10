@@ -94,7 +94,7 @@ class MultiArtefactWheelBuilder(WheelBuilder):
             INVALID_BUILD_TAG_MESSAGE: Final[str] = "No build tag match"
             raise ValueError(INVALID_BUILD_TAG_MESSAGE)
 
-        return f"py3-none-{tag_match.group("platform")}"
+        return f"py3-none-{tag_match.group('platform')}"
 
     @override
     def build_editable_explicit(self, directory: str, **build_data: object) -> str:
