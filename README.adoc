@@ -95,7 +95,7 @@ uv add Pydowndoc
 [source,bash]
 uv tool install Pydowndoc
 
-.Install using {labelled-url-pip}
+.Install using {labelled-url-pip} after {url-python-wiki-virtual-environments}[creating a virtual environment]
 [source,bash]
 path/to/venv/python -m pip install Pydowndoc
 
