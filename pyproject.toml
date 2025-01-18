@@ -181,6 +181,7 @@ environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
 no-binary-package = ["Pydowndoc"]
 no-build = true
 package = false
+required-version = ">=0.5.21"
 trusted-publishing = "always"
 
 [[tool.uv.index]]
