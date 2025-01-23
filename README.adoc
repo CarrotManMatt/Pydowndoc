@@ -164,11 +164,11 @@ from pathlib import Path
 
 import pydowndoc
 
-converted_file_contents: str = pydowndoc.run(
+pydowndoc.run(
     Path("MyNotes.adoc"),
     output=Path("output.md"),
     process_check_return_code=True,
-).stdout.decode()
+)
 ----
 
 == Use as a Hatch build hook
@@ -194,10 +194,20 @@ requires = ["hatchling", "Pydowndoc"]
 
 . Include the hook name, so that processing ocurrs
 +
+--
 [source,toml]
 ----
 [tool.hatch.metadata.hooks.downdoc-readme]
 ----
+
+or
+
+[source,toml]
+----
+[tool.hatch.metadata.hooks]
+downdoc-readme = {}
+----
+--
 
 .. Using a path to a custom {labelled-url-wiki-readme} file
 +
