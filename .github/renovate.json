@@ -13,6 +13,20 @@
                 "ref: (?<currentValue>.*?)\\s"
             ],
             "matchStringsStrategy": "combination"
+        },
+        {
+            "customType": "regex",
+            "datasourceTemplate": "node-version",
+            "depNameTemplate": "node",
+            "fileMatch": [
+                "^\\.github/workflows/[^/]+\\.ya?ml$"
+            ],
+            "matchStrings": [
+                "uses: actions/setup-node@v*\\s",
+                "node-version: (?<currentValue>.*?)\\s"
+            ],
+            "matchStringsStrategy": "combination",
+            "versioningTemplate": "node"
         }
     ],
     "enabled": true,
