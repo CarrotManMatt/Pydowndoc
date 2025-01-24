@@ -68,7 +68,7 @@ jobs:
 
             - name: Rename built downdoc binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: mv downloads/downdoc downloads/downdoc-windows-x64.exe
+              run: mv downloads/downdoc.exe downloads/downdoc-windows-x64.exe
 
             - uses: actions/upload-artifact@v4
               with:
