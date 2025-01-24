@@ -64,7 +64,7 @@ jobs:
 
             - name: Build downdoc windows-x64 binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: npx pkg -t win-x64 . --out-path downloads
+              run: npx pkg -t node20-win-x64 . --out-path downloads
 
             - name: Rename built downdoc binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
