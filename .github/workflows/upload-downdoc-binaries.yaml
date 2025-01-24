@@ -25,7 +25,7 @@ jobs:
             - uses: actions/setup-node@v4
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               with:
-                node-version: 18
+                node-version: 22
 
             - name: Build downdoc linux-x64 binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
