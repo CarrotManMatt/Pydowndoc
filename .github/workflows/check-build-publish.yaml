@@ -284,6 +284,10 @@ jobs:
               with:
                 enable-cache: true
 
+            - name: Check sys_platform
+              run: uv run python -c "import sys; import os; import platform; print(os.name, sys.platform,
+                platform.machine(), platform.system())
+
             - name: Download Converted README
               uses: actions/download-artifact@v4
               with:
