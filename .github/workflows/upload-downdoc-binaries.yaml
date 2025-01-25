@@ -32,6 +32,16 @@ jobs:
                       downdoc_architecture: x64
                       downdoc_binary_suffix: .exe
 
+                    - container: "null"
+                      runner: macos-13
+                      os: macos
+                      display_os: MacOS
+                      downdoc_os: macos
+                      architecture: x86-64
+                      display_architecture: x86_64
+                      downdoc_architecture: x64
+                      downdoc_binary_suffix: ""
+
         steps:
             - uses: actions/checkout@v4
               id: checkout-upstream-repository

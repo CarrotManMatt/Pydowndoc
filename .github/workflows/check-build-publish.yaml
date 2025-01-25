@@ -242,6 +242,13 @@ jobs:
                       architecture: x86-64
                       display_architecture: x86_64
 
+                    - container: "null"
+                      runner: macos-13
+                      os: macos
+                      display_os: MacOS
+                      architecture: x86-64
+                      display_architecture: x86_64
+
         steps:
             - uses: actions/checkout@v4
               with:
