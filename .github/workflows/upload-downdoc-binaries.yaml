@@ -16,6 +16,7 @@ jobs:
                       runner: ubuntu-latest
                       os: linux
                       display_os: Linux
+                      downdoc_os: linux
                       architecture: x86-64
                       display_architecture: x86_64
                       downdoc_architecture: x64
@@ -24,8 +25,9 @@ jobs:
 
                     - container: "null"
                       runner: windows-latest
-                      os: win
+                      os: windows
                       display_os: Windows
+                      downdoc_os: win
                       architecture: x86-64
                       display_architecture: x86_64
                       downdoc_architecture: x64
@@ -42,8 +44,8 @@ jobs:
             - uses: actions/cache@v4
               id: restore-binary-from-cache
               with:
-                path: downloads/downdoc-${{matrix.os}}-${{matrix.downdoc_architecture}}${{matrix.downdoc_binary_suffix}}
-                key: downdoc-${{matrix.os}}-${{matrix.downdoc_architecture}}|${{steps.checkout-upstream-repository.outputs.ref}}
+                path: downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
+                key: downdoc-${{matrix.os}}-${{matrix.architecture}}|${{steps.checkout-upstream-repository.outputs.ref}}
 
             - uses: actions/setup-node@v4
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
@@ -52,15 +54,15 @@ jobs:
 
             - name: Build downdoc ${{matrix.display_os}} ${{matrix.display_architecture}} binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: npx pkg -t ${{matrix.node_prefix}}${{matrix.os}}-${{matrix.downdoc_architecture}}
+              run: npx pkg -t ${{matrix.node_prefix}}${{matrix.downdoc_os}}-${{matrix.downdoc_architecture}}
                 . --out-path downloads
 
             - name: Rename built downdoc binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: mv downloads/downdoc${{matrix.downdoc_binary_suffix}} downloads/downdoc-${{matrix.os}}-${{matrix.downdoc_architecture}}${{matrix.downdoc_binary_suffix}}
+              run: mv downloads/downdoc${{matrix.downdoc_binary_suffix}} downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
 
             - uses: actions/upload-artifact@v4
               with:
                 name: downdoc-${{matrix.os}}-${{matrix.architecture}}-binary
-                path: downloads/downdoc-${{matrix.os}}-${{matrix.downdoc_architecture}}${{matrix.downdoc_binary_suffix}}
+                path: downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
                 if-no-files-found: error

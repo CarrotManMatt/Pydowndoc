@@ -18,18 +18,18 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Download Linux x86-64 downdoc Binary
+            - name: Download Linux x86_64 downdoc Binary
               uses: actions/download-artifact@v4
               with:
                 name: downdoc-linux-x86-64-binary
                 merge-multiple: true
                 path: downloads/
 
-            - name: Make Linux x86-64 downdoc Binary An Executable
-              run: chmod +x downloads/downdoc-linux-x64
+            - name: Make Linux x86_64 downdoc Binary An Executable
+              run: chmod +x downloads/downdoc-linux-x86-64
 
             - name: Convert Project README
-              run: downloads/downdoc-linux-x64 README.adoc
+              run: downloads/downdoc-linux-x86-64 README.adoc
 
             - name: Save Converted README
               uses: actions/upload-artifact@v4
