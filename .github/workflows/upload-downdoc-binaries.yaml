@@ -7,11 +7,11 @@ on:
 jobs:
     upload-downdoc-binaries:
         runs-on: ${{matrix.runner}}
-        container: ${{matrix.container}}
+        container: ${{fromJSON(matrix.container)}}
         strategy:
             matrix:
                 include:
-                    - container: {image: quay.io/pypa/manylinux_2_34_x86_64}
+                    - container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
                       runner: ubuntu-latest
                       os: linux
                       display_os: Linux
@@ -21,7 +21,7 @@ jobs:
                       downdoc_binary_suffix: ""
                       node_prefix: ""
 
-                    - container: {}
+                    - container: "null"
                       runner: windows-latest
                       os: win
                       display_os: Windows
