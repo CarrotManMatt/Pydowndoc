@@ -274,6 +274,11 @@ jobs:
               with:
                 fetch-depth: 0
 
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version-file: .python-version
+
             - name: Install uv
               uses: astral-sh/setup-uv@v5
               with:
@@ -284,7 +289,7 @@ jobs:
               with:
                 name: converted-readme
 
-            - name: Download downdoc Binaries
+            - name: Download Windows x86_64 downdoc Binaries
               uses: actions/download-artifact@v4
               with:
                 name: downdoc-windows-x86-64-binary
