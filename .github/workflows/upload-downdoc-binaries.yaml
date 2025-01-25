@@ -6,6 +6,7 @@ on:
 
 jobs:
     upload-downdoc-binaries:
+        name: Upload ${{matrix.display_os}} ${{matrix.display_architecture}} downdoc binary
         runs-on: ${{matrix.runner}}
         container: ${{fromJSON(matrix.container)}}
         strategy:
