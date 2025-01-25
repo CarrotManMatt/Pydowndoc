@@ -51,7 +51,7 @@ jobs:
 
             - name: Build downdoc ${{matrix.display_os}} ${{matrix.display_architecture}} binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: npx pkg -t ${{matrix.node-prefix}}{{matrix.os}}-${{matrix.downdoc_architecture}}
+              run: npx pkg -t ${{matrix.node-prefix}}${{matrix.os}}-${{matrix.downdoc_architecture}}
                 . --out-path downloads
 
             - name: Rename built downdoc binary
