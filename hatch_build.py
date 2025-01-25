@@ -158,7 +158,7 @@ def _get_downdoc_binary_architecture() -> str:
         or "x64" in raw_architecture
         or "amd64" in raw_architecture.lower()
     ):
-        return "x64"
+        return "x86_64"
 
     raise NotImplementedError(raw_architecture)
 
