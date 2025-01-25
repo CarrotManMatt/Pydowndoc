@@ -25,7 +25,7 @@ jobs:
                 merge-multiple: true
                 path: downloads/
 
-            - name: Make Linux x86-64 downdoc Binary Executable
+            - name: Make Linux x86-64 downdoc Binary An Executable
               run: chmod +x downloads/downdoc-linux-x64
 
             - name: Convert Project README
@@ -39,8 +39,6 @@ jobs:
 
     uv-check:
         runs-on: ubuntu-latest
-        outputs:
-            project_name: ${{steps.store-project-name.outputs.project_name}}
 
         steps:
             - uses: actions/checkout@v4
@@ -54,17 +52,6 @@ jobs:
               uses: astral-sh/setup-uv@v5
               with:
                 enable-cache: true
-
-            - name: Install jq
-              run: sudo apt-get install jq
-
-            - name: Store Project Name
-              id: store-project-name
-              run: echo "project_name=$(cat pyproject.toml | uvx --from yq tomlq .project.name -M
-                -r)" >> $GITHUB_OUTPUT
-
-            - name: Update local package only
-              run: uv lock --upgrade-package ${{steps.store-project-name.outputs.project_name}}
 
             - name: Check uv.lock (ensure all dependencies up to date)
               run: uv lock --check
@@ -228,7 +215,7 @@ jobs:
             - name: Run Ruff
               run: uv run -- ruff check --no-fix --output-format=github
 
-    build:
+    build-linux-x86-64:
         needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-scripts, pre-commit,
             ruff-lint, uv-check]
         runs-on: ubuntu-latest
@@ -248,25 +235,21 @@ jobs:
               with:
                 name: converted-readme
 
-            - name: Download downdoc Binaries
+            - name: Download Linux x86_64 downdoc Binaries
               uses: actions/download-artifact@v4
               with:
-                pattern: downdoc-*-binary
-                merge-multiple: true
+                name: downdoc-linux-x86-64-binary
                 path: downloads/
-
-            - name: Update local package only
-              if: github.ref_type != 'tag'
-              run: uv lock --upgrade-package ${{needs.uv-check.outputs.project_name}}
 
             - name: Install Build Dependencies From Lock File
               run: uv sync --only-group build
 
-            - name: Build Package
+            - name: Build Linux x86_64 Package
               run: uv run -- hatch build -t custom
 
             - name: Repair Linux Packages
-              run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux*.whl") -w dist
+              run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux_x86_64.whl") -w
+                dist
 
             - name: Remove Unrepaired Linux Packages
               run: rm dist/*-linux_x86_64.whl
@@ -274,11 +257,53 @@ jobs:
             - name: Save Build Artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: built-Pydowndoc-package
+                name: built-pydowndoc-linux-x86-64-package
+                path: dist/
+
+    build-windows-x86-64:
+        needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-scripts, pre-commit,
+            ruff-lint, uv-check]
+        runs-on: windows-latest
+        env:
+            UV_NO_SYNC: true
+            UV_FROZEN: true
+            UV_PYTHON_DOWNLOADS: never
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v5
+              with:
+                enable-cache: true
+
+            - name: Download Converted README
+              uses: actions/download-artifact@v4
+              with:
+                name: converted-readme
+
+            - name: Download downdoc Binaries
+              uses: actions/download-artifact@v4
+              with:
+                name: downdoc-windows-x86-64-binary
+                path: downloads/
+
+            - name: Install Build Dependencies From Lock File
+              run: uv sync --only-group build
+
+            - name: Build Package
+              run: uv run -- hatch build -t custom
+
+            - name: Save Build Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: built-pydowndoc-windows-x86-64-package
                 path: dist/
 
     publish:
-        needs: [build]
+        needs: [build-linux-x86-64, build-windows-x86-64]
         runs-on: ubuntu-latest
         environment: publish
         permissions:
@@ -297,14 +322,15 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                name: built-Pydowndoc-package
+                name: built-pydowndoc-*-package
+                merge-multiple: true
                 path: dist/
 
             - name: Publish to PyPI
               run: uv publish
 
     test-publish:
-        needs: [build]
+        needs: [build-linux-x86-64, build-windows-x86-64]
         runs-on: ubuntu-latest
         environment: test-publish
         permissions:
@@ -323,7 +349,8 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                name: built-Pydowndoc-package
+                name: built-pydowndoc-*-package
+                merge-multiple: true
                 path: dist/
 
             - name: Publish to Test-PyPI
@@ -342,7 +369,8 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                name: built-Pydowndoc-package
+                name: built-pydowndoc-*-package
+                merge-multiple: true
                 path: dist/
 
             - name: Sign Build Artifacts

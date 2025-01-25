@@ -177,7 +177,10 @@ keep-runtime-typing = true
 
 [tool.uv]
 default-groups = ["dev"]
-environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'windows' and platform_machine == 'x86_64'",
+]
 no-binary-package = ["Pydowndoc"]
 no-build = true
 package = false
