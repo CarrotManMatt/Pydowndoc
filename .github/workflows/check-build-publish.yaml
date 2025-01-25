@@ -215,59 +215,32 @@ jobs:
             - name: Run Ruff
               run: uv run -- ruff check --no-fix --output-format=github
 
-    build-linux-x86-64:
+    build:
+        name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Pydowndoc packages
         needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-scripts, pre-commit,
             ruff-lint, uv-check]
-        runs-on: ubuntu-latest
-        container: {image: quay.io/pypa/manylinux_2_34_x86_64}
+        runs-on: ${{matrix.runner}}
+        container: ${{fromJSON(matrix.container)}}
         env:
             UV_NO_SYNC: true
             UV_FROZEN: true
             UV_PYTHON_DOWNLOADS: never
+        strategy:
+            matrix:
+                include:
+                    - container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
+                      runner: ubuntu-latest
+                      os: linux
+                      display_os: Linux
+                      architecture: x86-64
+                      display_architecture: x86_64
 
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                fetch-depth: 0
-
-            - name: Download Converted README
-              uses: actions/download-artifact@v4
-              with:
-                name: converted-readme
-
-            - name: Download Linux x86_64 downdoc Binaries
-              uses: actions/download-artifact@v4
-              with:
-                name: downdoc-linux-x86-64-binary
-                path: downloads/
-
-            - name: Install Build Dependencies From Lock File
-              run: uv sync --only-group build
-
-            - name: Build Linux x86_64 Package
-              run: uv run -- hatch build -t custom
-
-            - name: Repair Linux Packages
-              run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux_x86_64.whl") -w
-                dist
-
-            - name: Remove Unrepaired Linux Packages
-              run: rm dist/*-linux_x86_64.whl
-
-            - name: Save Build Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                name: built-pydowndoc-linux-x86-64-package
-                path: dist/
-
-    build-windows-x86-64:
-        needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-scripts, pre-commit,
-            ruff-lint, uv-check]
-        runs-on: windows-latest
-        env:
-            UV_NO_SYNC: true
-            UV_FROZEN: true
-            UV_PYTHON_DOWNLOADS: never
+                    - container: "null"
+                      runner: windows-latest
+                      os: windows
+                      display_os: Windows
+                      architecture: x86-64
+                      display_architecture: x86_64
 
         steps:
             - uses: actions/checkout@v4
@@ -276,11 +249,13 @@ jobs:
 
             - name: Set Up Python
               uses: actions/setup-python@v5
+              if: "!contains(matrix.container, 'pypa/manylinux')"
               with:
                 python-version-file: .python-version
 
             - name: Install uv
               uses: astral-sh/setup-uv@v5
+              if: "!contains(matrix.container, 'pypa/manylinux')"
               with:
                 enable-cache: true
 
@@ -289,26 +264,35 @@ jobs:
               with:
                 name: converted-readme
 
-            - name: Download Windows x86_64 downdoc Binaries
+            - name: Download ${{matrix.display_os}} ${{matrix.display_architecture}} downdoc Binaries
               uses: actions/download-artifact@v4
               with:
-                name: downdoc-windows-x86-64-binary
+                name: downdoc-${{matrix.os}}-${{matrix.architecture}}-binary
                 path: downloads/
 
             - name: Install Build Dependencies From Lock File
               run: uv sync --only-group build
 
-            - name: Build Package
+            - name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Package
               run: uv run -- hatch build -t custom
+
+            - name: Repair Linux ${{matrix.display_architecture}} Packages
+              if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
+              run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux_x86_64.whl") -w
+                dist
+
+            - name: Remove Unrepaired Linux ${{matrix.display_architecture}} Packages
+              if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
+              run: rm dist/*-linux_x86_64.whl
 
             - name: Save Build Artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: built-pydowndoc-windows-x86-64-package
+                name: built-pydowndoc-${{matrix.os}}-${{matrix.architecture}}-package
                 path: dist/
 
     publish:
-        needs: [build-linux-x86-64, build-windows-x86-64]
+        needs: [build]
         runs-on: ubuntu-latest
         environment: publish
         permissions:
@@ -335,7 +319,7 @@ jobs:
               run: uv publish
 
     test-publish:
-        needs: [build-linux-x86-64, build-windows-x86-64]
+        needs: [build]
         runs-on: ubuntu-latest
         environment: test-publish
         permissions:
