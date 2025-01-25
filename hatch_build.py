@@ -156,7 +156,7 @@ def _get_downdoc_binary_architecture() -> str:
     if (
         "x86_64" in raw_architecture
         or "x64" in raw_architecture
-        or "amd64" in raw_architecture
+        or "amd64" in raw_architecture.lower()
     ):
         return "x64"
 
