@@ -141,7 +141,7 @@ def _get_downdoc_binary_operating_system() -> str:
         return "macos"
 
     if "win" in raw_operating_system and "darwin" not in raw_operating_system:
-        return "win"
+        return "windows"
 
     raise NotImplementedError(raw_operating_system)
 
