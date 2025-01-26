@@ -22,7 +22,6 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                 name: downdoc-linux-x86-64-binary
-                merge-multiple: true
                 path: downloads/
 
             - name: Make Linux x86_64 downdoc Binary An Executable
@@ -318,7 +317,7 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                name: built-pydowndoc-*-package
+                pattern: built-pydowndoc-*-package
                 merge-multiple: true
                 path: dist/
 
@@ -345,7 +344,7 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                name: built-pydowndoc-*-package
+                pattern: built-pydowndoc-*-package
                 merge-multiple: true
                 path: dist/
 
@@ -365,7 +364,7 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                name: built-pydowndoc-*-package
+                pattern: built-pydowndoc-*-package
                 merge-multiple: true
                 path: dist/
 
