@@ -55,7 +55,9 @@ class MultiArtefactWheelBuilder(WheelBuilder):
                 raise TypeError
 
             build_data["shared_scripts"] = {
-                str(downdoc_binary_filepath.resolve()): "downdoc",
+                str(
+                    downdoc_binary_filepath.resolve()
+                ): f"downdoc{_get_downdoc_binary_file_extension()}",
                 **existing_shared_scripts,
             }
 
@@ -129,7 +131,7 @@ def get_builder() -> (
 
 
 def _get_downdoc_binary_operating_system() -> str:
-    """Retriee the string representation of the current operating system."""
+    """Retrieve the string representation of the current operating system."""
     raw_operating_system: str = sys.platform
 
     if "linux" in raw_operating_system:
@@ -139,29 +141,39 @@ def _get_downdoc_binary_operating_system() -> str:
         return "macos"
 
     if "win" in raw_operating_system and "darwin" not in raw_operating_system:
-        return "win"
+        return "windows"
 
     raise NotImplementedError(raw_operating_system)
 
 
 def _get_downdoc_binary_architecture() -> str:
-    """Retreive the string representation of the current platform architecture."""
+    """Retrieve the string representation of the current platform architecture."""
     raw_architecture: str = platform.machine()
 
     if "arm64" in raw_architecture:
         return "arm64"
 
-    if "x86_64" in raw_architecture:
-        return "x64"
+    if (
+        "x86_64" in raw_architecture
+        or "x64" in raw_architecture
+        or "amd64" in raw_architecture.lower()
+    ):
+        return "x86-64"
 
     raise NotImplementedError(raw_architecture)
 
 
 def _get_downdoc_binary_file_extension() -> str:
-    """Retrive the file extension for the executable on the current operating system."""
+    """Retrieve the file extension for the executable on the current operating system."""
     raw_operating_system: str = sys.platform
+
+    if "linux" in raw_operating_system:
+        return ""
+
+    if "darwin" in raw_operating_system or "macos" in raw_operating_system:
+        return ""
 
     if "win" in raw_operating_system and "darwin" not in raw_operating_system:
         return ".exe"
 
-    return ""
+    raise NotImplementedError(raw_operating_system)

@@ -5,9 +5,42 @@ on:
     workflow_call:
 
 jobs:
-    upload-linux-x86-64-downdoc-binary:
-        runs-on: ubuntu-latest
-        container: {image: quay.io/pypa/manylinux_2_34_x86_64}
+    upload-downdoc-binaries:
+        name: Upload ${{matrix.display_os}} ${{matrix.display_architecture}} downdoc binary
+        runs-on: ${{matrix.runner}}
+        container: ${{fromJSON(matrix.container)}}
+        strategy:
+            matrix:
+                include:
+                    - container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
+                      runner: ubuntu-latest
+                      os: linux
+                      display_os: Linux
+                      downdoc_os: linux
+                      architecture: x86-64
+                      display_architecture: x86_64
+                      downdoc_architecture: x64
+                      downdoc_binary_suffix: ""
+
+                    - container: "null"
+                      runner: windows-latest
+                      os: windows
+                      display_os: Windows
+                      downdoc_os: win
+                      architecture: x86-64
+                      display_architecture: x86_64
+                      downdoc_architecture: x64
+                      downdoc_binary_suffix: .exe
+
+                    - container: "null"
+                      runner: macos-13
+                      os: macos
+                      display_os: MacOS
+                      downdoc_os: macos
+                      architecture: x86-64
+                      display_architecture: x86_64
+                      downdoc_architecture: x64
+                      downdoc_binary_suffix: ""
 
         steps:
             - uses: actions/checkout@v4
@@ -19,24 +52,25 @@ jobs:
             - uses: actions/cache@v4
               id: restore-binary-from-cache
               with:
-                path: downloads/downdoc-linux-x64
-                key: downdoc-linux-x64|${{steps.checkout-upstream-repository.outputs.ref}}
+                path: downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
+                key: downdoc-${{matrix.os}}-${{matrix.architecture}}|${{steps.checkout-upstream-repository.outputs.ref}}
 
             - uses: actions/setup-node@v4
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               with:
                 node-version: 22
 
-            - name: Build downdoc linux-x64 binary
+            - name: Build downdoc ${{matrix.display_os}} ${{matrix.display_architecture}} binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: npx pkg -t linux-x64 . --out-path downloads
+              run: npx pkg -t node18-${{matrix.downdoc_os}}-${{matrix.downdoc_architecture}} . --out-path
+                downloads
 
             - name: Rename built downdoc binary
               if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
-              run: mv downloads/downdoc downloads/downdoc-linux-x64
+              run: mv downloads/downdoc${{matrix.downdoc_binary_suffix}} downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
 
             - uses: actions/upload-artifact@v4
               with:
-                name: downdoc-linux-x86-64-binary
-                path: downloads/downdoc-linux-x64
+                name: downdoc-${{matrix.os}}-${{matrix.architecture}}-binary
+                path: downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
                 if-no-files-found: error
