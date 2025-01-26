@@ -35,7 +35,7 @@ jobs:
                     - container: "null"
                       runner: macos-13
                       os: macos
-                      display_os: MacOS
+                      display_os: macOS
                       downdoc_os: macos
                       architecture: x86-64
                       display_architecture: x86_64
