@@ -9,10 +9,14 @@ dependencies = ["Pydowndoc"]
 description = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"."
 name = "downdoc"
 readme = { content-type = "text/markdown", text = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"." }
-version = "1.0.2"
+version = "1.1.0"
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
+
+
+[tool.hatch.build.targets.wheel]
+only-include = [""]
 
 
 [tool.uv]
