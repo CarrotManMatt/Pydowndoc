@@ -57,12 +57,13 @@ def run(
 
     arguments: list[str] = list(
         itertools.chain.from_iterable(
-            ("--attribute", shlex.quote(f"{name}={val}")) for name, val in attributes.items()
+            ("--attribute", f"{shlex.quote(name)}={shlex.quote(val)}")
+            for name, val in attributes.items()
         )
     )
 
     if output is not None:
-        arguments.extend(("--output", shlex.quote(str(output))))
+        arguments.extend(("--output", str(output)))
 
     if postpublish:
         arguments.append("--postpublish")
@@ -73,7 +74,7 @@ def run(
     if display_version:
         arguments.append("--version")
 
-    arguments.extend(shlex.quote(str(in_file_path)) for in_file_path in in_file_paths)
+    arguments.extend(str(in_file_path) for in_file_path in in_file_paths)
 
     return subprocess.run(
         ("downdoc", *arguments),
