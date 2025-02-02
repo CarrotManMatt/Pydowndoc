@@ -74,10 +74,10 @@ Rapidly convert your {labelled-url-asciidoc} files to {labelled-url-wiki-markdow
 
 A {labelled-url-python} wrapper around the latest-built binary of {labelled-url-downdoc}; a rapid {labelled-url-asciidoc} to {labelled-url-wiki-markdown} converter.
 
-== Features
+== Why Use Pydowndoc?
 
-* Use {labelled-url-pypi} as the single installation location of your {labelled-url-python} project tooling
 * Run {labelled-url-downdoc} from the CLI within your {url-python-wiki-virtual-environments}[virtual environment]
+* Use {labelled-url-pypi} as the single installation location of your {labelled-url-python} project tooling
 * Use link:pydowndoc/__init__.py[the API] to convert files using your own {labelled-url-python} code/scripts
 * Use the {labelled-url-hatch} plugin to convert your project's README.adoc file to {labelled-url-wiki-markdown}, when building your package
 
