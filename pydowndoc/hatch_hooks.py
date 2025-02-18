@@ -33,8 +33,8 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
     """Hatchling metadata hook for converting AsciiDoc README files to Markdown format."""
 
     @classproperty
-    @override  # type: ignore[override]
-    def PLUGIN_NAME(cls) -> str:
+    @override
+    def PLUGIN_NAME(cls) -> str:  # type: ignore[override]
         return "downdoc-readme"
 
     @classmethod
