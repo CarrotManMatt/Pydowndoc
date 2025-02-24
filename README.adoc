@@ -107,21 +107,21 @@ These commands will only work correctly either after installation as a {url-uv-w
 Replace the command name `+downdoc+` with `+uvx --from Pydowndoc -- downdoc+`, to run any of the following commands in an ephemeral envrionment.
 --
 
-.Get the currently installed version
+.Display the current version number (useful to validate that installation eas successful)
 [source,bash]
 downdoc --version
 
-.Output the help message
+.Display the help message
 [source,bash]
 downdoc --help
 
-.Convert a given file (filename will be kept the same, with `+.md+` file-extension)
+.Convert a given file (the same filename will be retained, with file-extension changed to `+.md+`)
 [source,bash]
 downdoc MyNotes.adoc
 
-.Output the converted file to the given filename
+.Output the converted file to the given filename & path
 [source,bash]
-downdoc MyNotes.adoc -o output.md
+downdoc MyNotes.adoc -o path/to/output.md
 
 .Output the converted file to stdout
 [source,bash]
@@ -133,7 +133,7 @@ cat MyNotes.adoc | downdoc - -o MyNotes.md
 
 == API Usage
 
-.Convert a given file (the filename will be kept the same, with a `+.md+` file-extension)
+.Convert a given file (the same filename will be retained, with file-extension changed to `+.md+`)
 [source,python]
 ----
 from pathlib import Path
@@ -157,7 +157,7 @@ converted_file_contents: str = pydowndoc.run(
 ).stdout.decode()
 ----
 
-.Ensure the conversion process executes successfully
+.Ensure the conversion process executes successfully and output the converted file to the given location (by default your code will continue execution even if conversion fails)
 [source,python]
 ----
 from pathlib import Path
@@ -166,7 +166,7 @@ import pydowndoc
 
 pydowndoc.run(
     Path("MyNotes.adoc"),
-    output=Path("output.md"),
+    output=Path("path/to/output.md"),
     process_check_return_code=True,
 )
 ----
@@ -192,7 +192,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling", "Pydowndoc"]
 ----
 
-. Include the hook name, so that processing ocurrs
+. Include the hook name within `[tool.hatch.metadata.hooks]` to enable {labelled-url-wiki-readme}-file conversion
 +
 --
 [source,toml]
@@ -245,7 +245,7 @@ path = "README2.adoc"
 |`+path+`
 |`+str+`
 |`+README.adoc+`
-|The location of the file to convert to {labelled-url-wiki-markdown}, to be used as the project's {labelled-url-wiki-readme} file
+|The location of your AsciiDoc to be converted to {labelled-url-wiki-markdown}, to be used as the project's {labelled-url-wiki-readme} file
 |===
 
 == Upgrading
