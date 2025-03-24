@@ -1,5 +1,5 @@
 """
-Hatch build package build too hooks entry-points.
+Hatch build package hooks entry-points.
 
 Convert your AsciiDoc README to the Markdown format, supported by PyPA's README specification:
 https://packaging.python.org/en/latest/specifications/pyproject-toml/#readme
@@ -78,10 +78,15 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
             )
             raise TypeError(MISSING_DYNAMIC_MESSAGE)
 
+        readme_path: Path = self._get_readme_path(self.config, Path(self.root))
+
+        if not readme_path.is_file():
+            raise FileNotFoundError(str(readme_path))
+
         metadata["readme"] = {
             "content-type": "text/markdown",
             "text": pydowndoc.run(
-                self._get_readme_path(self.config, Path(self.root)),
+                readme_path,
                 output="-",
                 process_capture_output=True,
                 process_check_return_code=True,
