@@ -135,14 +135,12 @@ ignore = [
     "CPY",
     "D206",
     "D212",
-    "DJ",
     "FA",
-    "FAST",
+    "ICN001",
     "INP001",
     "ISC001",
     "ISC002",
     "N806",
-    "PD",
     "PIE808",
     "Q000",
     "Q001",
@@ -158,7 +156,7 @@ select = ["ALL", "D204", "D213", "D401"]
 task-tags = ["BUG", "DONE", "FIXME", "HACK", "IDEA", "ISSUE", "NOBUG", "NOTE", "REQ", "TODO"]
 
 [tool.ruff.lint.flake8-import-conventions]
-banned-from = ["abc"]
+banned-from = ["abc", "re"]
 
 [tool.ruff.lint.flake8-type-checking]
 exempt-modules = []
