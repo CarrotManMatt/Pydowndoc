@@ -161,6 +161,7 @@ task-tags = ["BUG", "DONE", "FIXME", "HACK", "IDEA", "ISSUE", "NOBUG", "NOTE", "
 banned-from = ["abc"]
 
 [tool.ruff.lint.flake8-type-checking]
+exempt-modules = []
 quote-annotations = true
 strict = true
 
