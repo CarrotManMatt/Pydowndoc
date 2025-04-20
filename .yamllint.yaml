@@ -29,11 +29,12 @@ rules:
             - always_run
             - args
             - hooks
-    line-length:
-        max: 95
+            - jobs
+            - steps
+    line-length: disable
     new-lines: disable
     octal-values: enable
     quoted-strings:
         allow-quoted-quotes: true
-        quote-type: single
+        quote-type: double
         required: only-when-needed

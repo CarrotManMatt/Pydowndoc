@@ -1,16 +1,17 @@
 name: Lint, Type-Check, Test, Build and Publish Package
 
-on:
+"on":
     pull_request:
         branches: [main]
     push:
         branches: [main]
-        tags: ["v*"]
+        tags: [v*]
 
 jobs:
     upload-downdoc-binaries:
         uses: ./.github/workflows/upload-downdoc-binaries.yaml
 
+    # yamllint disable-line rule:key-ordering
     convert-readme:
         needs: [upload-downdoc-binaries]
         runs-on: ubuntu-latest
@@ -55,13 +56,14 @@ jobs:
             - name: Check uv.lock (ensure all dependencies up to date)
               run: uv lock --check
 
+    # yamllint disable-line rule:key-ordering
     mypy-package:
+        env:
+            UV_FROZEN: true
+            UV_NO_SYNC: true
+            UV_PYTHON_DOWNLOADS: never
         needs: [uv-check]
         runs-on: ubuntu-latest
-        env:
-            UV_NO_SYNC: true
-            UV_FROZEN: true
-            UV_PYTHON_DOWNLOADS: never
 
         strategy:
             matrix:
@@ -81,31 +83,32 @@ jobs:
             - name: Install uv
               uses: astral-sh/setup-uv@v5
               with:
-                python-version: ${{matrix.python-version}}
                 enable-cache: true
+                python-version: ${{matrix.python-version}}
 
             - name: Install mypy From Locked Dependencies
               run: uv sync --no-group dev --group type-check
 
-            - name: Store Hashed Python Version
-              id: store-hashed-python-version
+            - id: store-hashed-python-version
+              name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
-                path: ./.mypy_cache
                 key: mypy|${{steps.store-hashed-python-version.outputs.hashed_python_version}}|package
+                path: ./.mypy_cache
 
             - name: Run mypy
               run: uv run -- mypy pydowndoc/  # TODO: Add GitHub workflows output format
 
+    # yamllint disable-line rule:key-ordering
     mypy-scripts:
-        runs-on: ubuntu-latest
         env:
-            UV_NO_SYNC: true
             UV_FROZEN: true
+            UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
+        runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v4
@@ -123,25 +126,26 @@ jobs:
             - name: Install mypy From Locked Dependencies
               run: uv sync --only-group type-check --only-group build-dev
 
-            - name: Store Hashed Python Version
-              id: store-hashed-python-version
+            - id: store-hashed-python-version
+              name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
-                path: ./.mypy_cache
                 key: mypy|${{steps.store-hashed-python-version.outputs.hashed_python_version}}|scripts
+                path: ./.mypy_cache
 
             - name: Run mypy
               run: uv run -- mypy hatch_build.py  # TODO: Add GitHub workflows output format
 
+    # yamllint disable-line rule:key-ordering
     pre-commit:
-        runs-on: ubuntu-latest
         env:
-            UV_NO_SYNC: true
             UV_FROZEN: true
+            UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
+        runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v4
@@ -159,15 +163,15 @@ jobs:
             - name: Install pre-commit From Locked Dependencies
               run: uv sync --only-group pre-commit
 
-            - name: Store Hashed Python Version
-              id: store-hashed-python-version
+            - id: store-hashed-python-version
+              name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
-                path: ~/.cache/pre-commit
                 key: pre-commit|${{steps.store-hashed-python-version.outputs.hashed_python_version}}|${{hashFiles('.pre-commit-config.yaml')}}
+                path: ~/.cache/pre-commit
 
             - name: Setup pre-commit Environments
               run: uv run -- pre-commit install-hooks
@@ -178,12 +182,13 @@ jobs:
             - name: Run pre-commit
               run: uv run -- pre-commit run --all-files --hook-stage manual  # TODO: Add GitHub workflows output format
 
+    # yamllint disable-line rule:key-ordering
     ruff-lint:
-        runs-on: ubuntu-latest
         env:
-            UV_NO_SYNC: true
             UV_FROZEN: true
+            UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
+        runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v4
@@ -201,67 +206,69 @@ jobs:
             - name: Install ruff From Locked Dependencies
               run: uv sync --only-group lint-format
 
-            - name: Store Hashed Python Version
-              id: store-hashed-python-version
+            - id: store-hashed-python-version
+              name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
                 >> $GITHUB_OUTPUT
 
             - uses: actions/cache@v4
               with:
-                path: ./.ruff_cache
                 key: ruff|${{steps.store-hashed-python-version.outputs.hashed_python_version}}
+                path: ./.ruff_cache
 
             - name: Run Ruff
               run: uv run -- ruff check --no-fix --output-format=github
 
+    # yamllint disable-line rule:key-ordering
     build:
+        container: ${{fromJSON(matrix.container)}}
+        env:
+            UV_FROZEN: true
+            UV_NO_SYNC: true
+            UV_PYTHON_DOWNLOADS: never
         name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Pydowndoc packages
         needs: [convert-readme, upload-downdoc-binaries, mypy-package, mypy-scripts, pre-commit,
             ruff-lint, uv-check]
         runs-on: ${{matrix.runner}}
-        container: ${{fromJSON(matrix.container)}}
-        env:
-            UV_NO_SYNC: true
-            UV_FROZEN: true
-            UV_PYTHON_DOWNLOADS: never
+
         strategy:
             matrix:
                 include:
-                    - container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
-                      runner: ubuntu-latest
-                      os: linux
+                    - architecture: x86-64
+                      container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
+                      display_architecture: x86_64
                       display_os: Linux
-                      architecture: x86-64
-                      display_architecture: x86_64
+                      os: linux
+                      runner: ubuntu-latest
 
-                    - container: "null"
-                      runner: windows-latest
-                      os: windows
+                    - architecture: x86-64
+                      container: "null"
+                      display_architecture: x86_64
                       display_os: Windows
-                      architecture: x86-64
-                      display_architecture: x86_64
+                      os: windows
+                      runner: windows-latest
 
-                    - container: "null"
-                      runner: macos-13
-                      os: macos
-                      display_os: macOS
-                      architecture: x86-64
+                    - architecture: x86-64
+                      container: "null"
                       display_architecture: x86_64
+                      display_os: macOS
+                      os: macos
+                      runner: macos-13
 
         steps:
             - uses: actions/checkout@v4
               with:
                 fetch-depth: 0
 
-            - name: Set Up Python
+            - if: "!contains(matrix.container, 'pypa/manylinux')"
+              name: Set Up Python
               uses: actions/setup-python@v5
-              if: "!contains(matrix.container, 'pypa/manylinux')"
               with:
                 python-version-file: .python-version
 
-            - name: Install uv
+            - if: "!contains(matrix.container, 'pypa/manylinux')"
+              name: Install uv
               uses: astral-sh/setup-uv@v5
-              if: "!contains(matrix.container, 'pypa/manylinux')"
               with:
                 enable-cache: true
 
@@ -282,13 +289,13 @@ jobs:
             - name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Package
               run: uv run -- hatch build -t custom
 
-            - name: Repair Linux ${{matrix.display_architecture}} Packages
-              if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
+            - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
+              name: Repair Linux ${{matrix.display_architecture}} Packages
               run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux_x86_64.whl") -w
                 dist
 
-            - name: Remove Unrepaired Linux ${{matrix.display_architecture}} Packages
-              if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
+            - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
+              name: Remove Unrepaired Linux ${{matrix.display_architecture}} Packages
               run: rm dist/*-linux_x86_64.whl
 
             - name: Save Build Artifacts
@@ -297,14 +304,17 @@ jobs:
                 name: built-pydowndoc-${{matrix.os}}-${{matrix.architecture}}-package
                 path: dist/
 
+    # yamllint disable-line rule:key-ordering
     publish:
-        needs: [build]
-        runs-on: ubuntu-latest
         environment: publish
+
+        if: github.ref_type == 'tag'
+
+        needs: [build]
         permissions:
             id-token: write
 
-        if: github.ref_type == 'tag'
+        runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v4
@@ -317,21 +327,23 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                pattern: built-pydowndoc-*-package
                 merge-multiple: true
                 path: dist/
+                pattern: built-pydowndoc-*-package
 
             - name: Publish to PyPI
               run: uv publish
 
+    # yamllint disable-line rule:key-ordering
     test-publish:
-        needs: [build]
-        runs-on: ubuntu-latest
         environment: test-publish
-        permissions:
-            id-token: write
 
         if: github.ref_type != 'tag' && github.event_name != 'pull_request'
+
+        needs: [build]
+        permissions:
+            id-token: write
+        runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v4
@@ -344,37 +356,38 @@ jobs:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                pattern: built-pydowndoc-*-package
                 merge-multiple: true
                 path: dist/
+                pattern: built-pydowndoc-*-package
 
             - name: Publish to Test-PyPI
               run: uv publish --index Test-PyPI
 
+    # yamllint disable-line rule:key-ordering
     release:
+        if: github.ref_type == 'tag'
+
         needs: [publish]
-        runs-on: ubuntu-latest
         permissions:
             contents: write
             id-token: write
-
-        if: github.ref_type == 'tag'
+        runs-on: ubuntu-latest
 
         steps:
             - name: Download Build Artifacts
               uses: actions/download-artifact@v4
               with:
-                pattern: built-pydowndoc-*-package
                 merge-multiple: true
                 path: dist/
+                pattern: built-pydowndoc-*-package
 
             - name: Sign Build Artifacts
               uses: sigstore/gh-action-sigstore-python@v3.0.0
               with:
                 inputs: ./dist/pydowndoc-*.whl
 
-            - name: Create GitHub Release
-              env:
+            - env:
                 GITHUB_TOKEN: ${{github.token}}
+              name: Create GitHub Release
               run: gh release create '${{github.ref_name}}' dist/** --repo '${{github.repository}}'
                 --verify-tag --generate-notes
