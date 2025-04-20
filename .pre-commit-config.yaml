@@ -1,10 +1,15 @@
 default_install_hook_types: [pre-commit, commit-msg]
-default_stages: [pre-commit, pre-merge-commit, manual]
-
 default_language_version:
     python: python3.13
+default_stages: [pre-commit, pre-merge-commit, manual]
 
 repos:
+    - repo: https://github.com/adrienverge/yamllint.git
+      rev: v1.37.0
+      hooks:
+        - id: yamllint
+          args: [--strict]
+
     - repo: https://github.com/renovatebot/pre-commit-hooks
       rev: 39.242.2
       hooks:
