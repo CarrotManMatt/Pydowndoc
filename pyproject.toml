@@ -65,8 +65,8 @@ license = "Apache-2.0 AND MIT"
 license-files = ["LICENSE", "LICENSE-pydowndoc-bin"]
 maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 name = "Pydowndoc"
-optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
-readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
+#optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
+readme = "README.md"      # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
 requires-python = ">=3.9"
 
 [project.entry-points.hatch]
