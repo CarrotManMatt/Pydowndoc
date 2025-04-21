@@ -151,6 +151,7 @@ cover/
 
 # Local Build Files
 *-binary
+!LICENSE-*-binary
 README.md
 .pypi-redirects/*/.venv/
 .pypi-redirects/*/uv.lock
