@@ -288,22 +288,22 @@ jobs:
               run: uv sync --only-group build
 
             - name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Package
-              run: uv run -- hatch build -t custom
+              run: uv run --directory pydowndoc-bin -- hatch build -t custom
 
             - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
               name: Repair Linux ${{matrix.display_architecture}} Packages
-              run: uv run -- auditwheel repair $(find dist/ -type f -iname "*linux_x86_64.whl") -w
-                dist
+              run: uv run --directory pydowndoc-bin -- auditwheel repair $(find pydowndoc-bin/dist/
+                -type f -iname "*linux_x86_64.whl") -w pydowndoc-bin/dist
 
             - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
               name: Remove Unrepaired Linux ${{matrix.display_architecture}} Packages
-              run: rm dist/*-linux_x86_64.whl
+              run: rm pydowndoc-bin/dist/*-linux_x86_64.whl
 
             - name: Save Build Artifacts
               uses: actions/upload-artifact@v4
               with:
                 name: built-pydowndoc-bin-${{matrix.os}}-${{matrix.architecture}}-package
-                path: dist/
+                path: pydowndoc-bin/dist/
 
     # yamllint disable-line rule:key-ordering
     build-pydowndoc:
