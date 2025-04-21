@@ -17,10 +17,7 @@ test = []
 type-check = ["mypy>=1.12"]
 
 [project]
-authors = [
-    { name = "Dan Allen", email = "dan@opendevise.com" },
-    { name = "Matt Norton", email = "matt@carrotmanmatt.com" },
-]
+authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -61,9 +58,8 @@ keywords = [
     "pypi",
     "pyproject.toml",
 ]
-license = "Apache-2.0 AND MIT"
-license-files = ["LICENSE", "LICENSE-pydowndoc-bin"]
-maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 name = "Pydowndoc"
 #optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
 readme = "README.md"      # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.

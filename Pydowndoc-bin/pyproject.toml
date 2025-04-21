@@ -20,8 +20,8 @@ classifiers = [
 description = "Installable package for the downdoc binary executable."
 dynamic = ["version"]
 keywords = ["AsciiDoc", "Markdown", "converter", "documentation"]
-license = "Apache-2.0 AND MIT"
-license-files = ["LICENSE", "LICENSE-downdoc-binary"]
+license = "MIT"
+license-files = ["LICENSE"]
 maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 name = "Pydowndoc-bin"
 readme = { content-type = "text/markdown", text = "Installable package for the downdoc binary executable." }
