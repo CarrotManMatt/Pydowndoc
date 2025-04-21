@@ -292,8 +292,8 @@ jobs:
 
             - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
               name: Repair Linux ${{matrix.display_architecture}} Packages
-              run: uv run --directory Pydowndoc-bin -- auditwheel repair $(find Pydowndoc-bin/dist/
-                -type f -iname "*linux_x86_64.whl") -w Pydowndoc-bin/dist
+              run: uv run -- auditwheel repair $(find Pydowndoc-bin/dist/ -type f -iname "*linux_x86_64.whl")
+                -w Pydowndoc-bin/dist
 
             - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
               name: Remove Unrepaired Linux ${{matrix.display_architecture}} Packages
@@ -336,7 +336,7 @@ jobs:
                 name: converted-readme
 
             - name: Build Package
-              run: uv build
+              run: uv build --build
 
             - name: Save Build Artifacts
               uses: actions/upload-artifact@v4
