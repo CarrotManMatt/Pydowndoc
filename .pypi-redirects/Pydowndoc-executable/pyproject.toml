@@ -5,11 +5,11 @@ requires = ["hatchling"]
 [project]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 classifiers = ["Development Status :: 7 - Inactive"]
-dependencies = ["Pydowndoc"]
-description = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"."
-name = "downdoc"
-readme = { content-type = "text/markdown", text = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"." }
-version = "1.1.0"
+dependencies = ["Pydowndoc-bin"]
+description = "You tried to install \"Pydowndoc-executable\". The correct package name is \"Pydowndoc-bin\"."
+name = "Pydowndoc-executable"
+readme = { content-type = "text/markdown", text = "You tried to install \"Pydowndoc-executable\". The correct package name is \"Pydowndoc-bin\"." }
+version = "1.0.0"
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"

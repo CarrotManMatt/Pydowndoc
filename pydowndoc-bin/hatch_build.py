@@ -118,6 +118,7 @@ class MultiArtefactWheelBuilder(WheelBuilder):
     def build_standard(self, directory: str, **build_data: object) -> str:
         build_data["infer_tag"] = True
         build_data["pure_python"] = False
+        self.target_config["bypass-selection"] = True
 
         return super().build_standard(directory, **build_data)
 

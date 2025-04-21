@@ -27,6 +27,8 @@ classifiers = [
     "Framework :: Hatch",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
@@ -60,9 +62,10 @@ keywords = [
     "pyproject.toml",
 ]
 license = "Apache-2.0 AND MIT"
-license-files = ["LICENSE", "LICENSE-downdoc-binary"]
+license-files = ["LICENSE", "LICENSE-pydowndoc-bin"]
 maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 name = "Pydowndoc"
+optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
 readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
 requires-python = ">=3.9"
 
