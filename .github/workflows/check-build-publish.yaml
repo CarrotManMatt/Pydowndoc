@@ -233,7 +233,7 @@ jobs:
             UV_FROZEN: true
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
-        name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Pydowndoc-bin packages
+        name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Pydowndoc-bin package
         needs: [upload-downdoc-binaries, pre-commit, ruff-lint, mypy-scripts]
         runs-on: ${{matrix.runner}}
 
