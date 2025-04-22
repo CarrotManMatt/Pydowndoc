@@ -74,6 +74,8 @@ def run(
     if display_version:
         arguments.append("--version")
 
+    arguments.append("--")
+
     arguments.extend(str(in_file_path) for in_file_path in in_file_paths)
 
     return subprocess.run(
