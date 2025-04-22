@@ -9,10 +9,13 @@ dependencies = ["Pydowndoc-bin"]
 description = "You tried to install \"Pydowndoc-executable\". The correct package name is \"Pydowndoc-bin\"."
 name = "Pydowndoc-executable"
 readme = { content-type = "text/markdown", text = "You tried to install \"Pydowndoc-executable\". The correct package name is \"Pydowndoc-bin\"." }
-version = "1.0.0"
+version = "1.0.1"
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
+
+[tool.hatch.build.targets.wheel]
+bypass-selection = true
 
 
 [tool.uv]
