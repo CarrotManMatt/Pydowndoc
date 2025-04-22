@@ -61,8 +61,8 @@ keywords = [
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 name = "Pydowndoc"
-#optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
-readme = "README.md"      # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
+optional-dependencies = { "bin" = ["Pydowndoc-bin == 1.7.0"] }
+readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
 requires-python = ">=3.9"
 
 [project.entry-points.hatch]
@@ -191,7 +191,7 @@ keep-runtime-typing = true
 
 [tool.uv]
 default-groups = ["dev"]
-no-binary-package = ["Pydowndoc"]
+no-binary-package = ["Pydowndoc", "Pydowndoc-bin"]
 no-build = true
 package = false
 required-environments = [
@@ -201,6 +201,9 @@ required-environments = [
 ]
 required-version = ">=0.5.21"
 trusted-publishing = "always"
+
+[tool.uv.sources]
+Pydowndoc-bin = { path = "Pydowndoc-bin/" }
 
 [[tool.uv.index]]
 explicit = true

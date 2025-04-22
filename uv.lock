@@ -593,6 +593,11 @@ dependencies = [
     { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
 
+[package.optional-dependencies]
+bin = [
+    { name = "pydowndoc-bin" },
+]
+
 [package.dev-dependencies]
 build = [
     { name = "hatch" },
@@ -621,9 +626,11 @@ type-check = [
 [package.metadata]
 requires-dist = [
     { name = "hatchling" },
+    { name = "pydowndoc-bin", marker = "extra == 'bin'", virtual = "Pydowndoc-bin" },
     { name = "typed-classproperties", specifier = ">1.0.2" },
     { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
+provides-extras = ["bin"]
 
 [package.metadata.requires-dev]
 build = [
@@ -644,6 +651,10 @@ lint-format = [{ name = "ruff", specifier = ">=0.4" }]
 pre-commit = [{ name = "pre-commit" }]
 test = []
 type-check = [{ name = "mypy", specifier = ">=1.12" }]
+
+[[package]]
+name = "pydowndoc-bin"
+source = { virtual = "Pydowndoc-bin" }
 
 [[package]]
 name = "pyelftools"
