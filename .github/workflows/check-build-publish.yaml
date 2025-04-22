@@ -364,7 +364,15 @@ jobs:
               with:
                 enable-cache: true
 
-            - uses: actions/download-artifact@v4
+            - name: Download Pydowndoc Build Artifacts
+              uses: actions/download-artifact@v4
+              with:
+                merge-multiple: true
+                path: dist/
+                pattern: built-pydowndoc-package
+
+            - name: Download Pydowndoc-bin Build Artifacts
+              uses: actions/download-artifact@v4
               with:
                 merge-multiple: true
                 path: dist/
@@ -408,3 +416,40 @@ jobs:
 
             - name: Publish to Test-PyPI
               run: uv publish --index Test-PyPI
+
+    # yamllint disable-line rule:key-ordering
+    release:
+        if: github.ref_type == 'tag'
+
+        needs: [publish]
+        permissions:
+            contents: write
+            id-token: write
+        runs-on: ubuntu-latest
+
+        steps:
+
+            - name: Download Pydowndoc Build Artifacts
+              uses: actions/download-artifact@v4
+              with:
+                merge-multiple: true
+                path: dist/
+                pattern: built-pydowndoc-package
+
+            - name: Download Pydowndoc-bin Build Artifacts
+              uses: actions/download-artifact@v4
+              with:
+                merge-multiple: true
+                path: dist/
+                pattern: built-pydowndoc-bin-*-package
+
+            - name: Sign Build Artifacts
+              uses: sigstore/gh-action-sigstore-python@v3.0.0
+              with:
+                inputs: ./dist/pydowndoc-*.whl ./dist/pydowndoc-*.tar.gz
+
+            - env:
+                GITHUB_TOKEN: ${{github.token}}
+              name: Create GitHub Release
+              run: gh release create '${{github.ref_name}}' dist/** --repo '${{github.repository}}'
+                --verify-tag --generate-notes
