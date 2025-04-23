@@ -47,7 +47,7 @@ class DowndocVersionHook(MetadataHookInterface):
                 text=True,
                 check=True,
             )
-            .replace("-", "+")
+            .stdout.replace("-", "+")
             .replace("_", "+")
             .strip()
         )
