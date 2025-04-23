@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, override
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
 from hatchling.metadata.plugin.interface import MetadataHookInterface
+from packaging.version import Version
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -40,16 +41,18 @@ class DowndocVersionHook(MetadataHookInterface):
 
     @override
     def update(self, metadata: dict[str, object]) -> None:
-        metadata["version"] = (
-            subprocess.run(
-                [str(_get_downdoc_binary_filepath(root=Path(self.root))), "--version"],
-                capture_output=True,
-                text=True,
-                check=True,
+        metadata["version"] = str(
+            Version(
+                subprocess.run(
+                    (str(_get_downdoc_binary_filepath(root=Path(self.root))), "--version"),
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                .stdout.strip()
+                .removesuffix("-stable")
+                .strip()
             )
-            .stdout.replace("-", "+")
-            .replace("_", "+")
-            .strip()
         )
 
         if isinstance(metadata["dynamic"], Iterable):
