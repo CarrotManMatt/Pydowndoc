@@ -3,23 +3,30 @@
 import platform
 import re
 import stat
+import subprocess
 import sys
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
+from hatchling.metadata.plugin.interface import MetadataHookInterface
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Sequence
     from typing import Final, Protocol
 
     from hatchling.builders.config import BuilderConfig
     from hatchling.builders.plugin.interface import BuilderInterface
     from hatchling.plugin.manager import PluginManager
 
-__all__: "Sequence[str]" = ("MultiArtefactWheelBuilder", "get_builder")
+__all__: "Sequence[str]" = (
+    "DowndocVersionHook",
+    "MultiArtefactWheelBuilder",
+    "get_builder",
+    "get_metadata_hook",
+)
 
 
 if TYPE_CHECKING:
@@ -28,26 +35,38 @@ if TYPE_CHECKING:
         def __call__(self, directory: str, **build_data: object) -> str: ...
 
 
+class DowndocVersionHook(MetadataHookInterface):
+    """Hatchling metadata hook for retrieving the project version from the downdoc binary."""
+
+    @override
+    def update(self, metadata: dict[str, object]) -> None:
+        metadata["version"] = (
+            subprocess.run(
+                [str(_get_downdoc_binary_filepath(root=Path(self.root))), "--version"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            .replace("-", "+")
+            .replace("_", "+")
+            .strip()
+        )
+
+        if isinstance(metadata["dynamic"], Iterable):
+            metadata["dynamic"] = [value for value in metadata["dynamic"] if value != "readme"]
+
+
+def get_metadata_hook() -> "type[MetadataHookInterface] | list[type[MetadataHookInterface]]":
+    """Retrieve the correct hatch version metadata hook class."""
+    return DowndocVersionHook
+
+
 class MultiArtefactWheelBuilder(WheelBuilder):
     """Build multiple wheels at once with each set of binary executables."""
 
     class _BuildHook(BuildHookInterface[WheelBuilderConfig]):
         @override
         def initialize(self, version: str, build_data: dict[str, object]) -> None:
-            downdoc_binary_filepath: Path = Path(self.root) / (
-                "downloads/downdoc-"
-                f"{_get_downdoc_binary_operating_system()}-"
-                f"{_get_downdoc_binary_architecture()}"
-                f"{_get_downdoc_binary_file_extension()}"
-            )
-
-            if not downdoc_binary_filepath.is_file():
-                raise FileNotFoundError(downdoc_binary_filepath)
-
-            downdoc_binary_filepath.chmod(
-                downdoc_binary_filepath.stat().st_mode | stat.S_IEXEC
-            )
-
             existing_shared_scripts: object | dict[str, str] = build_data.get(
                 "shared_scripts", {}
             )
@@ -56,7 +75,7 @@ class MultiArtefactWheelBuilder(WheelBuilder):
 
             build_data["shared_scripts"] = {
                 str(
-                    downdoc_binary_filepath.resolve()
+                    _get_downdoc_binary_filepath(root=Path(self.root)).resolve()
                 ): f"downdoc{_get_downdoc_binary_file_extension()}",
                 **existing_shared_scripts,
             }
@@ -178,3 +197,20 @@ def _get_downdoc_binary_file_extension() -> str:
         return ".exe"
 
     raise NotImplementedError(raw_operating_system)
+
+
+def _get_downdoc_binary_filepath(root: Path) -> Path:
+    """Retrieve the file path for the downloaded downdoc binary executable."""
+    downdoc_binary_filepath: Path = root / (
+        "downloads/downdoc-"
+        f"{_get_downdoc_binary_operating_system()}-"
+        f"{_get_downdoc_binary_architecture()}"
+        f"{_get_downdoc_binary_file_extension()}"
+    )
+
+    if not downdoc_binary_filepath.is_file():
+        raise FileNotFoundError(downdoc_binary_filepath)
+
+    downdoc_binary_filepath.chmod(downdoc_binary_filepath.stat().st_mode | stat.S_IEXEC)
+
+    return downdoc_binary_filepath
