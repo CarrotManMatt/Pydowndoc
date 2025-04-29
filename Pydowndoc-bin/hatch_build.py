@@ -46,7 +46,7 @@ class DowndocVersionHook(MetadataHookInterface):
             setuptools_scm.get_version(
                 root=Path(self.root).parent,
                 local_scheme="no-local-version",
-                version_scheme="python-simplified-semver",
+                version_scheme="no-guess-dev",
             )
         )
 
