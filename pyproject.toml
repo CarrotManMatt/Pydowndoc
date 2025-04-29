@@ -4,7 +4,7 @@ requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
 
 [dependency-groups]
 build = ["hatch", "pip"]
-build-dev = ["auditwheel", { include-group = "build" }]
+build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
 dev = [
     { include-group = "lint-format" },
     { include-group = "pre-commit" },
@@ -61,7 +61,7 @@ keywords = [
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 name = "Pydowndoc"
-optional-dependencies = { "bin" = ["Pydowndoc-bin == 1.7.0"] }
+optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
 readme = "README.md" # NOTE: The hatch dynamic readme plugin cannot be installed in the project that builds it. The README.adoc file for this project must be converted manually.
 requires-python = ">=3.9"
 
@@ -114,6 +114,10 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["setuptools_scm"]
 
 [tool.ruff]
 indent-width = 4

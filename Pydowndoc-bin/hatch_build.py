@@ -9,6 +9,7 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
+import setuptools_scm
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
 from hatchling.metadata.plugin.interface import MetadataHookInterface
@@ -41,22 +42,67 @@ class DowndocVersionHook(MetadataHookInterface):
 
     @override
     def update(self, metadata: dict[str, object]) -> None:
-        metadata["version"] = str(
-            Version(
-                subprocess.run(
-                    (str(_get_downdoc_binary_filepath(root=Path(self.root))), "--version"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                )
-                .stdout.strip()
-                .removesuffix("-stable")
-                .strip()
+        scm_version: Version = Version(
+            setuptools_scm.get_version(
+                root=Path(self.root).parent,
+                local_scheme="no-local-version",
+                version_scheme="python-simplified-semver",
             )
         )
 
+        if (
+            scm_version.epoch
+            or scm_version.pre
+            or scm_version.post
+            or scm_version.local
+            or any(
+                part is not None and (part > 999 or part < 1)
+                for part in (*scm_version.release, scm_version.dev)
+            )
+        ):
+            VERSION_NUMBER_UNCONVERTABLE_MESSAGE: Final[str] = (
+                f"The project version number: {scm_version} is not convertable to an integer "
+                "of the downdoc binary's post release version."
+            )
+            raise NotImplementedError(VERSION_NUMBER_UNCONVERTABLE_MESSAGE)
+
+        bin_version: Version = Version(
+            subprocess.run(
+                (str(_get_downdoc_binary_filepath(root=Path(self.root))), "--version"),
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            .stdout.strip()
+            .removesuffix("-stable")
+            .strip()
+        )
+
+        metadata["version"] = "".join(
+            part
+            for part in (
+                f"{bin_version.epoch}!" if bin_version.epoch != 0 else None,
+                ".".join(str(part) for part in bin_version.release),
+                (
+                    "".join(str(part) for part in bin_version.pre)
+                    if bin_version.pre is not None
+                    else None
+                ),
+                f".post{
+                    +(scm_version.major * (10**9))
+                    + (scm_version.minor * (10**6))
+                    + (scm_version.micro * (10**3))
+                    + ((scm_version.dev or 0) * (10**0))
+                }",
+                (f".dev{bin_version.dev}" if bin_version.dev is not None else None),
+            )
+            if part is not None
+        )
+
         if isinstance(metadata["dynamic"], Iterable):
-            metadata["dynamic"] = [value for value in metadata["dynamic"] if value != "readme"]
+            metadata["dynamic"] = [
+                value for value in metadata["dynamic"] if value != "version"
+            ]
 
 
 def get_metadata_hook() -> "type[MetadataHookInterface] | list[type[MetadataHookInterface]]":
