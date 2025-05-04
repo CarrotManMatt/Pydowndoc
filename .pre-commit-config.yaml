@@ -5,7 +5,7 @@ default_stages: [pre-commit, pre-merge-commit, manual]
 
 repos:
     - repo: https://github.com/adrienverge/yamllint.git
-      rev: v1.37.0
+      rev: v1.37.1
       hooks:
         - id: yamllint
           args: [--strict]
@@ -28,7 +28,7 @@ repos:
         - id: gitlint-ci
 
     - repo: https://github.com/gitleaks/gitleaks
-      rev: v8.25.0
+      rev: v8.25.1
       hooks:
         - id: gitleaks
 
@@ -73,7 +73,7 @@ repos:
           stages: [manual]
 
     - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.11.7
+      rev: v0.11.8
       hooks:
         - id: ruff
           args: [--fix]
@@ -81,7 +81,7 @@ repos:
         - id: ruff-format
 
     - repo: https://github.com/astral-sh/uv-pre-commit
-      rev: 0.7.0
+      rev: 0.7.2
       hooks:
         - id: uv-lock
           always_run: true
