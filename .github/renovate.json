@@ -4,8 +4,8 @@
         {
             "customType": "regex",
             "datasourceTemplate": "github-tags",
-            "fileMatch": [
-                "^\\.github/workflows/[^/]+\\.ya?ml$"
+            "managerFilePatterns": [
+                "/^\\.github/workflows/[^/]+\\.ya?ml$/"
             ],
             "matchStrings": [
                 "uses: actions/checkout@v*\\s",
@@ -18,8 +18,8 @@
             "customType": "regex",
             "datasourceTemplate": "node-version",
             "depNameTemplate": "node",
-            "fileMatch": [
-                "^\\.github/workflows/[^/]+\\.ya?ml$"
+            "managerFilePatterns": [
+                "/^\\.github/workflows/[^/]+\\.ya?ml$/"
             ],
             "matchStrings": [
                 "uses: actions/setup-node@v*\\s",
