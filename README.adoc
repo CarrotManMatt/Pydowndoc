@@ -94,7 +94,7 @@ uvx --from Pydowndoc -- downdoc --version
 [source,bash]
 uv add Pydowndoc
 
-.{url-uv-wiki-tools-installing}[Install permenantly as a uv tool]
+.{url-uv-wiki-tools-installing}[Install permanently as a uv tool]
 [source,bash]
 uv tool install Pydowndoc
 
@@ -106,7 +106,7 @@ path/to/venv/python -m pip install Pydowndoc
 
 [WARNING]
 --
-These commands will only work correctly either after installation as a {url-uv-wiki-tools-installing}[permenant uv tool], or after activating a virtual environment with Pydowndoc installed.
+These commands will only work correctly either after installation as a {url-uv-wiki-tools-installing}[permanent uv tool], or after activating a virtual environment with Pydowndoc installed.
 Replace the command name `+downdoc+` with `+uvx --from Pydowndoc -- downdoc+`, to run any of the following commands in an ephemeral envrionment.
 --
 
