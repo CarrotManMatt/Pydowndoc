@@ -110,7 +110,7 @@ These commands will only work correctly either after installation as a {url-uv-w
 Replace the command name `+downdoc+` with `+uvx --from Pydowndoc -- downdoc+`, to run any of the following commands in an ephemeral envrionment.
 --
 
-.Display the current version number (useful to validate that installation eas successful)
+.Display the current version number (useful to validate that installation was successful)
 [source,bash]
 downdoc --version
 
