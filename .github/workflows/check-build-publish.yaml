@@ -446,7 +446,7 @@ jobs:
                 pattern: built-pydowndoc-bin-*-package
 
             - name: Sign Build Artifacts
-              uses: sigstore/gh-action-sigstore-python@v3.0.0
+              uses: sigstore/gh-action-sigstore-python@v3.0.1
               with:
                 inputs: ./dist/pydowndoc-*.whl ./dist/pydowndoc-*.tar.gz
 
