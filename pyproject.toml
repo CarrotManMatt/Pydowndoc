@@ -115,10 +115,6 @@ warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
 
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["setuptools_scm"]
-
 [tool.ruff]
 indent-width = 4
 line-length = 95

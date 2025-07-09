@@ -34,7 +34,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
     @classproperty
     @override
-    def PLUGIN_NAME(cls) -> str:  # type: ignore[override]
+    def PLUGIN_NAME(cls) -> str:
         return "downdoc-readme"
 
     @classmethod
