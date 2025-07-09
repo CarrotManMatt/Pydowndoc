@@ -13,6 +13,7 @@ jobs:
 
     # yamllint disable-line rule:key-ordering
     convert-readme:
+        name: Convert README
         needs: [upload-downdoc-binaries]
         runs-on: ubuntu-latest
 
