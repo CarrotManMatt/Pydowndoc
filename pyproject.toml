@@ -107,6 +107,7 @@ enable_error_code = [
     "unused-awaitable",
 ]
 extra_checks = true
+mypy_path = "stubs"
 no_implicit_reexport = true
 strict_equality = true
 warn_redundant_casts = true
