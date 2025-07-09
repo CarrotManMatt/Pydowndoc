@@ -269,7 +269,7 @@ jobs:
                       display_architecture: arm64
                       display_os: Linux
                       os: linux
-                      runner: ubuntu-latest
+                      runner: ubuntu-24.04-arm
 
         steps:
             - uses: actions/checkout@v4

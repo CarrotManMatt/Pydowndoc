@@ -50,7 +50,7 @@ jobs:
                       downdoc_binary_suffix: ""
                       downdoc_os: linux
                       os: linux
-                      runner: ubuntu-latest
+                      runner: ubuntu-24.04-arm
 
         steps:
             - id: checkout-upstream-repository
