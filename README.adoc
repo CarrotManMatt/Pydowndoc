@@ -281,7 +281,7 @@ path/to/venv/python -m pip uninstall Pydowndoc
 
 == Reporting Issues
 
-If there are issues with the Python API for this package, or you are encountering installation problems, please report these to {url-project-bug-tracker}[the GitHub issues tracker for this project].
+If there are issues with the Python API for this package, or you are encountering installation problems, please report these on {url-project-bug-tracker}[the GitHub issues tracker for this project].
 
 If you have problems with the conversion process of your AsciiDoc files to Markdown, please report these {url-downdoc-repository}/issues[upstream], directly to the {url-downdoc}[downdoc project].
 
@@ -289,7 +289,7 @@ If you have problems with the conversion process of your AsciiDoc files to Markd
 
 Windows and macOS wheels are provided to enable use of this project on non-linux hosts.
 However, these versions have not had the same level of testing as the linux version.
-Therefore, if you encounter any bugs with these other versions, report them to {url-project-bug-tracker}[the GitHub issues tracker for this project].
+Therefore, if you encounter any bugs with these other versions, report them on {url-project-bug-tracker}[the GitHub issues tracker for this project].
 
 == Licencing
 
