@@ -56,7 +56,7 @@ class DowndocVersionHook(MetadataHookInterface):
             or scm_version.post
             or scm_version.local
             or any(
-                part is not None and (part > 999 or part < 1)
+                part is not None and (part + 1 > 999 or part + 1 < 1)
                 for part in (*scm_version.release, scm_version.dev)
             )
         ):
@@ -90,10 +90,10 @@ class DowndocVersionHook(MetadataHookInterface):
                     else None
                 ),
                 f".post{
-                    +(scm_version.major * (10**9))
-                    + (scm_version.minor * (10**6))
-                    + (scm_version.micro * (10**3))
-                    + ((scm_version.dev or 0) * (10**0))
+                    ((scm_version.major + 1) * (10**9))
+                    + ((scm_version.minor + 1) * (10**6))
+                    + ((scm_version.micro + 1) * (10**3))
+                    + (((scm_version.dev or 0) + 1) * (10**0))
                 }",
                 (f".dev{bin_version.dev}" if bin_version.dev is not None else None),
             )
