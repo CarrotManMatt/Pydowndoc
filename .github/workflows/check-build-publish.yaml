@@ -264,6 +264,13 @@ jobs:
                       os: macos
                       runner: macos-13
 
+                    - architecture: arm64
+                      container: "{\"image\": \"quay.io/pypa/manylinux_2_34_aarch64\"}"
+                      display_architecture: arm64
+                      display_os: Linux
+                      os: linux
+                      runner: ubuntu-latest
+
         steps:
             - uses: actions/checkout@v4
               with:
@@ -293,13 +300,13 @@ jobs:
             - name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Package
               run: uv run --directory Pydowndoc-bin -- hatch build -t custom
 
-            - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
-              name: Repair Linux ${{matrix.display_architecture}} Packages
+            - if: matrix.os == 'linux'
+              name: Repair ${{matrix.display_os}} ${{matrix.display_architecture}} Packages
               run: uv run -- auditwheel repair $(find Pydowndoc-bin/dist/ -type f -iname "*linux_x86_64.whl")
                 -w Pydowndoc-bin/dist
 
-            - if: matrix.os == 'linux' && matrix.architecture == 'x86-64'
-              name: Remove Unrepaired Linux ${{matrix.display_architecture}} Packages
+            - if: matrix.os == 'linux'
+              name: Remove Unrepaired ${{matrix.display_os}} ${{matrix.display_architecture}} Packages
               run: rm Pydowndoc-bin/dist/*-linux_x86_64.whl
 
             - name: Save Build Artifacts

@@ -220,7 +220,7 @@ def _get_downdoc_binary_architecture() -> str:
     """Retrieve the string representation of the current platform architecture."""
     raw_architecture: str = platform.machine()
 
-    if "arm64" in raw_architecture:
+    if "arm64" in raw_architecture or "aarch64" in raw_architecture:
         return "arm64"
 
     if (
