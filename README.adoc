@@ -111,7 +111,7 @@ path/to/venv/python -m pip install Pydowndoc[bin]
 Pydowndoc assumes by default that you wish to use the `+downdoc+` binary already installed on your system (E.g. using your system's package manager).
 Installing the PyPI package `+Pydowndoc+` will only install the Python compatibility layer for downdoc.
 
-If you wish to _also_ install the `+downdoc+` binary itself, please install using the `+[bin]+` {url-python-wiki-extras}[extra].
+If you wish to _also_ install the `+downdoc+` https://pypi.org/project/Pydowndoc-bin[binary] itself, please install using the `+[bin]+` {url-python-wiki-extras}[extra].
 
 .Installing *without* the `+[bin]+` extra on a system where `+downdoc+` is not already installed will not work
 [source,console]
