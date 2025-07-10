@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from subprocess import CompletedProcess
-    from typing import Final, Literal
+    from typing import Final, Literal, Union
 
 __all__: "Sequence[str]" = ("run",)
 
@@ -79,7 +79,7 @@ def run(
 
     arguments.extend(str(in_file_path) for in_file_path in in_file_paths)
 
-    downdoc_executable: str | None = shutil.which("downdoc")
+    downdoc_executable: Union[str, None] = shutil.which("downdoc")
     if downdoc_executable is None:
         DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
             "The downdoc executable could not be found. "
