@@ -24,7 +24,14 @@ license = "MIT"
 license-files = ["LICENSE"]
 maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 name = "Pydowndoc-bin"
-readme = { content-type = "text/markdown", text = "Installable package for the downdoc binary executable." }
+
+[project.readme]
+content-type = "text/markdown"
+text = """
+Installable package for the downdoc binary executable.
+
+See [Pydowndoc](https://pypi.org/project/Pydowndoc) for the primary package and documentation.
+"""
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"

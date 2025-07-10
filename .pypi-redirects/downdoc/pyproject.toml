@@ -5,11 +5,18 @@ requires = ["hatchling"]
 [project]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
 classifiers = ["Development Status :: 7 - Inactive"]
-dependencies = ["Pydowndoc"]
+dependencies = ["Pydowndoc[bin]"]
 description = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"."
 name = "downdoc"
-readme = { content-type = "text/markdown", text = "You tried to install \"downdoc\". The correct package name is \"Pydowndoc\"." }
-version = "1.1.2"
+version = "1.2.0"
+
+[project.readme]
+content-type = "text/markdown"
+text = """
+You tried to install `downdoc`. The correct package name is `Pydowndoc`.
+
+See [Pydowndoc](https://pypi.org/project/Pydowndoc) for the primary package and documentation.
+"""
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"

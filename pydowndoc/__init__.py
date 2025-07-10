@@ -2,6 +2,7 @@
 
 import itertools
 import shlex
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -10,7 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from subprocess import CompletedProcess
-    from typing import Literal
+    from typing import Final, Literal
 
 __all__: "Sequence[str]" = ("run",)
 
@@ -78,8 +79,16 @@ def run(
 
     arguments.extend(str(in_file_path) for in_file_path in in_file_paths)
 
+    downdoc_executable: str | None = shutil.which("downdoc")
+    if downdoc_executable is None:
+        DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
+            "The downdoc executable could not be found. "
+            "Ensure it is installed (E.g `uv add Pydowndoc[bin]`). "
+        )
+        raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
+
     return subprocess.run(
-        ("downdoc", *arguments),
+        (downdoc_executable, *arguments),
         check=process_check_return_code,
         capture_output=process_capture_output,
     )

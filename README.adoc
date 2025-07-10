@@ -24,6 +24,7 @@ v1.2, 26/01/2025
 :url-python-download: {url-python-home}/downloads
 :url-python-wiki: https://docs.python.org/3
 :url-python-wiki-virtual-environments: {url-python-wiki}/tutorial/venv
+:url-python-wiki-extras: https://packaging.python.org/en/latest/specifications/dependency-specifiers#extras
 :url-pre-commit-home: https://pre-commit.com
 :url-pre-commit: {url-pre-commit-home}
 :url-ruff-home: https://ruff.rs
@@ -88,26 +89,45 @@ A {labelled-url-python} wrapper around the latest-built binary of {labelled-url-
 
 .Run as a {url-uv-wiki-tools}[uv tool] (no installation necessary)
 [source,bash]
-uvx --from Pydowndoc -- downdoc --version
+uvx --from Pydowndoc-bin -- downdoc --version
+
+TIP: uv will warn you that the `+downdoc+` binary is not directly provided by the `+Pydowndoc[bin]+` package, so we suggest to use `+--from Pydowndoc-bin+` when running downdoc using `+uvx+` or `+uv tool+`.
 
 .Add to your {url-uv-wiki-dependencies-adding}[uv project/script's dependencies]
 [source,bash]
-uv add Pydowndoc
+uv add Pydowndoc[bin]
 
 .{url-uv-wiki-tools-installing}[Install permanently as a uv tool]
 [source,bash]
-uv tool install Pydowndoc
+uv tool install Pydowndoc-bin
 
 .Install using {labelled-url-pip} after {url-python-wiki-virtual-environments}[creating a virtual environment]
 [source,bash]
-path/to/venv/python -m pip install Pydowndoc
+path/to/venv/python -m pip install Pydowndoc[bin]
+
+[#installing-the-downdoc-binary]
+=== Installing the `downdoc` Binary
+
+Pydowndoc assumes by default that you wish to use the `+downdoc+` binary already installed on your system (E.g. using your system's package manager).
+Installing the PyPI package `+Pydowndoc+` will only install the Python compatibility layer for downdoc.
+
+If you wish to _also_ install the `+downdoc+` binary itself, please install using the `+[bin]+` {url-python-wiki-extras}[extra].
+
+.Installing *without* the `+[bin]+` extra on a system where `+downdoc+` is not already installed will not work
+[source,console]
+----
+$ uvx --with Pydowndoc python -c "import pydowndoc; pydowndoc.run()"
+OSError: The downdoc executable could not be found. Ensure it is installed (E.g `uv add Pydowndoc[bin]`).
+----
+
+NOTE: Once https://peps.python.org/pep-0771[PEP 771] is finalised, the default install will include the `+[bin]+` {url-python-wiki-extras}[extra], and using the `+downdoc+` binary already installed on your system will require opting-out from including the `+[bin]+` {url-python-wiki-extras}[extra].
 
 == CLI Usage
 
 [WARNING]
 --
-These commands will only work correctly either after installation as a {url-uv-wiki-tools-installing}[permanent uv tool], or after activating a virtual environment with Pydowndoc installed.
-Replace the command name `+downdoc+` with `+uvx --from Pydowndoc -- downdoc+`, to run any of the following commands in an ephemeral envrionment.
+These commands will only work correctly after the `+downdoc+` binary has been installed, either as a system binary or using the `+[bin]+` {url-python-wiki-extras}[extra].
+See <<installing-the-downdoc-binary>> for more information.
 --
 
 .Display the current version number (useful to validate that installation was successful)
@@ -186,14 +206,16 @@ version = "0.1.0"
 dynamic = ["readme"]
 ----
 
-. Set up your build backend, within your `+pyproject.toml+` file
+. Set up your build backend, within your `+pyproject.toml+` file, adding `+Pydowndoc[bin]+` as a build dependency
 +
 [source,toml]
 ----
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatchling", "Pydowndoc"]
+requires = ["hatchling", "Pydowndoc[bin]"]
 ----
++
+TIP: To prevent issues with users building your package that may not have the `downdoc` binary already installed on their system, we suggest including the `+[bin]+` {url-python-wiki-extras}[extra] in your package's build dependencies.
 
 . Include the hook name within `[tool.hatch.metadata.hooks]` to enable {labelled-url-wiki-readme}-file conversion
 +
@@ -232,7 +254,7 @@ dynamic = ["readme"]
 
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatchling", "Pydowndoc"]
+requires = ["hatchling", "Pydowndoc[bin]"]
 
 [tool.hatch.metadata.hooks.downdoc-readme]
 path = "README2.adoc"
@@ -255,7 +277,7 @@ path = "README2.adoc"
 
 .If {url-uv-wiki-tools-upgrading}[installed as a uv tool]
 [source,bash]
-uv tool upgrade Pydowndoc
+uv tool upgrade Pydowndoc-bin
 
 .If added as a {url-uv-wiki-dependencies-adding}[uv project dependency]
 [source,bash]
@@ -273,7 +295,7 @@ uv remove Pydowndoc
 
 .If installed as a {url-uv-wiki-tools}[uv tool]
 [source,bash]
-uv tool uninstall Pydowndoc
+uv tool uninstall Pydowndoc-bin
 
 .If installed with {labelled-url-pip}
 [source,bash]
