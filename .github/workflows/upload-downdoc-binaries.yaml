@@ -54,7 +54,7 @@ jobs:
 
         steps:
             - id: checkout-upstream-repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                 ref: v1.0.2-stable
                 repository: opendevise/downdoc
