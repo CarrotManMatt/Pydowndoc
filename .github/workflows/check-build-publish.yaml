@@ -77,7 +77,7 @@ jobs:
               run: touch README.md
 
             - name: Set Up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                 python-version: ${{matrix.python-version}}
 
@@ -115,7 +115,7 @@ jobs:
             - uses: actions/checkout@v5
 
             - name: Set Up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                 python-version-file: .python-version
 
@@ -159,7 +159,7 @@ jobs:
               shell: bash
 
             - name: Set Up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                 python-version-file: .python-version
 
@@ -205,7 +205,7 @@ jobs:
             - uses: actions/checkout@v5
 
             - name: Set Up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                 python-version-file: .python-version
 
@@ -281,7 +281,7 @@ jobs:
 
             - if: "!contains(matrix.container, 'pypa/manylinux')"
               name: Set Up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                 python-version-file: .python-version
 
@@ -333,7 +333,7 @@ jobs:
                 fetch-depth: 0
 
             - name: Set Up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                 python-version-file: .python-version
 
