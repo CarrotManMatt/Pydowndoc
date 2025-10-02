@@ -249,6 +249,13 @@ jobs:
                       os: linux
                       runner: ubuntu-24.04-arm
 
+                    - architecture: arm64
+                      container: "null"
+                      display_architecture: arm64
+                      display_os: macOS
+                      os: macos
+                      runner: macos-14
+
         steps:
             - uses: actions/checkout@v5
               with:
