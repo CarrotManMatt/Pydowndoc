@@ -24,7 +24,7 @@ import pydowndoc
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
-    from typing import Final
+    from typing import Final, Union
 
 __all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadata_hook")
 
@@ -39,23 +39,20 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
-        raw_readme_path: "object | str" = config.get("path", "")  # noqa: UP037
+        raw_readme_path: Union[object | str] = config.get("path", "")
 
         if not isinstance(raw_readme_path, str):
             INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
             raise TypeError(INVALID_PATH_TYPE_MESSAGE)
 
-        if not raw_readme_path:
-            return root / "README.adoc"
-
-        return root / raw_readme_path
+        return root / (raw_readme_path if raw_readme_path else "README.adoc")
 
     @classmethod
     def _is_project_misconfigured(cls, metadata: "Mapping[str, object]") -> bool:
         if "readme" in metadata:
             return True
 
-        dynamic: "object | Collection[object]" = metadata.get("dynamic", [])  # noqa: UP037
+        dynamic: Union[object | Collection[object]] = metadata.get("dynamic", [])
         if not isinstance(dynamic, Collection):
             INVALID_DYNAMIC_TYPE_MESSAGE: Final[str] = (
                 "'dynamic' field within `[project]` must be an array."

@@ -11,33 +11,6 @@ jobs:
     upload-downdoc-binaries:
         uses: ./.github/workflows/upload-downdoc-binaries.yaml
 
-    # yamllint disable-line rule:key-ordering
-    convert-readme:
-        name: Convert README
-        needs: [upload-downdoc-binaries]
-        runs-on: ubuntu-latest
-
-        steps:
-            - uses: actions/checkout@v5
-
-            - name: Download Linux x86_64 downdoc Binary
-              uses: actions/download-artifact@v5
-              with:
-                name: downdoc-linux-x86-64-binary
-                path: Pydowndoc-bin/downloads/
-
-            - name: Make Linux x86_64 downdoc Binary An Executable
-              run: chmod +x Pydowndoc-bin/downloads/downdoc-linux-x86-64
-
-            - name: Convert Project README
-              run: Pydowndoc-bin/downloads/downdoc-linux-x86-64 README.adoc
-
-            - name: Save Converted README
-              uses: actions/upload-artifact@v4
-              with:
-                name: converted-readme
-                path: README.md
-
     uv-check:
         runs-on: ubuntu-latest
 
@@ -138,7 +111,7 @@ jobs:
                 path: ./.mypy_cache
 
             - name: Run mypy
-              run: uv run -- mypy Pydowndoc-bin/hatch_build.py  # TODO: Add GitHub workflows output format
+              run: uv run -- mypy hatch_build.py ; uv run -- mypy Pydowndoc-bin/hatch_build.py  # TODO: Add GitHub workflows output format
 
     # yamllint disable-line rule:key-ordering
     pre-commit:
@@ -324,7 +297,7 @@ jobs:
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Build Pydowndoc package
-        needs: [convert-readme, mypy-package, pre-commit, ruff-lint, uv-check]
+        needs: [mypy-package, pre-commit, ruff-lint, uv-check]
         runs-on: ubuntu-latest
 
         steps:
@@ -341,11 +314,6 @@ jobs:
               uses: astral-sh/setup-uv@v6
               with:
                 enable-cache: true
-
-            - name: Download Converted README
-              uses: actions/download-artifact@v5
-              with:
-                name: converted-readme
 
             - name: Build Package
               run: uv build --build --no-sources
