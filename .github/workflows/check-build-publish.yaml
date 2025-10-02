@@ -213,7 +213,7 @@ jobs:
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} Pydowndoc-bin package
-        needs: [upload-downdoc-binaries, pre-commit, ruff-lint, mypy-scripts]
+        needs: [mypy-scripts, pre-commit, ruff-lint, upload-downdoc-binaries]
         runs-on: ${{matrix.runner}}
 
         strategy:
@@ -300,7 +300,7 @@ jobs:
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Build Pydowndoc package
-        needs: [mypy-package, pre-commit, ruff-lint, uv-check]
+        needs: [mypy-package, mypy-scripts, pre-commit, ruff-lint, uv-check]
         runs-on: ubuntu-latest
 
         steps:
