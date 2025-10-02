@@ -39,5 +39,14 @@
     ],
     "extends": [
         "github>CarrotManMatt/renovate-config"
-    ]
+    ],
+    "pep621": {
+        "ignorePaths": [
+            "**/.pypi-redirects/**",
+            "**/vendor/**",
+            "**/examples/**",
+            "**/__fixtures__/**",
+            "Pydowndoc-bin"
+        ]
+    }
 }
