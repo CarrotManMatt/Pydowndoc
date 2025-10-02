@@ -46,7 +46,7 @@
             "**/vendor/**",
             "**/examples/**",
             "**/__fixtures__/**",
-            "Pydowndoc-bin"
+            "Pydowndoc-bin/**"
         ]
     }
 }
