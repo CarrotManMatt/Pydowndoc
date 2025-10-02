@@ -1,5 +1,6 @@
 """Project build script to package binary artefacts into platform-specific builds."""
 
+import os
 import platform
 import re
 import stat
@@ -67,9 +68,16 @@ class DowndocVersionHook(MetadataHookInterface):
             )
             raise NotImplementedError(VERSION_NUMBER_UNCONVERTABLE_MESSAGE)
 
+        try:
+            downdoc_binary_filepath: Path = _get_downdoc_binary_filepath(root=Path(self.root))
+        except FileNotFoundError as e:
+            raise RuntimeError(str(os.environ)) from e
+            if "" not in os.environ:
+                raise e from e
+
         bin_version: Version = Version(
             subprocess.run(
-                (str(_get_downdoc_binary_filepath(root=Path(self.root))), "--version"),
+                (str(downdoc_binary_filepath), "--version"),
                 capture_output=True,
                 text=True,
                 check=True,
@@ -123,9 +131,18 @@ class MultiArtefactWheelBuilder(WheelBuilder):
             if not isinstance(existing_shared_scripts, Mapping):
                 raise TypeError
 
+            try:
+                downdoc_binary_filepath: Path = _get_downdoc_binary_filepath(
+                    root=Path(self.root)
+                )
+            except FileNotFoundError as e:
+                raise RuntimeError(str(os.environ)) from e
+                if "" not in os.environ:
+                    raise e from e
+
             build_data["shared_scripts"] = {
                 str(
-                    _get_downdoc_binary_filepath(root=Path(self.root)).resolve()
+                    downdoc_binary_filepath.resolve()
                 ): f"downdoc{_get_downdoc_binary_file_extension()}",
                 **existing_shared_scripts,
             }
