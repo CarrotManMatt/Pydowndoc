@@ -197,7 +197,6 @@ keep-runtime-typing = true
 default-groups = ["dev"]
 no-binary-package = ["Pydowndoc", "Pydowndoc-bin"]
 no-build = true
-package = false
 required-environments = [
     "sys_platform == 'darwin' and platform_machine == 'x86_64'",
     "sys_platform == 'linux' and platform_machine == 'aarch64'",

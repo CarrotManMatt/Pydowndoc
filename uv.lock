@@ -614,7 +614,7 @@ wheels = [
 
 [[package]]
 name = "pydowndoc"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "hatchling" },
     { name = "typed-classproperties" },

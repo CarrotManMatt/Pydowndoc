@@ -99,6 +99,13 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             }
         except OSError as e:
             warnings.warn(str(e), stacklevel=1)
+            metadata["readme"] = {
+                "content-type": "text/plain",
+                "text": (
+                    "Missing README content. "
+                    "DO NOT upload to any package distribution platform (E.g. PyPI)."
+                ),
+            }
 
         if isinstance(metadata["dynamic"], Iterable):
             metadata["dynamic"] = [value for value in metadata["dynamic"] if value != "readme"]
