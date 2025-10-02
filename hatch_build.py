@@ -3,10 +3,16 @@
 import inspect
 import shutil
 import subprocess
+import sys
 import warnings
 from collections.abc import Collection, Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING
+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
 
