@@ -1,6 +1,11 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatch-docstring-description", "hatch-vcs", "hatchling"]
+requires = [
+    "hatch-docstring-description",
+    "hatch-vcs",
+    "hatchling",
+    "typing-extensions; python_version < '3.12'",
+]
 
 [dependency-groups]
 build = ["hatch", "pip"]
