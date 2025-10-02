@@ -1,6 +1,7 @@
 """Project build script to convert this project's AsciiDoc README file to Markdown format."""
 
 import inspect
+import os
 import shutil
 import subprocess
 import sys
@@ -67,9 +68,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
         downdoc_executable: Union[str, None] = shutil.which("downdoc")
         if downdoc_executable is None:
             DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
-                "The downdoc executable could not be found. "
-                "This package will be built without any README content, "
-                "it MUST NOT BE UPLOADED to any package distribution platform (E.g. PyPI). "
+                "The downdoc executable could not be found."
             )
             raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
 
@@ -104,7 +103,21 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
                 "text": self._perform_conversion(readme_path),
             }
         except OSError as e:
-            warnings.warn(str(e), stacklevel=1)
+            if (
+                "/renovate/" not in os.environ["PWD"]
+                and os.getenv("SKIP_MISSING_DOWNDOC", "False") != "True"
+            ):
+                raise e from e
+
+            warnings.warn(
+                (
+                    f"{e} "
+                    "This package will be built without any README content, "
+                    "it MUST NOT BE UPLOADED to any package distribution platform "
+                    "(E.g. PyPI)."
+                ),
+                stacklevel=1,
+            )
             metadata["readme"] = {
                 "content-type": "text/plain",
                 "text": (

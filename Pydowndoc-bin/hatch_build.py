@@ -6,6 +6,7 @@ import re
 import stat
 import subprocess
 import sys
+import warnings
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, override
@@ -71,42 +72,56 @@ class DowndocVersionHook(MetadataHookInterface):
         try:
             downdoc_binary_filepath: Path = _get_downdoc_binary_filepath(root=Path(self.root))
         except FileNotFoundError as e:
-            raise RuntimeError(str(os.environ)) from e
-            if "" not in os.environ:
+            if (
+                "/renovate/" not in os.environ["PWD"]
+                and os.getenv("SKIP_MISSING_DOWNDOC", "False") != "True"
+            ):
                 raise e from e
 
-        bin_version: Version = Version(
-            subprocess.run(
-                (str(downdoc_binary_filepath), "--version"),
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            .stdout.strip()
-            .removesuffix("-stable")
-            .strip()
-        )
-
-        metadata["version"] = "".join(
-            part
-            for part in (
-                f"{bin_version.epoch}!" if bin_version.epoch != 0 else None,
-                ".".join(str(part) for part in bin_version.release),
+            warnings.warn(
                 (
-                    "".join(str(part) for part in bin_version.pre)
-                    if bin_version.pre is not None
-                    else None
+                    f"Failed to find the downdoc executable binary at '{e}'. "
+                    "This package will be built without the downdoc executable binary, "
+                    "it MUST NOT BE UPLOADED to any package distribution platform "
+                    "(E.g. PyPI)."
                 ),
-                f".post{
-                    ((scm_version.major + 1) * (10**9))
-                    + ((scm_version.minor + 1) * (10**6))
-                    + ((scm_version.micro + 1) * (10**3))
-                    + (((scm_version.dev or 0) + 1) * (10**0))
-                }",
-                (f".dev{bin_version.dev}" if bin_version.dev is not None else None),
+                stacklevel=1,
             )
-            if part is not None
-        )
+            metadata["version"] = "0.1.0"
+
+        else:
+            bin_version: Version = Version(
+                subprocess.run(
+                    (str(downdoc_binary_filepath), "--version"),
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                .stdout.strip()
+                .removesuffix("-stable")
+                .strip()
+            )
+
+            metadata["version"] = "".join(
+                part
+                for part in (
+                    f"{bin_version.epoch}!" if bin_version.epoch != 0 else None,
+                    ".".join(str(part) for part in bin_version.release),
+                    (
+                        "".join(str(part) for part in bin_version.pre)
+                        if bin_version.pre is not None
+                        else None
+                    ),
+                    f".post{
+                        ((scm_version.major + 1) * (10**9))
+                        + ((scm_version.minor + 1) * (10**6))
+                        + ((scm_version.micro + 1) * (10**3))
+                        + (((scm_version.dev or 0) + 1) * (10**0))
+                    }",
+                    (f".dev{bin_version.dev}" if bin_version.dev is not None else None),
+                )
+                if part is not None
+            )
 
         if isinstance(metadata["dynamic"], Iterable):
             metadata["dynamic"] = [
@@ -136,9 +151,22 @@ class MultiArtefactWheelBuilder(WheelBuilder):
                     root=Path(self.root)
                 )
             except FileNotFoundError as e:
-                raise RuntimeError(str(os.environ)) from e
-                if "" not in os.environ:
+                if (
+                    "/renovate/" not in os.environ["PWD"]
+                    and os.getenv("SKIP_MISSING_DOWNDOC", "False") != "True"
+                ):
                     raise e from e
+
+                warnings.warn(
+                    (
+                        f"Failed to find the downdoc executable binary at '{e}'. "
+                        "This package will be built without the downdoc executable binary, "
+                        "it MUST NOT BE UPLOADED to any package distribution platform "
+                        "(E.g. PyPI)."
+                    ),
+                    stacklevel=1,
+                )
+                return
 
             build_data["shared_scripts"] = {
                 str(

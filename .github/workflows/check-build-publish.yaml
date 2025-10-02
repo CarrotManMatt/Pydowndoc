@@ -207,6 +207,7 @@ jobs:
     build-pydowndoc-bin:
         container: ${{fromJSON(matrix.container)}}
         env:
+            SKIP_MISSING_DOWNDOC: "False"
             UV_FROZEN: true
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
@@ -294,6 +295,7 @@ jobs:
     # yamllint disable-line rule:key-ordering
     build-pydowndoc:
         env:
+            SKIP_MISSING_DOWNDOC: "False"
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Build Pydowndoc package
