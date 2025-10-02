@@ -39,7 +39,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
-        raw_readme_path: Union[object | str] = config.get("path", "")
+        raw_readme_path: Union[object, str] = config.get("path", "")
 
         if not isinstance(raw_readme_path, str):
             INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
@@ -52,7 +52,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
         if "readme" in metadata:
             return True
 
-        dynamic: Union[object | Collection[object]] = metadata.get("dynamic", [])
+        dynamic: Union[object, Collection[object]] = metadata.get("dynamic", [])
         if not isinstance(dynamic, Collection):
             INVALID_DYNAMIC_TYPE_MESSAGE: Final[str] = (
                 "'dynamic' field within `[project]` must be an array."
