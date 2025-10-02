@@ -315,6 +315,15 @@ jobs:
               with:
                 enable-cache: true
 
+            - name: Download Linux x86_64 downdoc Binary
+              uses: actions/download-artifact@v5
+              with:
+                name: downdoc-linux-x86-64-binary
+                path: ~/.local/bin/
+
+            - name: Make Linux x86_64 downdoc Binary An Executable
+              run: mv ~/.local/bin/downdoc-linux-x86-64-binary ~/.local/bin/downdoc && chmod +x Pydowndoc-bin/downloads/downdoc-linux-x86-64
+
             - name: Build Package
               run: uv build --build --no-sources
 
