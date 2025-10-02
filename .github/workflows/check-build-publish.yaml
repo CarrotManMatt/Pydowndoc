@@ -308,6 +308,15 @@ jobs:
               with:
                 fetch-depth: 0
 
+            - name: Download Linux x86_64 downdoc Binary
+              uses: actions/download-artifact@v5
+              with:
+                name: downdoc-linux-x86-64-binary
+                path: ~/.local/bin/
+
+            - name: Make Linux x86_64 downdoc Binary An Executable
+              run: mv ~/.local/bin/downdoc-linux-x86-64 ~/.local/bin/downdoc && chmod +x ~/.local/bin/downdoc
+
             - name: Set Up Python
               uses: actions/setup-python@v6
               with:
@@ -317,15 +326,6 @@ jobs:
               uses: astral-sh/setup-uv@v6
               with:
                 enable-cache: true
-
-            - name: Download Linux x86_64 downdoc Binary
-              uses: actions/download-artifact@v5
-              with:
-                name: downdoc-linux-x86-64-binary
-                path: ~/.local/bin/
-
-            - name: Make Linux x86_64 downdoc Binary An Executable
-              run: mv ~/.local/bin/downdoc-linux-x86-64 ~/.local/bin/downdoc && chmod +x ~/.local/bin/downdoc
 
             - name: Build Package
               run: uv build --build --no-sources
