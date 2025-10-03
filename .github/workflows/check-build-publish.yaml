@@ -221,7 +221,7 @@ jobs:
                 include:
                     - architecture: x86-64
                       auditwheel_architecture: x86_64
-                      container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
+                      container: "{\"image\": \"quay.io/pypa/manylinux2014_x86_64\"}"
                       display_architecture: x86_64
                       display_os: Linux
                       os: linux
@@ -243,7 +243,7 @@ jobs:
 
                     - architecture: arm64
                       auditwheel_architecture: aarch64
-                      container: "{\"image\": \"quay.io/pypa/manylinux_2_34_aarch64\"}"
+                      container: "{\"image\": \"quay.io/pypa/manylinux2014_aarch64\"}"
                       display_architecture: arm64
                       display_os: Linux
                       os: linux
@@ -254,7 +254,7 @@ jobs:
                       display_architecture: arm64
                       display_os: macOS
                       os: macos
-                      runner: macos-14
+                      runner: macos-latest
 
         steps:
             - uses: actions/checkout@v5
