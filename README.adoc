@@ -194,6 +194,22 @@ pydowndoc.run(
 )
 ----
 
+.Retrieve the version number of the currently installed downdoc executable
+[source,python]
+----
+import pydowndoc
+
+version_string: str = pydowndoc.get_version()
+----
+
+.Retrieve the help text given by running downdoc with the `+--help+` flag
+[source,python]
+----
+import pydowndoc
+
+help_text: str = pydowndoc.get_help()
+----
+
 == Use as a Hatch build hook
 
 . Ensure the `+readme+` field is added to your `+project.dynamic+` list within your `+pyproject.toml+` file

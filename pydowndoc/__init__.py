@@ -16,14 +16,57 @@ if TYPE_CHECKING:
 __all__: "Sequence[str]" = ("run",)
 
 
+def _get_downdoc_executable() -> str:
+    downdoc_executable: Union[str, None] = shutil.which("downdoc")
+
+    if downdoc_executable is None:
+        DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
+            "The downdoc executable could not be found. "
+            "Ensure it is installed (E.g `uv add Pydowndoc[bin]`). "
+        )
+        raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
+
+    return downdoc_executable
+
+
+def get_help() -> str:
+    """
+    Retrieve downdoc help text output.
+
+    Returns:
+        downdoc's help text output.
+
+    Raises:
+        subprocess.CalledProcessError: If calling the downdoc subprocess exited
+            with a non-zero exit code.
+    """
+    return subprocess.run(
+        (_get_downdoc_executable(), "--help"), check=True, capture_output=True
+    ).stdout.decode()
+
+
+def get_version() -> str:
+    """
+    Retrieve the current downdoc version.
+
+    Returns:
+        downdoc's version text output.
+
+    Raises:
+        subprocess.CalledProcessError: If calling the downdoc subprocess exited
+            with a non-zero exit code.
+    """
+    return subprocess.run(
+        (_get_downdoc_executable(), "--version"), check=True, capture_output=True
+    ).stdout.decode()
+
+
 def run(
     *in_file_paths: "Path",
     attributes: "Mapping[str, str] | None" = None,
     output: "Path | Literal['-'] | None" = None,
     postpublish: bool = False,
     prepublish: bool = False,
-    display_help: bool = False,
-    display_version: bool = False,
     process_capture_output: bool = False,
     process_check_return_code: bool = False,
 ) -> "CompletedProcess[bytes]":
@@ -37,10 +80,6 @@ def run(
         postpublish: Whether to run the postpublish lifecycle routine (restore the input file).
         prepublish: Whether to run the prepublish lifecycle routine
             (convert and hide the input file).
-        display_help: Whether to skip all conversions and instead display the help text
-            to stdout.
-        display_version: Whether to skip all conversions and instead display the version
-            to stdout.
         process_capture_output: Whether to capture, into a string,
             anything sent to stdout by the subprocess, during execution.
         process_check_return_code: Whether to raise an exception
@@ -70,25 +109,13 @@ def run(
         arguments.append("--postpublish")
     if prepublish:
         arguments.append("--prepublish")
-    if display_help:
-        arguments.append("--help")
-    if display_version:
-        arguments.append("--version")
 
     arguments.append("--")
 
     arguments.extend(str(in_file_path) for in_file_path in in_file_paths)
 
-    downdoc_executable: Union[str, None] = shutil.which("downdoc")
-    if downdoc_executable is None:
-        DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
-            "The downdoc executable could not be found. "
-            "Ensure it is installed (E.g `uv add Pydowndoc[bin]`). "
-        )
-        raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
-
     return subprocess.run(
-        (downdoc_executable, *arguments),
+        (_get_downdoc_executable(), *arguments),
         check=process_check_return_code,
         capture_output=process_capture_output,
     )
