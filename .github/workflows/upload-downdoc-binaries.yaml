@@ -13,7 +13,7 @@ jobs:
             matrix:
                 include:
                     - architecture: x86-64
-                      container: "{\"image\": \"quay.io/pypa/manylinux_2_34_x86_64\"}"
+                      container: "{\"image\": \"quay.io/pypa/manylinux_2_28_x86_64\"}"
                       display_architecture: x86_64
                       display_os: Linux
                       downdoc_architecture: x64
@@ -43,7 +43,7 @@ jobs:
                       runner: macos-13
 
                     - architecture: arm64
-                      container: "{\"image\": \"quay.io/pypa/manylinux_2_34_aarch64\"}"
+                      container: "{\"image\": \"quay.io/pypa/manylinux_2_28_aarch64\"}"
                       display_architecture: arm64
                       display_os: Linux
                       downdoc_architecture: arm64
@@ -60,7 +60,7 @@ jobs:
                       downdoc_binary_suffix: ""
                       downdoc_os: macos
                       os: macos
-                      runner: macos-14
+                      runner: macos-latest
 
         steps:
             - id: checkout-upstream-repository
@@ -78,7 +78,7 @@ jobs:
             - if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               uses: actions/setup-node@v5
               with:
-                node-version: 22
+                node-version: 24
 
             - if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               name: Build downdoc ${{matrix.display_os}} ${{matrix.display_architecture}} binary
