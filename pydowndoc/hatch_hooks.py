@@ -82,12 +82,9 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
         metadata["readme"] = {
             "content-type": "text/markdown",
-            "text": pydowndoc.run(
-                readme_path,
-                output="-",
-                process_capture_output=True,
-                process_check_return_code=True,
-            ).stdout.decode(),
+            "text": pydowndoc.convert_file(
+                readme_path, output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING
+            ),
         }
 
         if isinstance(metadata["dynamic"], Iterable):

@@ -73,10 +73,11 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
 
         return subprocess.run(
-            (downdoc_executable, "--output", "-", str(readme_path)),
+            (downdoc_executable, "--output", "-", "--", str(readme_path)),
             capture_output=True,
+            text=True,
             check=True,
-        ).stdout.decode()
+        ).stdout
 
     @override
     def update(self, metadata: dict[str, object]) -> None:

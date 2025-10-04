@@ -176,7 +176,12 @@ classmethod-decorators = [
     "typed_classproperties.cached_classproperty",
     "typed_classproperties.classproperty",
 ]
-extend-ignore-names = ["BROKEN_*_MESSAGE", "INVALID_*_MESSAGE", "NO_*_MESSAGE"]
+extend-ignore-names = [
+    "BROKEN_*_MESSAGE",
+    "INVALID_*_MESSAGE",
+    "NO_*_MESSAGE",
+    "OUTPUT_CONVERSION_TO_STRING",
+]
 
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true
