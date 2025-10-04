@@ -116,7 +116,7 @@ If you wish to _also_ install the `+downdoc+` https://pypi.org/project/Pydowndoc
 .Installing *without* the `+[bin]+` extra on a system where `+downdoc+` is not already installed will not work
 [source,console]
 ----
-$ uvx --with Pydowndoc python -c "import pydowndoc; pydowndoc.run()"
+$ uvx --with Pydowndoc python -c "import pydowndoc; pydowndoc.get_help()"
 OSError: The downdoc executable could not be found. Ensure it is installed (E.g `uv add Pydowndoc[bin]`).
 ----
 
@@ -156,14 +156,24 @@ cat MyNotes.adoc | downdoc - -o MyNotes.md
 
 == API Usage
 
-.Convert a given file (the same filename will be retained, with file-extension changed to `+.md+`)
+.Convert a given file. (The same filename will be retained, with file-extension changed to `+.md+`)
 [source,python]
 ----
 from pathlib import Path
 
 import pydowndoc
 
-pydowndoc.run(Path("MyNotes.adoc"))
+pydowndoc.convert_file(Path("MyNotes.adoc"))
+----
+
+.Output the converted file to the given location
+[source,python]
+----
+from pathlib import Path
+
+import pydowndoc
+
+pydowndoc.convert_file(Path("MyNotes.adoc"), output_location=Path("path/to/output.md"))
 ----
 
 .Retrieve the converted file as a string
@@ -173,25 +183,21 @@ from pathlib import Path
 
 import pydowndoc
 
-converted_file_contents: str = pydowndoc.run(
-    Path("MyNotes.adoc"),
-    output="-",
-    process_capture_output=True,
-).stdout.decode()
+converted_file_content: str = pydowndoc.convert_file(
+    Path("MyNotes.adoc"), output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
+)
 ----
 
-.Ensure the conversion process executes successfully and output the converted file to the given location (by default your code will continue execution even if conversion fails)
+.Convert an in-memory string
 [source,python]
 ----
 from pathlib import Path
 
 import pydowndoc
 
-pydowndoc.run(
-    Path("MyNotes.adoc"),
-    output=Path("path/to/output.md"),
-    process_check_return_code=True,
-)
+original_content: str = ...
+
+converted_content: str = pydowndoc.convert_string(original_content)
 ----
 
 .Retrieve the version number of the currently installed downdoc executable
