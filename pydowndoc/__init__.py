@@ -15,7 +15,7 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
-    from typing import Final, Union
+    from typing import Final
 
 __all__: "Sequence[str]" = (
     "OUTPUT_CONVERSION_TO_STRING",
@@ -42,18 +42,18 @@ class ConversionError(RuntimeError):
     @override
     def __init__(
         self,
-        message: str | None = None,
+        message: "str | None" = None,
         *,
-        subprocess_return_code: int | None = None,
-        subprocess_stderr: str | None = None,
+        subprocess_return_code: "int | None" = None,
+        subprocess_stderr: "str | None" = None,
     ) -> None:
-        self.message: str | None = message
-        self.subprocess_return_code: int | None = subprocess_return_code
-        self.subprocess_stderr: str | None = subprocess_stderr
+        self.message: "str | None" = message
+        self.subprocess_return_code: "int | None" = subprocess_return_code
+        self.subprocess_stderr: "str | None" = subprocess_stderr
 
 
 def _get_downdoc_executable() -> str:
-    downdoc_executable: Union[str, None] = shutil.which("downdoc")
+    downdoc_executable: "str | None" = shutil.which("downdoc")
 
     if downdoc_executable is None:
         DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
@@ -123,7 +123,7 @@ def convert_file(
     file_path: "Path",
     *,
     attributes: "Mapping[str, str] | None" = ...,
-    output_location: Path | None = ...,
+    output_location: "Path | None" = ...,
     postpublish: bool = ...,
     prepublish: bool = ...,
 ) -> None: ...
@@ -133,10 +133,10 @@ def convert_file(
     file_path: "Path",
     *,
     attributes: "Mapping[str, str] | None" = None,
-    output_location: Path | _ConversionOutputDestinationFlag | None = None,
+    output_location: "Path | _ConversionOutputDestinationFlag | None" = None,
     postpublish: bool = False,
     prepublish: bool = False,
-) -> str | None:
+) -> "str | None":
     """
     Execute the downdoc converter upon the given input file path.
 
