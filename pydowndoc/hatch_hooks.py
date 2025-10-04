@@ -21,10 +21,20 @@ from hatchling.plugin import hookimpl
 from typed_classproperties import classproperty
 
 import pydowndoc
+from pydowndoc.conversion_backends import (
+    DowndocMarkdownConversionBackend,
+    PandocMarkdownConversionBackend,
+    PandocMultiMarkdownConversionBackend,
+    PandocPHPMarkdownExtraConversionBackend,
+    PandocRSTConversionBackend,
+    PandocTXTConversionBackend,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from typing import Final
+
+    from pydowndoc.conversion_backends import BaseConversionBackend
 
 __all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadata_hook")
 
@@ -46,6 +56,41 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
             raise TypeError(INVALID_PATH_TYPE_MESSAGE)
 
         return root / (raw_readme_path if raw_readme_path else "README.adoc")
+
+    @classmethod
+    def _get_conversion_backend(
+        cls, config: "Mapping[str, object]"
+    ) -> "type[BaseConversionBackend] | None":
+        raw_conversion_backend: "object | str" = config.get("backend", "")
+
+        if not isinstance(raw_conversion_backend, str):
+            INVALID_CONVERSION_BACKEND_TYPE_MESSAGE: Final[str] = (
+                f"{cls.PLUGIN_NAME}.backend must be a string."
+            )
+            raise TypeError(INVALID_CONVERSION_BACKEND_TYPE_MESSAGE)
+
+        raw_conversion_backend = raw_conversion_backend.strip()
+
+        if not raw_conversion_backend:
+            return None
+
+        try:
+            return {
+                conversion_backend.ID: conversion_backend
+                for conversion_backend in (
+                    DowndocMarkdownConversionBackend,
+                    PandocMarkdownConversionBackend,
+                    PandocMultiMarkdownConversionBackend,
+                    PandocPHPMarkdownExtraConversionBackend,
+                    PandocTXTConversionBackend,
+                    PandocRSTConversionBackend,
+                )
+            }[raw_conversion_backend]
+        except KeyError as e:
+            INVALID_CONVERSION_BACKEND_MESSAGE: Final[str] = (
+                f"Invalid conversion_backend: {raw_conversion_backend!r}."
+            )
+            raise ValueError(INVALID_CONVERSION_BACKEND_MESSAGE) from e
 
     @classmethod
     def _is_project_misconfigured(cls, metadata: "Mapping[str, object]") -> bool:
@@ -80,10 +125,23 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
         if not readme_path.is_file():
             raise FileNotFoundError(str(readme_path))
 
+        conversion_backend: type[BaseConversionBackend] | None = self._get_conversion_backend(
+            self.config
+        )
+
         metadata["readme"] = {
             "content-type": "text/markdown",
-            "text": pydowndoc.convert_file(
-                readme_path, output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING
+            "text": (
+                pydowndoc.convert_file(
+                    readme_path,
+                    output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
+                    backend=conversion_backend,
+                )
+                if conversion_backend is not None
+                else pydowndoc.convert_file(
+                    readme_path,
+                    output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
+                )
             ),
         }
 
