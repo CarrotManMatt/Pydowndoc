@@ -4,8 +4,14 @@ import itertools
 import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, overload, override
+from typing import TYPE_CHECKING, overload
+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
