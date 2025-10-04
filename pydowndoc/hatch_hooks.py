@@ -24,7 +24,7 @@ import pydowndoc
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
-    from typing import Final, Union
+    from typing import Final
 
 __all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadata_hook")
 
@@ -39,7 +39,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
-        raw_readme_path: Union[object, str] = config.get("path", "")
+        raw_readme_path: "object | str" = config.get("path", "")
 
         if not isinstance(raw_readme_path, str):
             INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
@@ -52,7 +52,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
         if "readme" in metadata:
             return True
 
-        dynamic: Union[object, Collection[object]] = metadata.get("dynamic", [])
+        dynamic: "object | Collection[object]" = metadata.get("dynamic", [])
         if not isinstance(dynamic, Collection):
             INVALID_DYNAMIC_TYPE_MESSAGE: Final[str] = (
                 "'dynamic' field within `[project]` must be an array."
@@ -82,12 +82,9 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
         metadata["readme"] = {
             "content-type": "text/markdown",
-            "text": pydowndoc.run(
-                readme_path,
-                output="-",
-                process_capture_output=True,
-                process_check_return_code=True,
-            ).stdout.decode(),
+            "text": pydowndoc.convert_file(
+                readme_path, output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING
+            ),
         }
 
         if isinstance(metadata["dynamic"], Iterable):

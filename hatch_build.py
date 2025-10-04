@@ -19,7 +19,7 @@ from hatchling.metadata.plugin.interface import MetadataHookInterface
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
-    from typing import Final, LiteralString, Union
+    from typing import Final, LiteralString
 
 __all__: "Sequence[str]" = ("PydowndocCustomReadmeMetadataHook",)
 
@@ -54,7 +54,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
         if "readme" in metadata:
             return True
 
-        dynamic: Union[object | Collection[object]] = metadata.get("dynamic", [])
+        dynamic: "object | Collection[object]" = metadata.get("dynamic", [])
         if not isinstance(dynamic, Collection):
             INVALID_DYNAMIC_TYPE_MESSAGE: Final[str] = (
                 "'dynamic' field within `[project]` must be an array."
@@ -65,7 +65,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _perform_conversion(cls, readme_path: "Path") -> str:
-        downdoc_executable: Union[str, None] = shutil.which("downdoc")
+        downdoc_executable: "str | None" = shutil.which("downdoc")
         if downdoc_executable is None:
             DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
                 "The downdoc executable could not be found."
@@ -73,10 +73,11 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
 
         return subprocess.run(
-            (downdoc_executable, "--output", "-", str(readme_path)),
+            (downdoc_executable, "--output", "-", "--", str(readme_path)),
             capture_output=True,
+            text=True,
             check=True,
-        ).stdout.decode()
+        ).stdout
 
     @override
     def update(self, metadata: dict[str, object]) -> None:
