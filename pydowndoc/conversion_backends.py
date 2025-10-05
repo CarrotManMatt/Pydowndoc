@@ -337,21 +337,22 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
     @classmethod
     @override
     def get_version(cls) -> str:
-        return f"{
-            subprocess.run(
-                (cls._get_asciidoctor_executable_path(), '--version'),
-                check=True,
-                text=True,
-                capture_output=True,
-            ).stdout.strip()
-        }\n{
-            subprocess.run(
-                (cls._get_pandoc_executable_path(), '--version'),
-                check=True,
-                text=True,
-                capture_output=True,
-            ).stdout.strip()
-        }"
+        # NOTE: Intermediary variables are used to prevent 'Unterminated f-string literal' errors in older Python versions
+        asciidoctor_version: str = subprocess.run(
+            (cls._get_asciidoctor_executable_path(), "--version"),
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+
+        pandoc_version: str = subprocess.run(
+            (cls._get_pandoc_executable_path(), "--version"),
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+
+        return f"{asciidoctor_version}\n{pandoc_version}"
 
     @classmethod
     @override
