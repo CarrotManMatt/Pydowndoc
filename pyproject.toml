@@ -40,11 +40,12 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.9",
     "Topic :: Software Development",
+    "Topic :: Text Processing :: Markup",
     "Typing :: Typed",
 ]
 dependencies = [
     "hatchling",
-    "typed_classproperties>1.0.2",
+    "typed_classproperties>=1.3",
     "typing-extensions; python_version < '3.12'",
 ]
 dynamic = ["description", "readme", "version"]
