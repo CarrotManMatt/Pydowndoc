@@ -46,7 +46,7 @@ class BaseConversionBackend(abc.ABC):
     @classproperty
     @abc.abstractmethod
     def ID(cls) -> "LiteralString":  # noqa: D102, N802
-        raise NotImplementedError
+        pass
 
     @classmethod
     @abc.abstractmethod
@@ -58,7 +58,7 @@ class BaseConversionBackend(abc.ABC):
     def _convert_string(
         cls, asciidoc_content: str, *, attributes: "Mapping[str, str] | None" = None
     ) -> str:
-        raise NotImplementedError
+        pass
 
     @final
     @classmethod
@@ -111,7 +111,7 @@ class BaseConversionBackend(abc.ABC):
         postpublish: bool = False,
         prepublish: bool = False,
     ) -> "str | None":
-        raise NotImplementedError
+        pass
 
     @overload
     @classmethod
@@ -306,12 +306,12 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
     @classproperty
     @abc.abstractmethod
     def PANDOC_ID(cls) -> "LiteralString":  # noqa: N802
-        raise NotImplementedError
+        pass
 
     @classproperty
     @abc.abstractmethod
     def FILE_SUFFIX(cls) -> "LiteralString":  # noqa: N802
-        raise NotImplementedError
+        pass
 
     @classmethod
     def _get_asciidoctor_executable_path(cls) -> str:
