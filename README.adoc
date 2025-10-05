@@ -23,8 +23,10 @@ v1.2, 26/01/2025
 :url-python: {url-python-home}
 :url-python-download: {url-python-home}/downloads
 :url-python-wiki: https://docs.python.org/3
+:url-python-wiki-type-annotations: https://typing.python.org/en/latest/spec/annotations.html
 :url-python-wiki-virtual-environments: {url-python-wiki}/tutorial/venv
 :url-python-wiki-extras: https://packaging.python.org/en/latest/specifications/dependency-specifiers#extras
+:url-python-wiki-packaging-supported-readme-formats: https://packaging.python.org/en/latest/specifications/core-metadata/#core-metadata-description-content-type
 :url-pre-commit-home: https://pre-commit.com
 :url-pre-commit: {url-pre-commit-home}
 :url-ruff-home: https://ruff.rs
@@ -33,7 +35,20 @@ v1.2, 26/01/2025
 :url-mypy: {url-mypy-home}
 :url-github-wiki-readme: {_url-github-wiki}/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes
 :url-downdoc-repository: {_url-github}/opendevise/downdoc
+:url-pandoc-home: https://pandoc.org/
+:url-pandoc: {url-pandoc-home}
+:url-pandoc-markdown: {url-pandoc-home}/MANUAL.html#pandocs-markdown
+:url-docbook-home: https://docbook.org
+:url-docbook: {url-docbook-home}
+:url-multimarkdown-home: https://fletcherpenney.net/multimarkdown
+:url-multimarkdown: {url-multimarkdown-home}
+:url-php-markdown-extra: https://michelf.ca/projects/php-markdown/extra
 :url-wiki-markdown: {_url-wikipedia}/Markdown
+:url-wiki-plaintext: {_url-wikipedia}/Plaintext
+:url-wiki-restructuredtext: {_url-wikipedia}/ReStructuredText
+:url-wiki-docstrings: {_url-wikipedia}/Docstring#Python
+:url-wiki-ide: {_url-wikipedia}/Integrated_development_environment
+:url-wiki-lsp: {_url-wikipedia}/Language_Server_Protocol
 :url-downdoc: {url-downdoc-repository}
 :url-asciidoc-home: https://asciidoc.org
 :url-asciidoc: {url-asciidoc-home}
@@ -54,7 +69,14 @@ v1.2, 26/01/2025
 
 :labelled-url-python: {url-python}[Python]
 :labelled-url-downdoc: {url-downdoc}[downdoc]
+:labelled-url-pandoc: {url-pandoc}[Pandoc]
+:labelled-url-docbook: {url-docbook}[DocBook]
+:labelled-url-multimarkdown: {url-multimarkdown}[MultiMarkdown]
+:labelled-url-php-markdown-extra: {url-php-markdown-extra}[PHP Markdown Extra]
 :labelled-url-asciidoc: {url-asciidoc}[AsciiDoc]
+:labelled-url-asciidoc-asciidoctor: {url-asciidoc-asciidoctor}[Asciidoctor]
+:labelled-url-wiki-plaintext: {url-wiki-plaintext}[Plaintext]
+:labelled-url-wiki-restructuredtext: {url-wiki-restructuredtext}[reStructuredText]
 :labelled-url-wiki-markdown: {url-wiki-markdown}[Markdown]
 :labelled-url-wiki-readme: {url-github-wiki-readme}[README]
 :labelled-url-pypi: {url-pypi}[PyPI]
@@ -83,7 +105,7 @@ A {labelled-url-python} wrapper around the latest-built binary of {labelled-url-
 * Run {labelled-url-downdoc} from the CLI within your {url-python-wiki-virtual-environments}[virtual environment]
 * Use {labelled-url-pypi} as the single installation location of your {labelled-url-python} project tooling
 * Use link:pass:macros[pydowndoc/__init__.py][the API] to convert files using your own {labelled-url-python} code/scripts
-* Use the {labelled-url-hatch} plugin to convert your project's README.adoc file to {labelled-url-wiki-markdown}, when building your package
+* Use the {labelled-url-hatch} plugin to convert your project's README.adoc file to {labelled-url-wiki-markdown} (or any other {url-python-wiki-packaging-supported-readme-formats}[PyPI supported README format]), when building your package
 
 == Installation
 
@@ -200,6 +222,17 @@ original_content: str = ...
 converted_content: str = pydowndoc.convert_string(original_content)
 ----
 
+.Use an alternative conversion backend
+[source,python]
+----
+from pathlib import Path
+
+import pydowndoc
+from pydowndoc.conversion_backends import PandocMultiMarkdownConversionBackend
+
+pydowndoc.convert_file(Path("MyNotes.adoc"), backend=PandocMultiMarkdownConversionBackend)
+----
+
 .Retrieve the version number of the currently installed downdoc executable
 [source,python]
 ----
@@ -208,13 +241,7 @@ import pydowndoc
 version_string: str = pydowndoc.get_version()
 ----
 
-.Retrieve the help text given by running downdoc with the `+--help+` flag
-[source,python]
-----
-import pydowndoc
-
-help_text: str = pydowndoc.get_help()
-----
+TIP: This project includes function {url-wiki-docstrings}[docstrings] and modern {url-python-wiki-type-annotations}[type annotations], allowing you to search for API functionality using your {url-wiki-ide}[IDE] or any program with Python {url-wiki-lsp}[LSP support].
 
 == Use as a Hatch build hook
 
@@ -264,6 +291,14 @@ downdoc-readme = {}
 path = "README2.adoc"
 ----
 
+.. Using an alternative conversion backend
++
+[source,toml]
+----
+[tool.hatch.metadata.hooks.downdoc-readme]
+backend = "pandoc-md-mmd"
+----
+
 .A full example of a `+pyproject.toml+` file
 [%collapsible]
 ====
@@ -280,19 +315,34 @@ requires = ["hatchling", "Pydowndoc[bin]"]
 
 [tool.hatch.metadata.hooks.downdoc-readme]
 path = "README2.adoc"
+path = "pandoc-md-mmd"
 ----
 ====
 
 === Configuration Options
 
-[cols="1,1,1,3"]
+[cols="1,1,1,4"]
 |===
 |Option |Type |Default |Description
 
 |`+path+`
 |`+str+`
 |`+README.adoc+`
-|The location of your AsciiDoc to be converted to {labelled-url-wiki-markdown}, to be used as the project's {labelled-url-wiki-readme} file
+|The location of the AsciiDoc file to be converted to {labelled-url-wiki-markdown} and used as the project's {labelled-url-wiki-readme} file
+
+|`+backend+`
+|`+str+`
+|`+downdoc-md+`
+a|The conversion backend used to convert from AsciiDoc to any other {url-python-wiki-packaging-supported-readme-formats}[PyPI supported README format].
+
+[horizontal]
+.Supported Conversion Backends
+`+downdoc-md+`:: {labelled-url-wiki-markdown} converted by {labelled-url-downdoc}
+`+pandoc-md+`:: {url-pandoc-markdown}[Pandoc's Markdown] converted by {labelled-url-pandoc} & {labelled-url-asciidoc-asciidoctor} (via {labelled-url-docbook})
+`+pandoc-multi-md+`:: {labelled-url-multimarkdown} converted by {labelled-url-pandoc} & {labelled-url-asciidoc-asciidoctor} (via {labelled-url-docbook})
+`+pandoc-php-md-extra+`:: {labelled-url-php-markdown-extra} converted by {labelled-url-pandoc} & {labelled-url-asciidoc-asciidoctor} (via {labelled-url-docbook})
+`+pandoc-txt+`:: {labelled-url-wiki-plaintext} converted by {labelled-url-pandoc} & {labelled-url-asciidoc-asciidoctor} (via {labelled-url-docbook})
+`+pandoc-rst+`:: {labelled-url-wiki-restructuredtext} converted by {labelled-url-pandoc} & {labelled-url-asciidoc-asciidoctor} (via {labelled-url-docbook})
 |===
 
 == Upgrading

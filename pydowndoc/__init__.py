@@ -1,117 +1,51 @@
 """Python wrapper for converting/reducing AsciiDoc files back to Markdown."""
 
-import itertools
-import shlex
-import shutil
-import subprocess
-import sys
-from pathlib import Path
 from typing import TYPE_CHECKING, overload
 
-if sys.version_info >= (3, 12):
-    from typing import override
-else:
-    from typing_extensions import override
+from ._utils import OUTPUT_CONVERSION_TO_STRING, ConversionError
+from .conversion_backends import DowndocMarkdownConversionBackend
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
-    from typing import Final
+    from collections.abc import Mapping, Sequence
+    from pathlib import Path
+
+    from ._utils import ConversionOutputDestinationFlag
+    from .conversion_backends import BaseConversionBackend
 
 __all__: "Sequence[str]" = (
     "OUTPUT_CONVERSION_TO_STRING",
     "ConversionError",
     "convert_file",
     "convert_string",
-    "get_help",
     "get_version",
 )
 
 
-class _ConversionOutputDestinationFlag:
-    pass
-
-
-OUTPUT_CONVERSION_TO_STRING: "Final[_ConversionOutputDestinationFlag]" = (
-    _ConversionOutputDestinationFlag()
-)
-
-
-class ConversionError(RuntimeError):
-    """Raised when an error occurs while using the downdoc binary in a subprocess."""
-
-    @override
-    def __init__(
-        self,
-        message: "str | None" = None,
-        *,
-        subprocess_return_code: "int | None" = None,
-        subprocess_stderr: "str | None" = None,
-    ) -> None:
-        self.message: "str | None" = message
-        self.subprocess_return_code: "int | None" = subprocess_return_code
-        self.subprocess_stderr: "str | None" = subprocess_stderr
-
-
-def _get_downdoc_executable() -> str:
-    downdoc_executable: "str | None" = shutil.which("downdoc")
-
-    if downdoc_executable is None:
-        DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
-            "The downdoc executable could not be found. "
-            "Ensure it is installed (E.g `uv add Pydowndoc[bin]`). "
-        )
-        raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
-
-    return downdoc_executable
-
-
-def _attributes_to_arguments(attributes: "Mapping[str, str] | None") -> "Iterable[str]":
-    if attributes is None:
-        attributes = {}
-
-    return itertools.chain.from_iterable(
-        ("--attribute", f"{shlex.quote(name)}={shlex.quote(val)}")
-        for name, val in attributes.items()
-    )
-
-
-def get_help() -> str:
+def get_version(
+    backend: "type[BaseConversionBackend]" = DowndocMarkdownConversionBackend,
+) -> str:
     """
-    Retrieve the downdoc help text output.
+    Retrieve the current version of the given conversion backend.
+
+    Arguments:
+        backend: The conversion backend to get the version of, defaults to `DOWNDOC_MD`.
 
     Returns:
-        downdoc's help text output.
+        Conversion backend's version text output.
 
     Raises:
-        subprocess.CalledProcessError: If calling the downdoc subprocess exited
+        subprocess.CalledProcessError: If calling the conversion backend subprocess exited
             with a non-zero exit code.
     """
-    return subprocess.run(
-        (_get_downdoc_executable(), "--help"), check=True, text=True, capture_output=True
-    ).stdout
-
-
-def get_version() -> str:
-    """
-    Retrieve the current downdoc version.
-
-    Returns:
-        downdoc's version text output.
-
-    Raises:
-        subprocess.CalledProcessError: If calling the downdoc subprocess exited
-            with a non-zero exit code.
-    """
-    return subprocess.run(
-        (_get_downdoc_executable(), "--version"), check=True, text=True, capture_output=True
-    ).stdout
+    return backend.get_version()
 
 
 @overload
 def convert_file(
     file_path: "Path",
     *,
-    output_location: _ConversionOutputDestinationFlag,
+    output_location: "ConversionOutputDestinationFlag",
+    backend: "type[BaseConversionBackend]" = ...,
     attributes: "Mapping[str, str] | None" = ...,
     postpublish: bool = ...,
     prepublish: bool = ...,
@@ -124,6 +58,7 @@ def convert_file(
     *,
     attributes: "Mapping[str, str] | None" = ...,
     output_location: "Path | None" = ...,
+    backend: "type[BaseConversionBackend]" = ...,
     postpublish: bool = ...,
     prepublish: bool = ...,
 ) -> None: ...
@@ -133,7 +68,8 @@ def convert_file(
     file_path: "Path",
     *,
     attributes: "Mapping[str, str] | None" = None,
-    output_location: "Path | _ConversionOutputDestinationFlag | None" = None,
+    output_location: "Path | ConversionOutputDestinationFlag | None" = None,
+    backend: "type[BaseConversionBackend]" = DowndocMarkdownConversionBackend,
     postpublish: bool = False,
     prepublish: bool = False,
 ) -> "str | None":
@@ -147,6 +83,7 @@ def convert_file(
             or `OUTPUT_CONVERSION_TO_STRING` to return as a string.
             By default (or when `None`), the output file will use the same name
             as the input file, with the extension changed to `.md`.
+        backend: The conversion backend to use, defaults to `downdoc-md`.
         postpublish: Whether to run the postpublish lifecycle routine (restore the input file).
         prepublish: Whether to run the prepublish lifecycle routine
             (convert and hide the input file).
@@ -158,37 +95,20 @@ def convert_file(
     Raises:
         ConversionError: When calling the downdoc subprocess exited with an error.
     """
-    if not file_path.is_file():
-        raise FileNotFoundError(file_path)
-
-    optional_arguments: list[str] = []
-
-    if isinstance(output_location, Path):
-        optional_arguments.extend(("--output", str(output_location)))
-    elif isinstance(output_location, _ConversionOutputDestinationFlag):
-        optional_arguments.extend(("--output", "-"))
-
-    if postpublish:
-        optional_arguments.extend("--postpublish")
-    if prepublish:
-        optional_arguments.extend("--prepublish")
-
-    return subprocess.run(
-        (
-            _get_downdoc_executable(),
-            *_attributes_to_arguments(attributes),
-            *optional_arguments,
-            "--",
-            str(file_path),
-        ),
-        check=True,
-        text=True,
-        capture_output=True,
-    ).stdout
+    return backend.convert_file(
+        file_path=file_path,
+        attributes=attributes,
+        output_location=output_location,
+        postpublish=postpublish,
+        prepublish=prepublish,
+    )
 
 
 def convert_string(
-    asciidoc_content: str, *, attributes: "Mapping[str, str] | None" = None
+    asciidoc_content: str,
+    *,
+    attributes: "Mapping[str, str] | None" = None,
+    backend: "type[BaseConversionBackend]" = DowndocMarkdownConversionBackend,
 ) -> str:
     """
     Execute the downdoc converter upon the given AsciiDoc content string.
@@ -196,6 +116,7 @@ def convert_string(
     Arguments:
         asciidoc_content: The string AsciiDoc content to convert.
         attributes: AsciiDoc attributes to be set while rendering AsciiDoc files.
+        backend: The conversion backend to use, defaults to `downdoc-md`.
 
     Returns:
         The converted Markdown output.
@@ -203,25 +124,4 @@ def convert_string(
     Raises:
         ConversionError: When calling the downdoc subprocess exited with an error.
     """
-    if not asciidoc_content.strip():
-        INVALID_ASCIIDOC_CONTENT_MESSAGE: Final[str] = "Cannot convert empty string content."
-        raise ValueError(INVALID_ASCIIDOC_CONTENT_MESSAGE)
-
-    ends_with_newline: bool = asciidoc_content.endswith("\n")
-
-    converted_string: str = subprocess.run(
-        (
-            _get_downdoc_executable(),
-            *_attributes_to_arguments(attributes),
-            "--output",
-            "-",
-            "--",
-            "-",
-        ),
-        check=True,
-        input=asciidoc_content,
-        text=True,
-        capture_output=True,
-    ).stdout
-
-    return converted_string if ends_with_newline else converted_string.removesuffix("\n")
+    return backend.convert_string(asciidoc_content=asciidoc_content, attributes=attributes)
