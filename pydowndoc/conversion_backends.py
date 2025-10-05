@@ -20,7 +20,12 @@ from ._utils import OUTPUT_CONVERSION_TO_STRING
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
-    from typing import Final, LiteralString, NoReturn
+    from typing import Final, NoReturn
+
+    if sys.version_info >= (3, 11):
+        from typing import LiteralString
+    else:
+        from typing_extensions import LiteralString
 
     from ._utils import ConversionOutputDestinationFlag
 

@@ -125,8 +125,8 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
         if not readme_path.is_file():
             raise FileNotFoundError(str(readme_path))
 
-        conversion_backend: type[BaseConversionBackend] | None = self._get_conversion_backend(
-            self.config
+        conversion_backend: "type[BaseConversionBackend] | None" = (
+            self._get_conversion_backend(self.config)
         )
 
         metadata["readme"] = {
