@@ -12,6 +12,8 @@ jobs:
         uses: ./.github/workflows/upload-downdoc-binaries.yaml
 
     uv-check:
+        env:
+            SKIP_MISSING_DOWNDOC: "True"
         runs-on: ubuntu-latest
 
         steps:
