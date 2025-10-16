@@ -36,7 +36,7 @@ __all__: "Sequence[str]" = (
 if TYPE_CHECKING:
 
     class _ProtocolBuildFunc(Protocol):
-        def __call__(self, directory: str, **build_data: object) -> str: ...
+        def __call__(self, directory: str, **build_data: object) -> str: ...  # noqa: CAR150
 
 
 class DowndocVersionHook(MetadataHookInterface):
@@ -52,14 +52,16 @@ class DowndocVersionHook(MetadataHookInterface):
             )
         )
 
-        if (
-            scm_version.epoch
-            or scm_version.pre
-            or scm_version.post
-            or scm_version.local
-            or any(
-                part is not None and (part + 1 > 999 or part + 1 < 1)
-                for part in (*scm_version.release, scm_version.dev)
+        if any(
+            (
+                scm_version.epoch,
+                scm_version.pre,
+                scm_version.post,
+                scm_version.local,
+                *(
+                    part is not None and (part + 1 > 999 or part + 1 < 1)
+                    for part in (*scm_version.release, scm_version.dev)
+                ),
             )
         ):
             VERSION_NUMBER_UNCONVERTABLE_MESSAGE: Final[str] = (
@@ -213,15 +215,15 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         return f"py3-none-{tag_match.group('platform')}"
 
     @override
-    def build_editable_explicit(self, directory: str, **build_data: object) -> str:
+    def build_editable_explicit(self, directory: str, **build_data: object) -> str:  # noqa: CAR150
         raise NotImplementedError
 
     @override
-    def build_editable_detection(self, directory: str, **build_data: object) -> str:
+    def build_editable_detection(self, directory: str, **build_data: object) -> str:  # noqa: CAR150
         raise NotImplementedError
 
     @override
-    def build_editable(self, directory: str, **build_data: object) -> str:
+    def build_editable(self, directory: str, **build_data: object) -> str:  # noqa: CAR150
         raise NotImplementedError
 
     @override
@@ -229,12 +231,12 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         return {"standard": self.build_standard}
 
     @override
-    def build_standard(self, directory: str, **build_data: object) -> str:
+    def build_standard(self, directory: str, **build_data: object) -> str:  # noqa: CAR150
         build_data["infer_tag"] = True
         build_data["pure_python"] = False
         self.target_config["bypass-selection"] = True
 
-        return super().build_standard(directory, **build_data)
+        return super().build_standard(directory, **build_data)  # noqa: CAR151
 
 
 def get_builder() -> (
