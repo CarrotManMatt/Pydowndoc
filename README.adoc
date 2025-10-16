@@ -1,9 +1,5 @@
 = Pydowndoc
-Matt Norton <matt@carrotmanmatt.com>
-v1.2, 26/01/2025
 
-:docinfodir: .asciidoctor
-:docinfo: shared
 :project-root: .
 
 :!example-caption:
