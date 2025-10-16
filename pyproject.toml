@@ -17,7 +17,7 @@ dev = [
     { include-group = "test" },
     { include-group = "type-check" },
 ]
-lint-format = ["ruff>=0.4"]
+lint-format = ["flake8-carrot>=0.1.2; python_version >= '3.14'", "ruff>=0.4"]
 pre-commit = ["pre-commit"]
 test = []
 type-check = ["mypy>=1.12"]
@@ -143,6 +143,7 @@ line-ending = "lf"
 quote-style = "double"
 
 [tool.ruff.lint]
+external = ["CAR"]
 ignore = [
     "C90",
     "COM812",
