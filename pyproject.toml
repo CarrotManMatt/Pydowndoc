@@ -7,6 +7,7 @@ requires = [
     "typing-extensions; python_version < '3.12'",
 ]
 
+
 [dependency-groups]
 build = ["hatch", "pip"]
 build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
@@ -20,6 +21,7 @@ lint-format = ["ruff>=0.4"]
 pre-commit = ["pre-commit"]
 test = []
 type-check = ["mypy>=1.12"]
+
 
 [project]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
@@ -78,6 +80,7 @@ downdoc-readme = "pydowndoc.hatch_hooks"
 Issues = "https://github.com/CarrotManMatt/Pydowndoc/issues"
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
+
 [tool.hatch.build]
 only-packages = true
 
@@ -91,6 +94,7 @@ docstring-description = {}
 [tool.hatch.version]
 raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
 source = "vcs"
+
 
 [tool.mypy]
 check_untyped_defs = true
@@ -125,6 +129,7 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
+
 
 [tool.ruff]
 indent-width = 4
@@ -206,10 +211,12 @@ max-returns = 10
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
 
+
 [tool.uv]
 default-groups = ["dev"]
 no-binary-package = ["Pydowndoc", "Pydowndoc-bin"]
 no-build = true
+package = true
 required-environments = [
     "sys_platform == 'darwin' and platform_machine == 'arm64'",
     "sys_platform == 'darwin' and platform_machine == 'x86_64'",
