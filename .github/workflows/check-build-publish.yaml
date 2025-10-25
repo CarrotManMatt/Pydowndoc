@@ -298,7 +298,7 @@ jobs:
                 enable-cache: true
 
             - name: Download ${{matrix.display_os}} ${{matrix.display_architecture}} downdoc Binaries
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 name: downdoc-${{matrix.os}}-${{matrix.architecture}}-binary
                 path: Pydowndoc-bin/downloads/
@@ -319,7 +319,7 @@ jobs:
               run: rm Pydowndoc-bin/dist/*-${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl
 
             - name: Save Build Artifacts
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               with:
                 name: built-pydowndoc-bin-${{matrix.os}}-${{matrix.architecture}}-package
                 path: Pydowndoc-bin/dist/
@@ -340,7 +340,7 @@ jobs:
                 fetch-depth: 0
 
             - name: Download Linux x86_64 downdoc Binary
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 name: downdoc-linux-x86-64-binary
                 path: ~/.local/bin/
@@ -362,7 +362,7 @@ jobs:
               run: uv build --build --no-sources
 
             - name: Save Build Artifacts
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               with:
                 name: built-pydowndoc-package
                 path: dist/
@@ -388,14 +388,14 @@ jobs:
                 enable-cache: true
 
             - name: Download Pydowndoc Build Artifacts
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 merge-multiple: true
                 path: dist/
                 pattern: built-pydowndoc-package
 
             - name: Download Pydowndoc-bin Build Artifacts
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 merge-multiple: true
                 path: dist/
@@ -424,14 +424,14 @@ jobs:
                 enable-cache: true
 
             - name: Download Pydowndoc Build Artifacts
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 merge-multiple: true
                 path: dist/
                 pattern: built-pydowndoc-package
 
             - name: Download Pydowndoc-bin Build Artifacts
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 merge-multiple: true
                 path: dist/
@@ -453,14 +453,14 @@ jobs:
         steps:
 
             - name: Download Pydowndoc Build Artifacts
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 merge-multiple: true
                 path: dist/
                 pattern: built-pydowndoc-package
 
             - name: Download Pydowndoc-bin Build Artifacts
-              uses: actions/download-artifact@v5
+              uses: actions/download-artifact@v6
               with:
                 merge-multiple: true
                 path: dist/
