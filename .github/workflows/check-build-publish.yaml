@@ -331,7 +331,7 @@ jobs:
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Build Pydowndoc package
-        needs: [flake8, mypy-package, mypy-scripts, pre-commit, ruff-lint, uv-check]
+        needs: [flake8, mypy-package, mypy-scripts, pre-commit, ruff-lint, uv-check, upload-downdoc-binaries]
         runs-on: ubuntu-latest
 
         steps:
