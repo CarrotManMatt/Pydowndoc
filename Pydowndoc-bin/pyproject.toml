@@ -1,12 +1,14 @@
-[build-system]
-build-backend = "hatchling.build"
-requires = ["hatchling", "packaging", "setuptools-scm"]
-
 [project]
+name = "Pydowndoc-bin"
+description = "Installable package for the downdoc binary executable."
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Dan Allen", email = "dan@opendevise.com" },
-    { name = "Matt Norton", email = "matt@carrotmanmatt.com" },
+    { name = "Matt Norton", email = "matt@carrotmanmatt.com" }
 ]
+maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
+keywords = ["AsciiDoc", "Markdown", "converter", "documentation"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -15,29 +17,27 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
-    "Topic :: Software Development",
+    "Topic :: Software Development"
 ]
-description = "Installable package for the downdoc binary executable."
 dynamic = ["version"]
-keywords = ["AsciiDoc", "Markdown", "converter", "documentation"]
-license = "MIT"
-license-files = ["LICENSE"]
-maintainers = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
-name = "Pydowndoc-bin"
 
 [project.readme]
-content-type = "text/markdown"
 text = """
 Installable package for the downdoc binary executable.
 
 See [Pydowndoc](https://pypi.org/project/Pydowndoc) for the primary package and documentation.
 """
+content-type = "text/markdown"
 
 [project.urls]
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
+[build-system]
+requires = ["hatchling", "packaging", "setuptools-scm"]
+build-backend = "hatchling.build"
+
 [tool.hatch.metadata.hooks]
-custom = {}
+custom = {  }
 
 [tool.uv]
 managed = false

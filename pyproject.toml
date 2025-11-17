@@ -1,57 +1,9 @@
-[build-system]
-build-backend = "hatchling.build"
-requires = [
-    "hatch-docstring-description",
-    "hatch-vcs",
-    "hatchling",
-    "typing-extensions; python_version < '3.12'",
-]
-
-
-[dependency-groups]
-build = ["hatch", "pip"]
-build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
-dev = [
-    { include-group = "lint-format" },
-    { include-group = "pre-commit" },
-    { include-group = "test" },
-    { include-group = "type-check" },
-]
-lint-format = ["flake8-carrot>=0.1.2; python_version >= '3.14'", "ruff>=0.4"]
-pre-commit = ["pre-commit"]
-test = []
-type-check = ["mypy>=1.12"]
-
-
 [project]
+name = "Pydowndoc"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [{ name = "Matt Norton", email = "matt@carrotmanmatt.com" }]
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Environment :: Console",
-    "Framework :: Hatch",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
-    "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Programming Language :: Python :: 3.15",
-    "Programming Language :: Python :: 3.9",
-    "Topic :: Software Development",
-    "Topic :: Text Processing :: Markup",
-    "Typing :: Typed",
-]
-dependencies = [
-    "hatchling",
-    "typed_classproperties>=1.3",
-    "typing-extensions; python_version < '3.12'",
-]
-dynamic = ["description", "readme", "version"]
 keywords = [
     "AsciiDoc",
     "Hatch",
@@ -65,21 +17,66 @@ keywords = [
     "metadata",
     "packaging",
     "pypi",
-    "pyproject.toml",
+    "pyproject.toml"
 ]
-license = "Apache-2.0"
-license-files = ["LICENSE"]
-name = "Pydowndoc"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Framework :: Hatch",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Software Development",
+    "Topic :: Text Processing :: Markup",
+    "Typing :: Typed"
+]
+dependencies = [
+    "hatchling",
+    "typed_classproperties>=1.3",
+    "typing-extensions; python_version < '3.12'"
+]
 optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
-requires-python = ">=3.9"
-
-[project.entry-points.hatch]
-downdoc-readme = "pydowndoc.hatch_hooks"
+dynamic = ["description", "readme", "version"]
 
 [project.urls]
 Issues = "https://github.com/CarrotManMatt/Pydowndoc/issues"
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
+[project.entry-points.hatch]
+downdoc-readme = "pydowndoc.hatch_hooks"
+
+[dependency-groups]
+dev = [
+    { include-group = "lint-format" },
+    { include-group = "pre-commit" },
+    { include-group = "test" },
+    { include-group = "type-check" }
+]
+build = ["hatch", "pip"]
+build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
+lint-format = ["flake8-carrot>=0.1.2; python_version >= '3.14'", "ruff>=0.4"]
+pre-commit = ["pre-commit"]
+test = []
+type-check = ["mypy>=1.18.1"]
+
+[build-system]
+requires = [
+    "hatch-docstring-description",
+    "hatch-vcs",
+    "hatchling",
+    "typing-extensions; python_version < '3.12'"
+]
+build-backend = "hatchling.build"
 
 [tool.hatch.build]
 only-packages = true
@@ -89,12 +86,11 @@ artifacts = ["README.adoc"]
 
 [tool.hatch.metadata.hooks]
 custom = { readme-path = "README.adoc" }
-docstring-description = {}
+docstring-description = {  }
 
 [tool.hatch.version]
 raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
 source = "vcs"
-
 
 [tool.mypy]
 check_untyped_defs = true
@@ -118,18 +114,20 @@ enable_error_code = [
     "redundant-self",
     "truthy-bool",
     "truthy-iterable",
-    "unused-awaitable",
+    "unused-awaitable"
 ]
 extra_checks = true
 mypy_path = "stubs"
 no_implicit_reexport = true
+strict_bytes = true
 strict_equality = true
+strict_equality_for_none = true  # tombi: lint.rules.key-not-allowed.disabled = true
 warn_redundant_casts = true
 warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
-
+warn_incomplete_stub = true
 
 [tool.ruff]
 indent-width = 4
@@ -167,7 +165,7 @@ ignore = [
     "TD002",
     "TD003",
     "UP037",
-    "W191",
+    "W191"
 ]
 select = ["ALL", "D204", "D213", "D401"]
 task-tags = ["BUG", "DONE", "FIXME", "HACK", "IDEA", "ISSUE", "NOBUG", "NOTE", "REQ", "TODO"]
@@ -183,13 +181,13 @@ strict = true
 [tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
     "typed_classproperties.cached_classproperty",
-    "typed_classproperties.classproperty",
+    "typed_classproperties.classproperty"
 ]
 extend-ignore-names = [
     "BROKEN_*_MESSAGE",
     "INVALID_*_MESSAGE",
     "NO_*_MESSAGE",
-    "OUTPUT_CONVERSION_TO_STRING",
+    "OUTPUT_CONVERSION_TO_STRING"
 ]
 
 [tool.ruff.lint.pycodestyle]
@@ -200,7 +198,7 @@ max-doc-length = 95
 convention = "google"
 property-decorators = [
     "typed_classproperties.cached_classproperty",
-    "typed_classproperties.classproperty",
+    "typed_classproperties.classproperty"
 ]
 
 [tool.ruff.lint.pylint]
@@ -212,6 +210,9 @@ max-returns = 10
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
 
+[tool.tombi.format.rules]
+indent-width = 4
+line-width = 95
 
 [tool.uv]
 default-groups = ["dev"]
@@ -223,7 +224,7 @@ required-environments = [
     "sys_platform == 'darwin' and platform_machine == 'x86_64'",
     "sys_platform == 'linux' and platform_machine == 'aarch64'",
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
-    "sys_platform == 'win32' and platform_machine == 'AMD64'",
+    "sys_platform == 'win32' and platform_machine == 'AMD64'"
 ]
 required-version = ">=0.5.21"
 trusted-publishing = "always"
