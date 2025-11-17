@@ -263,7 +263,7 @@ jobs:
                       display_architecture: x86_64
                       display_os: macOS
                       os: macos
-                      runner: macos-13
+                      runner: macos-15-intel
 
                     - architecture: arm64
                       auditwheel_architecture: aarch64

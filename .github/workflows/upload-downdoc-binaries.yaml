@@ -40,7 +40,7 @@ jobs:
                       downdoc_binary_suffix: ""
                       downdoc_os: macos
                       os: macos
-                      runner: macos-13
+                      runner: macos-15-intel
 
                     - architecture: arm64
                       container: "{\"image\": \"quay.io/pypa/manylinux_2_28_aarch64\"}"
