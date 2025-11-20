@@ -64,8 +64,8 @@ dev = [
 ]
 build = ["hatch", "pip"]
 build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
-lint-format = ["flake8-carrot>=0.1.2; python_version >= '3.14'", "ruff>=0.4"]
-pre-commit = ["pre-commit"]
+lint-format = ["flake8-carrot>=0.1.2; python_version >= '3.14'", "ruff>=0.13"]
+pre-commit = ["pre-commit>=4.0", { include-group = "lint-format" }]
 test = []
 type-check = ["mypy>=1.18.1"]
 

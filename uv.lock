@@ -804,8 +804,10 @@ lint-format = [
     { name = "ruff" },
 ]
 pre-commit = [
+    { name = "flake8-carrot", marker = "python_full_version >= '3.14'" },
     { name = "pre-commit", version = "4.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "pre-commit", version = "4.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "ruff" },
 ]
 type-check = [
     { name = "mypy" },
@@ -834,14 +836,18 @@ build-dev = [
 dev = [
     { name = "flake8-carrot", marker = "python_full_version >= '3.14'", specifier = ">=0.1.2" },
     { name = "mypy", specifier = ">=1.18.1" },
-    { name = "pre-commit" },
-    { name = "ruff", specifier = ">=0.4" },
+    { name = "pre-commit", specifier = ">=4.0" },
+    { name = "ruff", specifier = ">=0.13" },
 ]
 lint-format = [
     { name = "flake8-carrot", marker = "python_full_version >= '3.14'", specifier = ">=0.1.2" },
-    { name = "ruff", specifier = ">=0.4" },
+    { name = "ruff", specifier = ">=0.13" },
 ]
-pre-commit = [{ name = "pre-commit" }]
+pre-commit = [
+    { name = "flake8-carrot", marker = "python_full_version >= '3.14'", specifier = ">=0.1.2" },
+    { name = "pre-commit", specifier = ">=4.0" },
+    { name = "ruff", specifier = ">=0.13" },
+]
 test = []
 type-check = [{ name = "mypy", specifier = ">=1.18.1" }]
 
