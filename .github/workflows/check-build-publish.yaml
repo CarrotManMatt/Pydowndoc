@@ -112,6 +112,9 @@ jobs:
                   ARGS="--no-group dev --group type-check"
                 elif [ "${{matrix.component}}" == "scripts" ]; then
                   ARGS="--only-group type-check --only-group build-dev"
+                else
+                  echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
+                  exit 1
                 fi
 
                 uv sync $ARGS
@@ -132,6 +135,9 @@ jobs:
                   ARGS="pydowndoc/"
                 elif [ "${{matrix.component}}" == "scripts" ]; then
                   ARGS="hatch_build.py"
+                else
+                  echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
+                  exit 1
                 fi
 
                 uv run -- mypy $ARGS
