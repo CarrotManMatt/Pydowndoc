@@ -30,7 +30,9 @@ See [Pydowndoc](https://pypi.org/project/Pydowndoc) for the primary package and 
 content-type = "text/markdown"
 
 [project.urls]
-Repository = "https://github.com/CarrotManMatt/Pydowndoc"
+Issues = "https://github.com/opendevise/downdoc/issues"
+Releases = "https://github.com/opendevise/downdoc/tags"
+Repository = "https://github.com/CarrotManMatt/Pydowndoc/tree/main/Pydowndoc-bin"
 
 [build-system]
 requires = ["hatchling", "packaging", "setuptools-scm"]

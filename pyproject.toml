@@ -50,6 +50,7 @@ dynamic = ["description", "readme", "version"]
 
 [project.urls]
 Issues = "https://github.com/CarrotManMatt/Pydowndoc/issues"
+Releases = "https://github.com/CarrotManMatt/Pydowndoc/releases"
 Repository = "https://github.com/CarrotManMatt/Pydowndoc"
 
 [project.entry-points.hatch]
@@ -64,7 +65,11 @@ dev = [
 ]
 build = ["hatch", "pip"]
 build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
-lint-format = ["flake8-carrot>=0.1.2; python_version >= '3.14'", "ruff>=0.13"]
+lint-format = [
+    "flake8-carrot>=0.1.2; python_version >= '3.14'",
+    "flake8-pyproject>=1.2; python_version >= '3.14'",
+    "ruff>=0.13"
+]
 pre-commit = ["pre-commit>=4.0", { include-group = "lint-format" }]
 test = []
 type-check = ["mypy>=1.18.1"]
@@ -77,6 +82,11 @@ requires = [
     "typing-extensions; python_version < '3.12'"
 ]
 build-backend = "hatchling.build"
+
+[tool.flake8]
+select = ["CAR"]
+extend_exclude = [".venv/"]
+require_plugins = ["flake8-carrot"]
 
 [tool.hatch.build]
 only-packages = true
