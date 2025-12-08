@@ -93,13 +93,23 @@ repos:
           require_serial: true
           types: [python]
 
-        - id: pyroma
+        - id: pyroma-Pydowndoc
           args: [--min=10]
           description: Check how well a Python package conforms to best practices.  # yamllint disable-line rule:key-ordering
           entry: env SKIP_MISSING_DOWNDOC=True pyroma -d .  # yamllint disable-line rule:key-ordering
           language: python
           always_run: true
-          name: Check package with Pyroma
+          name: Check Pydowndoc package with Pyroma
+          pass_filenames: false
+          require_serial: true
+
+        - id: pyroma-Pydowndoc-bin
+          args: [--min=10, --skip-tests, "PythonClassifierVersion,PythonRequiresVersion"]
+          description: Check how well a Python package conforms to best practices.  # yamllint disable-line rule:key-ordering
+          entry: env SKIP_MISSING_DOWNDOC=True pyroma -d Pydowndoc-bin/  # yamllint disable-line rule:key-ordering
+          language: python
+          always_run: true
+          name: Check Pydowndoc-bin package with Pyroma
           pass_filenames: false
           require_serial: true
 
