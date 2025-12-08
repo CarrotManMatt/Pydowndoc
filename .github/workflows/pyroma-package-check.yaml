@@ -51,4 +51,5 @@ jobs:
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
               name: Run pyroma
-              run: uv run -- pyroma --min=10 --pypi --skip-test BusFactor ${{matrix.package-name}}
+              run: uv run -- pyroma --min=10 --pypi --skip-tests BusFactor${{matrix.package-name=='Pydowndoc-bin'&&',PythonClassifierVersion,PythonRequiresVersion,SDist'||''}}
+                ${{matrix.package-name}}
