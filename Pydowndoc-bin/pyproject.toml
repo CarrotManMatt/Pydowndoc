@@ -44,6 +44,3 @@ custom = {  }
 managed = false
 package = false
 trusted-publishing = "always"
-
-[tool.uv.sources]
-pyroma = { git = "https://github.com/CarrotManMatt/pyroma", branch = "patch-1" }
