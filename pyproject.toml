@@ -69,7 +69,7 @@ lint-format = [
     "flake8-pyproject>=1.2; python_version >= '3.14'",
     "ruff>=0.13"
 ]
-package-analysis = ["pyroma>=5.0"]
+package-analysis = ["pyroma>=5.0.1"]
 pre-commit = [
     "pre-commit>=4.0",
     { include-group = "lint-format" },
@@ -230,7 +230,7 @@ line-width = 95
 
 [tool.uv]
 default-groups = ["dev"]
-no-binary-package = ["Pydowndoc", "Pydowndoc-bin", "pyroma"]
+no-binary-package = ["Pydowndoc", "Pydowndoc-bin"]
 no-build = true
 package = true
 required-environments = [
@@ -245,7 +245,6 @@ trusted-publishing = "always"
 
 [tool.uv.sources]
 Pydowndoc-bin = { path = "Pydowndoc-bin/" }
-pyroma = { git = "https://github.com/CarrotManMatt/pyroma", branch = "patch-1" }
 
 [[tool.uv.index]]
 explicit = true

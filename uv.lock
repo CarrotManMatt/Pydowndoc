@@ -1268,7 +1268,7 @@ dev = [
     { name = "flake8-pyproject", marker = "python_full_version >= '3.14'", specifier = ">=1.2" },
     { name = "mypy", specifier = ">=1.18.1" },
     { name = "pre-commit", specifier = ">=4.0" },
-    { name = "pyroma", git = "https://github.com/CarrotManMatt/pyroma?branch=patch-1" },
+    { name = "pyroma", specifier = ">=5.0.1" },
     { name = "ruff", specifier = ">=0.13" },
 ]
 lint-format = [
@@ -1276,12 +1276,12 @@ lint-format = [
     { name = "flake8-pyproject", marker = "python_full_version >= '3.14'", specifier = ">=1.2" },
     { name = "ruff", specifier = ">=0.13" },
 ]
-package-analysis = [{ name = "pyroma", git = "https://github.com/CarrotManMatt/pyroma?branch=patch-1" }]
+package-analysis = [{ name = "pyroma", specifier = ">=5.0.1" }]
 pre-commit = [
     { name = "flake8-carrot", marker = "python_full_version >= '3.14'", specifier = ">=0.1.2" },
     { name = "flake8-pyproject", marker = "python_full_version >= '3.14'", specifier = ">=1.2" },
     { name = "pre-commit", specifier = ">=4.0" },
-    { name = "pyroma", git = "https://github.com/CarrotManMatt/pyroma?branch=patch-1" },
+    { name = "pyroma", specifier = ">=5.0.1" },
     { name = "ruff", specifier = ">=0.13" },
 ]
 test = []
@@ -1329,8 +1329,8 @@ wheels = [
 
 [[package]]
 name = "pyroma"
-version = "5.1.dev0"
-source = { git = "https://github.com/CarrotManMatt/pyroma?branch=patch-1#86af2ddf2a1d0e5b77e7457d316495f9f30953d7" }
+version = "5.0.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "build" },
     { name = "docutils" },
@@ -1339,6 +1339,10 @@ dependencies = [
     { name = "requests" },
     { name = "setuptools" },
     { name = "trove-classifiers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0b/68/a91ab78e5d7ff88eaaa10cefc948a07723d263e9a443e3650b32fbf0ac01/pyroma-5.0.1.tar.gz", hash = "sha256:703ae972e53e16be836966d03cd387906ecf32d64992345a61f2ed15805aee56", size = 67392, upload-time = "2025-12-09T10:10:22.357Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/cd/300d42aa7675d2ce66fea380177c19ad9f8ffad01295160a06e257360d73/pyroma-5.0.1-py3-none-any.whl", hash = "sha256:e71fd3e0f213b36870a607eccf491241dbadf5462ec1cdda94d08bfa1c26951e", size = 23012, upload-time = "2025-12-09T10:10:20.578Z" },
 ]
 
 [[package]]
