@@ -109,20 +109,20 @@ jobs:
             - name: Install mypy From Locked Dependencies
               run: |
                 if [ "${{matrix.component}}" == "package" ]; then
-                  ARGS="--no-group dev --group type-check"
+                    ARGS=("--no-group" "dev" "--group" "type-check")
                 elif [ "${{matrix.component}}" == "scripts" ]; then
-                  ARGS="--only-group type-check --only-group build-dev"
+                    ARGS=("--only-group" "type-check" "--only-group" "build-dev")
                 else
-                  echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
-                  exit 1
+                    echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
+                    exit 1
                 fi
 
-                uv sync $ARGS
+                uv sync "${ARGS[@]}"
 
             - id: store-hashed-python-version
               name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
-                >> $GITHUB_OUTPUT
+                >> "$GITHUB_OUTPUT"
 
             - uses: actions/cache@v4
               with:
@@ -132,15 +132,15 @@ jobs:
             - name: Run mypy  # TODO: Add GitHub workflows output format
               run: |
                 if [ "${{matrix.component}}" == "package" ]; then
-                  ARGS="pydowndoc/"
+                    ARGS=("pydowndoc/")
                 elif [ "${{matrix.component}}" == "scripts" ]; then
-                  ARGS="hatch_build.py"
+                    ARGS=("hatch_build.py")
                 else
-                  echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
-                  exit 1
+                    echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
+                    exit 1
                 fi
 
-                uv run -- mypy $ARGS
+                uv run -- mypy "${ARGS[@]}"
 
     # yamllint disable-line rule:key-ordering
     pre-commit:
@@ -176,7 +176,7 @@ jobs:
             - id: store-hashed-python-version
               name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
-                >> $GITHUB_OUTPUT
+                >> "$GITHUB_OUTPUT"
 
             - uses: actions/cache@v4
               with:
@@ -187,10 +187,15 @@ jobs:
               run: uv run -- pre-commit install-hooks
 
             - name: Store pre-commit Checks Which Require Skipping
-              run: echo "SKIP=check-github-workflows,flake8,ruff-check,uv-lock" >> $GITHUB_ENV
+              run: echo "SKIP=check-github-workflows,flake8,ruff-check,uv-lock" >> "$GITHUB_ENV"
 
             - name: Run pre-commit
-              run: uv run -- pre-commit run --all-files --hook-stage manual  # TODO: Add GitHub workflows output format
+              run: |
+                set -o pipefail
+                uv run -- pre-commit run --all-files --hook-stage manual | tee /tmp/pre-commit.log
+
+            - name: Ensure No Warnings
+              run: if grep -q "\[WARNING\]" /tmp/pre-commit.log; then exit 1; fi
 
             - if: "!cancelled()"
               uses: pre-commit-ci/lite-action@v1.1.0
@@ -222,7 +227,7 @@ jobs:
             - id: store-hashed-python-version
               name: Store Hashed Python Version
               run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
-                >> $GITHUB_OUTPUT
+                >> "$GITHUB_OUTPUT"
 
             - uses: actions/cache@v4
               with:
@@ -315,7 +320,7 @@ jobs:
 
             - if: matrix.os == 'linux'
               name: Repair ${{matrix.display_os}} ${{matrix.display_architecture}} Packages
-              run: uv run -- auditwheel repair $(find Pydowndoc-bin/dist/ -type f -iname "*${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl")
+              run: uv run -- auditwheel repair "$(find Pydowndoc-bin/dist/ -type f -iname "*${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl")"
                 -w Pydowndoc-bin/dist
 
             - if: matrix.os == 'linux'

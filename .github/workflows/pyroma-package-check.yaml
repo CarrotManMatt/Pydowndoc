@@ -23,7 +23,7 @@ jobs:
         steps:
             - id: store-current-week-number-is-even
               name: Store If the Current Week Number is Even
-              run: echo "current-week-number-is-even=$((($date +%s)/(60*60*24*7))%2))" >> $GITHUB_OUTPUT
+              run: echo "current-week-number-is-even=$((($(date +%s)/(60*60*24*7))%2))" >> "$GITHUB_OUTPUT"
 
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
@@ -51,5 +51,9 @@ jobs:
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
               name: Run pyroma
-              run: uv run -- pyroma --min=10 --pypi --skip-tests BusFactor${{matrix.package-name=='Pydowndoc-bin'&&',PythonClassifierVersion,PythonRequiresVersion,SDist'||''}}
-                ${{matrix.package-name}}
+              run: |-
+                if [ "${{matrix.package-name}}" == "Pydowndoc-bin" ]; then
+                    uv run -- pyroma --min=10 --pypi --skip-tests BusFactor,PythonClassifierVersion,PythonRequiresVersion,SDist ${{matrix.package-name}}
+                else
+                    uv run -- pyroma --min=10 --pypi --skip-tests BusFactor ${{matrix.package-name}}
+                fi
