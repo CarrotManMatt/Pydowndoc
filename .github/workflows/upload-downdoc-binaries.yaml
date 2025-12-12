@@ -70,7 +70,7 @@ jobs:
                 repository: opendevise/downdoc
 
             - id: restore-binary-from-cache
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                 key: downdoc-${{matrix.os}}-${{matrix.architecture}}|${{steps.checkout-upstream-repository.outputs.ref}}
                 path: Pydowndoc-bin/downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
