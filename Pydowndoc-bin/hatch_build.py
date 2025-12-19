@@ -66,7 +66,7 @@ class DowndocVersionHook(MetadataHookInterface):
         ):
             VERSION_NUMBER_UNCONVERTABLE_MESSAGE: Final[str] = (
                 f"The project version number: `{scm_version}` "
-                "is not convertable to an integer representation "
+                "is not convertible to an integer representation "
                 "of the downdoc binary's post release version."
             )
             raise NotImplementedError(VERSION_NUMBER_UNCONVERTABLE_MESSAGE)

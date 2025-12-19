@@ -385,4 +385,4 @@ Therefore, if you encounter any bugs with these other versions, report them on {
 
 The compiled binary of the distributed downdoc software is shared under the MIT licence as described in {url-downdoc-repository}?tab=MIT-1-ov-file#readme[the upstream project's licence file].
 
-All other code in this project is distrubuted under link:./LICENSE[the Apache-2.0 licence].
+All other code in this project is distributed under link:./LICENSE[the Apache-2.0 licence].
