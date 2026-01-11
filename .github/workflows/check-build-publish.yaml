@@ -317,7 +317,7 @@ jobs:
 
             - if: matrix.os == 'linux'
               name: Repair ${{matrix.display_os}} ${{matrix.display_architecture}} Package
-              run: uv run --no-build -- auditwheel repair "$(find Pydowndoc-bin/dist/ -type f -iname
+              run: uv run --no-project -- auditwheel repair "$(find Pydowndoc-bin/dist/ -type f -iname
                 "*${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl")" -w Pydowndoc-bin/dist
 
             - if: matrix.os == 'linux'
