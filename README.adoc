@@ -311,7 +311,7 @@ requires = ["hatchling", "Pydowndoc[bin]"]
 
 [tool.hatch.metadata.hooks.downdoc-readme]
 path = "README2.adoc"
-path = "pandoc-md-mmd"
+backend = "pandoc-md-mmd"
 ----
 ====
 
