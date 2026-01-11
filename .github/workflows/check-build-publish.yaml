@@ -303,7 +303,7 @@ jobs:
               with:
                 enable-cache: true
 
-            - name: Download ${{matrix.display_os}} ${{matrix.display_architecture}} downdoc Binaries
+            - name: Download ${{matrix.display_os}} ${{matrix.display_architecture}} downdoc Binary
               uses: actions/download-artifact@v7
               with:
                 name: downdoc-${{matrix.os}}-${{matrix.architecture}}-binary
@@ -316,12 +316,12 @@ jobs:
               run: uv run --directory Pydowndoc-bin -- hatch build -t custom
 
             - if: matrix.os == 'linux'
-              name: Repair ${{matrix.display_os}} ${{matrix.display_architecture}} Packages
-              run: uv run -- auditwheel repair "$(find Pydowndoc-bin/dist/ -type f -iname "*${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl")"
-                -w Pydowndoc-bin/dist
+              name: Repair ${{matrix.display_os}} ${{matrix.display_architecture}} Package
+              run: uv run --no-project -- auditwheel repair "$(find Pydowndoc-bin/dist/ -type f -iname
+                "*${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl")" -w Pydowndoc-bin/dist
 
             - if: matrix.os == 'linux'
-              name: Remove Unrepaired ${{matrix.display_os}} ${{matrix.display_architecture}} Packages
+              name: Remove Unrepaired ${{matrix.display_os}} ${{matrix.display_architecture}} Package
               run: rm Pydowndoc-bin/dist/*-${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl
 
             - name: Save Build Artifacts
