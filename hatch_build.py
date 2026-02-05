@@ -47,7 +47,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             readme_path = raw_readme_path
             break
 
-        return root / (readme_path if readme_path else "README.adoc")
+        return root / (readme_path or "README.adoc")
 
     @classmethod
     def _is_project_misconfigured(cls, metadata: "Mapping[str, object]") -> bool:
