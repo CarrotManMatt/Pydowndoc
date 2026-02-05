@@ -38,7 +38,7 @@ requires = ["hatchling", "packaging", "setuptools-scm"]
 build-backend = "hatchling.build"
 
 [tool.hatch.metadata.hooks]
-custom = {  }
+custom = {}
 
 [tool.uv]
 managed = false

@@ -55,7 +55,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
             INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
             raise TypeError(INVALID_PATH_TYPE_MESSAGE)
 
-        return root / (raw_readme_path if raw_readme_path else "README.adoc")
+        return root / (raw_readme_path or "README.adoc")
 
     @classmethod
     def _get_conversion_backend(
