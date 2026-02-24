@@ -25,9 +25,9 @@ if TYPE_CHECKING:
     from hatchling.builders.plugin.interface import BuilderInterface
     from hatchling.plugin.manager import PluginManager
 
-__all__: "Sequence[str]" = (
+__all__: Sequence[str] = (
+    "DowndocBinaryExecutableWheelBuilder",
     "DowndocVersionHook",
-    "MultiArtefactWheelBuilder",
     "get_builder",
     "get_metadata_hook",
 )
@@ -131,13 +131,13 @@ class DowndocVersionHook(MetadataHookInterface):
             ]
 
 
-def get_metadata_hook() -> "type[MetadataHookInterface] | list[type[MetadataHookInterface]]":
+def get_metadata_hook() -> type[MetadataHookInterface] | list[type[MetadataHookInterface]]:
     """Retrieve the correct hatch version metadata hook class."""
     return DowndocVersionHook
 
 
-class MultiArtefactWheelBuilder(WheelBuilder):
-    """Build multiple wheels at once with each set of binary executables."""
+class DowndocBinaryExecutableWheelBuilder(WheelBuilder):
+    """Build a wheel with the correct downdoc binary executable for the current platform."""
 
     class _BuildHook(BuildHookInterface[WheelBuilderConfig]):
         @override
@@ -201,6 +201,7 @@ class MultiArtefactWheelBuilder(WheelBuilder):
             "extra_metadata": {},
             "shared_data": {},
             "shared_scripts": {},
+            "sbom_files": {},
         }
 
     @override
@@ -227,7 +228,7 @@ class MultiArtefactWheelBuilder(WheelBuilder):
         raise NotImplementedError
 
     @override
-    def get_version_api(self) -> dict[str, "_ProtocolBuildFunc"]:
+    def get_version_api(self) -> dict[str, _ProtocolBuildFunc]:
         return {"standard": self.build_standard}
 
     @override
@@ -240,11 +241,11 @@ class MultiArtefactWheelBuilder(WheelBuilder):
 
 
 def get_builder() -> (
-    "type[BuilderInterface[BuilderConfig, PluginManager]] | "
-    "Iterable[type[BuilderInterface[BuilderConfig, PluginManager]]]"
+    type[BuilderInterface[BuilderConfig, PluginManager]]
+    | Iterable[type[BuilderInterface[BuilderConfig, PluginManager]]]
 ):
     """Retrieve the correct hatch builder hook class."""
-    return MultiArtefactWheelBuilder
+    return DowndocBinaryExecutableWheelBuilder
 
 
 def _get_downdoc_binary_operating_system() -> str:
