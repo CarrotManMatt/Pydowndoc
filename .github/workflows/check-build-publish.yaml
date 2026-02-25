@@ -132,15 +132,17 @@ jobs:
             - name: Run mypy  # TODO: Add GitHub workflows output format
               run: |
                 if [ "${{matrix.component}}" == "package" ]; then
-                    ARGS=("pydowndoc/")
+                    FILES=("pydowndoc/")
                 elif [ "${{matrix.component}}" == "scripts" ]; then
-                    ARGS=("hatch_build.py")
+                    FILES=("hatch_build.py" "Pydowndoc-bin/hatch_build.py")
                 else
                     echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
                     exit 1
                 fi
 
-                uv run -- mypy "${ARGS[@]}"
+                for FILE in "${FILES[@]}"; do
+                  uv run -- mypy "$FILE"
+                done
 
     # yamllint disable-line rule:key-ordering
     pre-commit:
