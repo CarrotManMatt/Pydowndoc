@@ -89,7 +89,7 @@ jobs:
               name: Rename built downdoc binary
               run: mv Pydowndoc-bin/downloads/downdoc${{matrix.downdoc_binary_suffix}} Pydowndoc-bin/downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}
 
-            - uses: actions/upload-artifact@v6
+            - uses: actions/upload-artifact@v7
               with:
                 if-no-files-found: error
                 name: downdoc-${{matrix.os}}-${{matrix.architecture}}-binary
