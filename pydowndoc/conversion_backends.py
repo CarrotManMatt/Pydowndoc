@@ -2,6 +2,7 @@
 
 import abc
 import itertools
+import re
 import shlex
 import shutil
 import subprocess
@@ -16,7 +17,7 @@ else:
 
 from typed_classproperties import classproperty
 
-from ._utils import OUTPUT_CONVERSION_TO_STRING
+from ._utils import OUTPUT_CONVERSION_TO_STRING, ConversionOutputDestinationFlag
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
@@ -27,7 +28,6 @@ if TYPE_CHECKING:
     else:
         from typing_extensions import LiteralString
 
-    from ._utils import ConversionOutputDestinationFlag
 
 __all__: "Sequence[str]" = (
     "BaseConversionBackend",
@@ -190,6 +190,10 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
     def ID(cls) -> "LiteralString":
         return "downdoc-md"
 
+    @classproperty
+    def FILE_SUFFIX(cls) -> "LiteralString":  # noqa: D102, N802
+        return ".md"
+
     @classmethod
     def _get_downdoc_executable_path(cls) -> str:
         downdoc_executable: "str | None" = shutil.which("downdoc")
@@ -202,6 +206,53 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
             raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
 
         return downdoc_executable
+
+    @classmethod
+    def _pre_process(cls, readme_content: str) -> str:
+        readme_content = readme_content.replace("\n****\n", "\n____\n")
+        readme_content = re.sub(
+            r"(?<=\n\[source)([^]\n]*]\n)(.+)(?=\n)",
+            (
+                lambda match: (
+                    match.group()
+                    if (
+                        re.search(r"\A(?:-{2,}|_{2,}|={2,}|\.{3,})(?=\n|\Z)", match.group(2))
+                        is not None
+                    )
+                    else f"{match.group(1)}----\n{match.group(2)}\n----"
+                )
+            ),
+            readme_content,
+        )
+        return readme_content  # noqa: RET504
+
+    @classmethod
+    def _replace_summary_title(cls, match: re.Match[str]) -> str:
+        replaced_summary_title: str = re.sub(
+            r"`(\+?)(.*?)\1`", r"<code>\2</code>", match.group()
+        )
+        replaced_summary_title = re.sub(r"_(.*?)_", r"<em>\1</em>", replaced_summary_title)
+        replaced_summary_title = re.sub(
+            r"\*(.*?)\*", r"<strong>\1</strong>", replaced_summary_title
+        )
+        return replaced_summary_title  # noqa: RET504
+
+    @classmethod
+    def _post_process(cls, converted_readme: str) -> str:
+        post_processed_readme: str = re.sub(
+            r"(?<=<summary>).*?(?=</summary>)", cls._replace_summary_title, converted_readme
+        )
+        post_processed_readme = re.sub(
+            r"([^>]\s+|\A)(\*\*)(?=[^\w\s!\"^*()_+='@#~;:.><,`-]\s*(?:TIP|NOTE|HINT|WARNING|INFO|INFORMATION|HAZARD|CAUTION|IMPORTANT)\s*:?\s*\*\*\\\n)",
+            r"\1> \2",
+            post_processed_readme,
+        )
+        post_processed_readme = re.sub(
+            r"\[([^[]+)]\(\s*pass\s*:\s*[a-z]+\)\s*\[([^[]+)]",
+            r"[\2](\1)",
+            post_processed_readme,
+        )
+        return post_processed_readme  # noqa: RET504
 
     @classmethod
     @override
@@ -230,12 +281,14 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
                 "-",
             ),
             check=True,
-            input=asciidoc_content,
+            input=cls._pre_process(asciidoc_content),
             text=True,
             capture_output=True,
         ).stdout
 
-        return converted_string if ends_with_newline else converted_string.removesuffix("\n")
+        return cls._post_process(
+            converted_string if ends_with_newline else converted_string.removesuffix("\n")
+        )
 
     @overload
     @classmethod
@@ -276,30 +329,41 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
     ) -> "str | None":
         optional_arguments: list[str] = []
 
-        if output_location == OUTPUT_CONVERSION_TO_STRING:
-            optional_arguments.extend(("--output", "-"))
-        elif isinstance(output_location, Path):
-            optional_arguments.extend(("--output", str(output_location)))
-
         if postpublish:
             optional_arguments.extend("--postpublish")
         if prepublish:
             optional_arguments.extend("--prepublish")
 
-        subprocess_stdout: str = subprocess.run(
-            (
-                cls._get_downdoc_executable_path(),
-                *cls._attributes_to_arguments(attributes),
-                *optional_arguments,
-                "--",
-                str(file_path),
-            ),
-            check=True,
-            text=True,
-            capture_output=True,
-        ).stdout
+        converted_readme_content: str = cls._post_process(
+            subprocess.run(
+                (
+                    cls._get_downdoc_executable_path(),
+                    *cls._attributes_to_arguments(attributes),
+                    "--output",
+                    "-",
+                    *optional_arguments,
+                    "--",
+                    "-",
+                ),
+                check=True,
+                text=True,
+                capture_output=True,
+                input=cls._pre_process(file_path.read_text()),
+            ).stdout
+        )
 
-        return subprocess_stdout if output_location == OUTPUT_CONVERSION_TO_STRING else None
+        if output_location is OUTPUT_CONVERSION_TO_STRING:
+            return converted_readme_content
+
+        if isinstance(output_location, ConversionOutputDestinationFlag):
+            raise TypeError
+
+        if output_location is None:
+            output_location = file_path.with_suffix(cls.FILE_SUFFIX)
+
+        output_location.write_text(converted_readme_content)
+
+        return None
 
 
 class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
@@ -451,7 +515,7 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
             optional_arguments.extend(
                 ("--output", str(file_path.with_suffix(cls.FILE_SUFFIX)))
             )
-        elif output_location == OUTPUT_CONVERSION_TO_STRING:
+        elif output_location is OUTPUT_CONVERSION_TO_STRING:
             optional_arguments.extend(("--output", "-"))
         elif isinstance(output_location, Path):
             optional_arguments.extend(("--output", str(output_location)))
@@ -491,7 +555,7 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
             capture_output=True,
         ).stdout
 
-        return subprocess_stdout if output_location == OUTPUT_CONVERSION_TO_STRING else None
+        return subprocess_stdout if output_location is OUTPUT_CONVERSION_TO_STRING else None
 
 
 class PandocMarkdownConversionBackend(_BasePandocConversionBackend):

@@ -100,10 +100,10 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             r"(?<=\.) \.(Supported Conversion Backends)(?= )", r"<br><br>**\1**", match.group()
         )
         replaced_multiline_table_cell = re.sub(
-            r" (`)(?=[a-z])", r"<br>\1", replaced_multiline_table_cell
+            r" +(`)(?=[a-z-]+`:+)", r"<br>\1", replaced_multiline_table_cell
         )
         replaced_multiline_table_cell = re.sub(
-            r"(?<=`)::(?= [A-Z[h(])", r":", replaced_multiline_table_cell
+            r"(?<=[a-z-]`)::(?= [A-Z[h(])", r":", replaced_multiline_table_cell
         )
         return replaced_multiline_table_cell  # noqa: RET504
 

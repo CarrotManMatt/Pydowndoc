@@ -106,6 +106,15 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
         return "readme" not in dynamic
 
+    @classmethod
+    def _post_process(
+        cls, converted_readme: str, *, conversion_backend: "type[BaseConversionBackend] | None"
+    ) -> str:
+        if conversion_backend in (DowndocMarkdownConversionBackend, None):
+            converted_readme = converted_readme.replace("**\n\n```", "**\n```")
+
+        return converted_readme
+
     @override
     def update(self, metadata: dict[str, object]) -> None:
         if (
@@ -131,17 +140,20 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
         metadata["readme"] = {
             "content-type": "text/markdown",
-            "text": (
-                pydowndoc.convert_file(
-                    readme_path,
-                    output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
-                    backend=conversion_backend,
-                )
-                if conversion_backend is not None
-                else pydowndoc.convert_file(
-                    readme_path,
-                    output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
-                )
+            "text": self._post_process(
+                (
+                    pydowndoc.convert_file(
+                        readme_path,
+                        output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
+                        backend=conversion_backend,
+                    )
+                    if conversion_backend is not None
+                    else pydowndoc.convert_file(
+                        readme_path,
+                        output_location=pydowndoc.OUTPUT_CONVERSION_TO_STRING,
+                    )
+                ),
+                conversion_backend=conversion_backend,
             ),
         }
 
