@@ -121,6 +121,11 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             post_processed_readme,
         )
         post_processed_readme = post_processed_readme.replace("**\n\n```", "**\n```")
+        post_processed_readme = re.sub(
+            r"\[([^[]+)]\(\s*pass\s*:\s*[a-z]+\)\s*\[([^[]+)]",
+            r"[\2](\1)",
+            post_processed_readme,
+        )
         return post_processed_readme  # noqa: RET504
 
     @classmethod
