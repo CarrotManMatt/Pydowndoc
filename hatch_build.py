@@ -66,7 +66,8 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _pre_process(cls, readme_content: str) -> str:
-        return re.sub(
+        readme_content = readme_content.replace("\n****\n", "\n____\n")
+        readme_content = re.sub(
             r"(?<=\n\[source)([^]\n]*]\n)(.+)(?=\n)",
             (
                 lambda match: (
@@ -80,6 +81,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             ),
             readme_content,
         )
+        return readme_content  # noqa: RET504
 
     @classmethod
     def _replace_summary_title(cls, match: re.Match[str]) -> str:
