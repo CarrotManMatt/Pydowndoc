@@ -92,7 +92,7 @@ require_plugins = ["flake8-carrot"]
 only-packages = true
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["README.adoc"]
+artifacts = ["README.adoc", "!local/**"]
 
 [tool.hatch.metadata.hooks]
 custom = { readme-path = "README.adoc" }
