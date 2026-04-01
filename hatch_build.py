@@ -2,6 +2,7 @@
 
 import inspect
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -64,6 +65,61 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
         return "readme" not in dynamic
 
     @classmethod
+    def _pre_process(cls, readme_content: str) -> str:
+        return re.sub(
+            r"(?<=\n\[source)([^]\n]*]\n)(.+)(?=\n)",
+            (
+                lambda match: (
+                    match.group()
+                    if (
+                        re.search(r"\A(?:-{2,}|_{2,}|={2,}|\.{3,})(?=\n|\Z)", match.group(2))
+                        is not None
+                    )
+                    else f"{match.group(1)}----\n{match.group(2)}\n----"
+                )
+            ),
+            readme_content,
+        )
+
+    @classmethod
+    def _replace_summary_title(cls, match: re.Match[str]) -> str:
+        replaced_summary_title: str = re.sub(
+            r"`(\+?)(.*?)\1`", r"<code>\2</code>", match.group()
+        )
+        replaced_summary_title = re.sub(r"_(.*?)_", r"<em>\1</em>", replaced_summary_title)
+        replaced_summary_title = re.sub(
+            r"\*(.*?)\*", r"<strong>\1</strong>", replaced_summary_title
+        )
+        return replaced_summary_title  # noqa: RET504
+
+    @classmethod
+    def _replace_multiline_table_cell(cls, match: re.Match[str]) -> str:
+        replaced_multiline_table_cell: str = re.sub(
+            r"(?<=\.) \.(Supported Conversion Backends)(?= )", r"<br>**\1**", match.group()
+        )
+        replaced_multiline_table_cell = re.sub(
+            r" (`)(?=[a-z])", r"<br>\1", replaced_multiline_table_cell
+        )
+        return replaced_multiline_table_cell  # noqa: RET504
+
+    @classmethod
+    def _post_process(cls, converted_readme: str) -> str:
+        post_processed_readme: str = re.sub(
+            r"(?<=<summary>).*?(?=</summary>)", cls._replace_summary_title, converted_readme
+        )
+        post_processed_readme = re.sub(
+            r"([^>]\s+|\A)(\*\*)(?=[^\w\s!\"^*()_+='@#~;:.><,`-]\s*(?:TIP|NOTE|HINT|WARNING|INFO|INFORMATION|HAZARD|CAUTION|IMPORTANT)\s*:?\s*\*\*\\\n)",
+            r"\1> \2",
+            post_processed_readme,
+        )
+        post_processed_readme = re.sub(
+            r"(?<= \| )[^|]+?(?= \|(?:\n|\Z))",
+            cls._replace_multiline_table_cell,
+            post_processed_readme,
+        )
+        return post_processed_readme  # noqa: RET504
+
+    @classmethod
     def _perform_conversion(cls, readme_path: "Path") -> str:
         downdoc_executable: "str | None" = shutil.which("downdoc")
         if downdoc_executable is None:
@@ -72,12 +128,15 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             )
             raise OSError(DOWNDOC_NOT_INSTALLED_MESSAGE)
 
-        return subprocess.run(
-            (downdoc_executable, "--output", "-", "--", str(readme_path)),
-            capture_output=True,
-            text=True,
-            check=True,
-        ).stdout
+        return cls._post_process(
+            subprocess.run(
+                (downdoc_executable, "--output", "-", "--", "-"),
+                capture_output=True,
+                text=True,
+                check=True,
+                input=cls._pre_process(readme_path.read_text()),
+            ).stdout
+        )
 
     @override
     def update(self, metadata: dict[str, object]) -> None:
