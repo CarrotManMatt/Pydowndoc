@@ -153,6 +153,8 @@ cover/
 *-binary
 !LICENSE-*-binary
 README.md
+*.adoc.new
+*.md.new
 .pypi-redirects/*/.venv/
 .pypi-redirects/*/uv.lock
 
