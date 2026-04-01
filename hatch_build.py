@@ -95,10 +95,13 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
     @classmethod
     def _replace_multiline_table_cell(cls, match: re.Match[str]) -> str:
         replaced_multiline_table_cell: str = re.sub(
-            r"(?<=\.) \.(Supported Conversion Backends)(?= )", r"<br>**\1**", match.group()
+            r"(?<=\.) \.(Supported Conversion Backends)(?= )", r"<br><br>**\1**", match.group()
         )
         replaced_multiline_table_cell = re.sub(
             r" (`)(?=[a-z])", r"<br>\1", replaced_multiline_table_cell
+        )
+        replaced_multiline_table_cell = re.sub(
+            r"(?<=`)::(?= [A-Z[h(])", r":", replaced_multiline_table_cell
         )
         return replaced_multiline_table_cell  # noqa: RET504
 
@@ -117,6 +120,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
             cls._replace_multiline_table_cell,
             post_processed_readme,
         )
+        post_processed_readme = post_processed_readme.replace("**\n\n```", "**\n```")
         return post_processed_readme  # noqa: RET504
 
     @classmethod
