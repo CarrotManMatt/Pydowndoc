@@ -34,11 +34,11 @@ class ConversionError(RuntimeError):
     @override
     def __init__(
         self,
-        message: "str | None" = None,
+        message: str | None = None,
         *,
-        subprocess_return_code: "int | None" = None,
-        subprocess_stderr: "str | None" = None,
+        subprocess_return_code: int | None = None,
+        subprocess_stderr: str | None = None,
     ) -> None:
-        self.message: "str | None" = message
-        self.subprocess_return_code: "int | None" = subprocess_return_code
-        self.subprocess_stderr: "str | None" = subprocess_stderr
+        self.message: str | None = message
+        self.subprocess_return_code: int | None = subprocess_return_code
+        self.subprocess_stderr: str | None = subprocess_stderr

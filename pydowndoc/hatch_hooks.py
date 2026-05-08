@@ -49,7 +49,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
-        raw_readme_path: "object | str" = config.get("path", "")
+        raw_readme_path: object | str = config.get("path", "")
 
         if not isinstance(raw_readme_path, str):
             INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
@@ -61,7 +61,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
     def _get_conversion_backend(
         cls, config: "Mapping[str, object]"
     ) -> "type[BaseConversionBackend] | None":
-        raw_conversion_backend: "object | str" = config.get("backend", "")
+        raw_conversion_backend: object | str = config.get("backend", "")
 
         if not isinstance(raw_conversion_backend, str):
             INVALID_CONVERSION_BACKEND_TYPE_MESSAGE: Final[str] = (
@@ -163,7 +163,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
 @hookimpl
 def hatch_register_metadata_hook() -> (
-    "type[MetadataHookInterface] | list[type[MetadataHookInterface]]"
+    type[MetadataHookInterface] | list[type[MetadataHookInterface]]
 ):
     """Export the correct metadata hook class for hatch projects."""
     return DowndocReadmeMetadataHook

@@ -65,8 +65,9 @@ class DowndocVersionHook(MetadataHookInterface):
             )
         ):
             VERSION_NUMBER_UNCONVERTABLE_MESSAGE: Final[str] = (
-                f"The project version number: `{scm_version}` "
-                "is not convertible to an integer representation "
+                f"The project version number: `{
+                    scm_version
+                }` is not convertible to an integer representation "
                 "of the downdoc binary's post release version."
             )
             raise NotImplementedError(VERSION_NUMBER_UNCONVERTABLE_MESSAGE)
@@ -82,8 +83,9 @@ class DowndocVersionHook(MetadataHookInterface):
 
             warnings.warn(
                 (
-                    f"Failed to find the downdoc executable binary at '{e}'. "
-                    "This package will be built without the downdoc executable binary, "
+                    f"Failed to find the downdoc executable binary at '{
+                        e
+                    }'. This package will be built without the downdoc executable binary, "
                     "it MUST NOT BE UPLOADED to any package distribution platform "
                     "(E.g. PyPI)."
                 ),
@@ -120,7 +122,7 @@ class DowndocVersionHook(MetadataHookInterface):
                         + ((scm_version.micro + 1) * (10**3))
                         + (((scm_version.dev or 0) + 1) * (10**0))
                     }",
-                    (f".dev{bin_version.dev}" if bin_version.dev is not None else None),
+                    f".dev{bin_version.dev}" if bin_version.dev is not None else None,
                 )
                 if part is not None
             )
@@ -161,8 +163,9 @@ class DowndocBinaryExecutableWheelBuilder(WheelBuilder):
 
                 warnings.warn(
                     (
-                        f"Failed to find the downdoc executable binary at '{e}'. "
-                        "This package will be built without the downdoc executable binary, "
+                        f"Failed to find the downdoc executable binary at '{
+                            e
+                        }'. This package will be built without the downdoc executable binary, "
                         "it MUST NOT BE UPLOADED to any package distribution platform "
                         "(E.g. PyPI)."
                     ),
@@ -300,10 +303,9 @@ def _get_downdoc_binary_file_extension() -> str:
 def _get_downdoc_binary_filepath(root: Path) -> Path:
     """Retrieve the file path for the downloaded downdoc binary executable."""
     downdoc_binary_filepath: Path = root / (
-        "downloads/downdoc-"
-        f"{_get_downdoc_binary_operating_system()}-"
-        f"{_get_downdoc_binary_architecture()}"
-        f"{_get_downdoc_binary_file_extension()}"
+        f"downloads/downdoc-{_get_downdoc_binary_operating_system()}-{
+            _get_downdoc_binary_architecture()
+        }{_get_downdoc_binary_file_extension()}"
     )
 
     if not downdoc_binary_filepath.is_file():

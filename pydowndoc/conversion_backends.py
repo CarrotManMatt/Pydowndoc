@@ -110,7 +110,7 @@ class BaseConversionBackend(abc.ABC):
         output_location: "Path | ConversionOutputDestinationFlag | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
-    ) -> "str | None":
+    ) -> str | None:
         pass
 
     @overload
@@ -147,7 +147,7 @@ class BaseConversionBackend(abc.ABC):
         output_location: "Path | ConversionOutputDestinationFlag | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
-    ) -> "str | None":
+    ) -> str | None:
         """Convert an AsciiDoc file to an interpretable documentation format."""
         if not file_path.is_file():
             raise FileNotFoundError(file_path)
@@ -196,7 +196,7 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
 
     @classmethod
     def _get_downdoc_executable_path(cls) -> str:
-        downdoc_executable: "str | None" = shutil.which("downdoc")
+        downdoc_executable: str | None = shutil.which("downdoc")
 
         if downdoc_executable is None:
             DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
@@ -332,7 +332,7 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
         output_location: "Path | ConversionOutputDestinationFlag | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
-    ) -> "str | None":
+    ) -> str | None:
         optional_arguments: list[str] = []
 
         if postpublish:
@@ -385,7 +385,7 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
 
     @classmethod
     def _get_asciidoctor_executable_path(cls) -> str:
-        asciidoctor_executable: "str | None" = shutil.which("asciidoctor")
+        asciidoctor_executable: str | None = shutil.which("asciidoctor")
 
         if asciidoctor_executable is None:
             ASCIIDOCTOR_NOT_INSTALLED_MESSAGE: Final[str] = (
@@ -398,7 +398,7 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
 
     @classmethod
     def _get_pandoc_executable_path(cls) -> str:
-        pandoc_executable: "str | None" = shutil.which("pandoc")
+        pandoc_executable: str | None = shutil.which("pandoc")
 
         if pandoc_executable is None:
             PANDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
@@ -507,7 +507,7 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
         output_location: "Path | ConversionOutputDestinationFlag | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
-    ) -> "str | None":
+    ) -> str | None:
         if postpublish or prepublish:
             INVALID_PREPUBLISH_OR_POSTPUBLISH_MESSAGE: Final[str] = (
                 "Neither 'postpublish' nor 'prepublish' can be used "

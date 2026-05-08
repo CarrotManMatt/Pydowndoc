@@ -72,7 +72,7 @@ def convert_file(
     backend: "type[BaseConversionBackend]" = DowndocMarkdownConversionBackend,
     postpublish: bool = False,
     prepublish: bool = False,
-) -> "str | None":
+) -> str | None:
     """
     Execute the downdoc converter upon the given input file path.
 

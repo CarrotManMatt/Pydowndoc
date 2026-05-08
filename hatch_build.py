@@ -138,7 +138,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
 
     @classmethod
     def _perform_conversion(cls, readme_path: "Path") -> str:
-        downdoc_executable: "str | None" = shutil.which("downdoc")
+        downdoc_executable: str | None = shutil.which("downdoc")
         if downdoc_executable is None:
             DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (
                 "The downdoc executable could not be found."
@@ -188,8 +188,7 @@ class PydowndocCustomReadmeMetadataHook(MetadataHookInterface):
 
             warnings.warn(
                 (
-                    f"{e} "
-                    "This package will be built without any README content, "
+                    f"{e} This package will be built without any README content, "
                     "it MUST NOT BE UPLOADED to any package distribution platform "
                     "(E.g. PyPI)."
                 ),
