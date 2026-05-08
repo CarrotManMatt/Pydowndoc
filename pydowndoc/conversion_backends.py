@@ -298,7 +298,6 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
 
     @overload
     @classmethod
-    @override
     def _convert_file(
         cls,
         file_path: "Path",
@@ -311,7 +310,6 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
 
     @overload
     @classmethod
-    @override
     def _convert_file(
         cls,
         file_path: "Path",
@@ -473,7 +471,6 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
 
     @overload
     @classmethod
-    @override
     def _convert_file(
         cls,
         file_path: "Path",
@@ -486,7 +483,6 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
 
     @overload
     @classmethod
-    @override
     def _convert_file(
         cls,
         file_path: "Path",
