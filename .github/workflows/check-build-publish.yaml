@@ -375,7 +375,11 @@ jobs:
     publish:
         environment: publish
 
-        if: github.ref_type == 'tag'
+        if: |
+            always()
+            && github.ref_type == 'tag'
+            && needs.build-pydowndoc.result == 'success'
+            && needs.build-pydowndoc-bin.result == 'success'
 
         needs: [build-pydowndoc, build-pydowndoc-bin]
         permissions:
@@ -412,7 +416,12 @@ jobs:
     test-publish:
         environment: test-publish
 
-        if: github.ref_type != 'tag' && github.event_name != 'pull_request'
+        if: |
+            always()
+            && github.ref_type != 'tag'
+            && github.event_name != 'pull_request'
+            && needs.build-pydowndoc.result == 'success'
+            && needs.build-pydowndoc-bin.result == 'success'
 
         needs: [build-pydowndoc, build-pydowndoc-bin]
         permissions:
@@ -446,7 +455,7 @@ jobs:
 
     # yamllint disable-line rule:key-ordering
     release:
-        if: github.ref_type == 'tag'
+        if: always() && github.ref_type == 'tag' && needs.publish.result == 'success'
 
         needs: [publish]
         permissions:
