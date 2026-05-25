@@ -7,6 +7,7 @@ https://packaging.python.org/en/latest/specifications/pyproject-toml/#readme
 
 import inspect
 import sys
+import warnings
 from collections.abc import Collection, Iterable
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -34,6 +35,11 @@ if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from typing import Final
 
+    if sys.version_info >= (3, 11):
+        from typing import LiteralString
+    else:
+        from typing_extensions import LiteralString
+
     from pydowndoc.conversion_backends import BaseConversionBackend
 
 __all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadata_hook")
@@ -48,14 +54,39 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
         return "downdoc-readme"
 
     @classmethod
-    def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
-        raw_readme_path: object | str = config.get("path", "")
+    def _get_raw_readme_path(cls, config: "Mapping[str, object]") -> str:
+        readme_path_key: LiteralString = "path"
+        try:
+            raw_readme_path: object | str = config[readme_path_key]
+        except KeyError:
+            readme_path_key = "readme-path"
+            try:
+                raw_readme_path = config[readme_path_key]
+            except KeyError:
+                return "README.adoc"
+        else:
+            if "readme-path" in config:
+                warnings.warn(
+                    (
+                        f"{cls.PLUGIN_NAME}.readme-path is a deprecated config option. "
+                        f"Because {cls.PLUGIN_NAME}.path has a higher priority "
+                        "and has been provided, "
+                        f"{cls.PLUGIN_NAME}.readme-path will be ignored."
+                    ),
+                    stacklevel=1,
+                )
 
         if not isinstance(raw_readme_path, str):
-            INVALID_PATH_TYPE_MESSAGE: Final[str] = f"{cls.PLUGIN_NAME}.path must be a string."
+            INVALID_PATH_TYPE_MESSAGE: Final[str] = (
+                f"{cls.PLUGIN_NAME}.{readme_path_key} must be a string."
+            )
             raise TypeError(INVALID_PATH_TYPE_MESSAGE)
 
-        return root / (raw_readme_path or "README.adoc")
+        return raw_readme_path
+
+    @classmethod
+    def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
+        return root / cls._get_raw_readme_path(config)
 
     @classmethod
     def _get_conversion_backend(
