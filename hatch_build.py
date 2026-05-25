@@ -37,7 +37,9 @@ class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
         except KeyError:
             pass
         else:
-            if isinstance(invalid_readme_path_key, str):
+            if isinstance(invalid_readme_path_key, str) and Path(
+                invalid_readme_path_key
+            ).suffix in (".adoc", ".md", ".markdown", ".asciidoc"):
                 INVALID_README_PATH_KEY_MESSAGE: str = (
                     f"Using {cls.PLUGIN_NAME}.path is not supported as a configuration key "
                     "to select the README file, "
