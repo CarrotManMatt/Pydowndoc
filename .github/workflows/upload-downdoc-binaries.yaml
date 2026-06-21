@@ -64,7 +64,7 @@ jobs:
 
         steps:
             - id: checkout-upstream-repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                 ref: v1.1.0-stable
                 repository: opendevise/downdoc
