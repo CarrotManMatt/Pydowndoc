@@ -6,6 +6,13 @@ name: Check Conformance to Packaging Best Practises
 
     workflow_dispatch: ~
 
+concurrency:  # yamllint disable-line rule:key-ordering
+    cancel-in-progress: true
+    group: ${{github.workflow}}-${{github.event.pull_request.number || github.ref}}
+
+permissions:
+    contents: read
+
 jobs:
     pyroma:
         env:
@@ -13,6 +20,7 @@ jobs:
             UV_FROZEN: true
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
+        name: Check conformance to packaging best practises with pyroma
         runs-on: ubuntu-latest
 
         strategy:
@@ -28,10 +36,12 @@ jobs:
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
               uses: actions/checkout@v7
+              with:
+                persist-credentials: false
 
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
-              name: Set Up Python
+              name: Set up Python
               uses: actions/setup-python@v6
               with:
                 python-version-file: .python-version
@@ -45,15 +55,17 @@ jobs:
 
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
-              name: Install pyroma From Locked Dependencies
+              name: Install pyroma from locked dependencies
               run: uv sync --only-group package-analysis
 
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
               name: Run pyroma
-              run: |-
+              run: |-  # zizmor: ignore[template-injection]
                 if [ "${{matrix.package-name}}" == "Pydowndoc-bin" ]; then
-                    uv run -- pyroma --min=10 --pypi --skip-tests BusFactor,PythonClassifierVersion,PythonRequiresVersion,SDist ${{matrix.package-name}}
+                    EXTRA_SKIP_TESTS=",PythonClassifierVersion,PythonRequiresVersion,SDist"
                 else
-                    uv run -- pyroma --min=10 --pypi --skip-tests BusFactor ${{matrix.package-name}}
+                    EXTRA_SKIP_TESTS=""
                 fi
+
+                uv run -- pyroma --min=10 --pypi --skip-tests "BusFactor${EXTRA_SKIP_TESTS}" ${{matrix.package-name}}

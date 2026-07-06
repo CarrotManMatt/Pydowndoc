@@ -1,0 +1,12 @@
+rules:
+    cache-poisoning:
+        ignore:
+            - check-build-publish.yaml
+    unpinned-images:
+        ignore:
+            - check-build-publish.yaml
+            - upload-downdoc-binaries.yaml
+    unpinned-uses:
+        config:
+            policies:
+                "*": ref-pin

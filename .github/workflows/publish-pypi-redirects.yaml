@@ -1,24 +1,33 @@
-name: Publish PyPI Redirects
+name: Publish PyPI redirects
 
 "on":
     workflow_dispatch: ~
 
+concurrency:  # yamllint disable-line rule:key-ordering
+    cancel-in-progress: true
+    group: ${{github.workflow}}-${{github.event.pull_request.number || github.ref}}
+
+permissions:
+    contents: read  # Needed to checkout repository contents
+
 jobs:
     downdoc-redirect:
         environment: redirect-publish-downdoc
+        name: Publish `downdoc` PyPI redirect
         permissions:
-            id-token: write
+            id-token: write  # Needed to authenticate to PyPI
         runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v7
               with:
                 fetch-depth: 0
+                persist-credentials: false
 
             - name: Install uv
               uses: astral-sh/setup-uv@v8.2.0
 
-            - name: Build Package
+            - name: Build `downdoc` redirect package
               run: uv build --sdist
               working-directory: ./.pypi-redirects/downdoc
 
@@ -28,19 +37,21 @@ jobs:
 
     pydowndoc-executable-redirect:
         environment: redirect-publish-pydowndoc-executable
+        name: Publish `Pydowndoc-executable` PyPI redirect
         permissions:
-            id-token: write
+            id-token: write  # Needed to authenticate to PyPI
         runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v7
               with:
                 fetch-depth: 0
+                persist-credentials: false
 
             - name: Install uv
               uses: astral-sh/setup-uv@v8.2.0
 
-            - name: Build Package
+            - name: Build `Pydowndoc-executable` redirect package
               run: uv build --sdist
               working-directory: ./.pypi-redirects/Pydowndoc-executable
 
