@@ -96,7 +96,7 @@ repos:
         - id: pretty-format-json
           args: [--autofix, --indent, "4"]
         - id: require-filename-pattern
-          files: (^|/)tests/.+\.py$  # yamllint disable-line rule:key-ordering
+          files: (^|/)tests/(?!(?:.+/)?_[a-z_]+/).+\.py$  # yamllint disable-line rule:key-ordering
           args:
             - ^test_.*\.py$
             - ^__init__\.py$
