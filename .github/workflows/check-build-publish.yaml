@@ -131,15 +131,17 @@ jobs:
               run: |  # zizmor: ignore[template-injection]
                 if [ "${{matrix.component}}" == "package" ]; then
                     FILES=("pydowndoc/")
+                    ARGS=("--python-version" "${{matrix.python-version}}")
                 elif [ "${{matrix.component}}" == "scripts" ]; then
                     FILES=("hatch_build.py" "Pydowndoc-bin/hatch_build.py")
+                    ARGS=()
                 else
                     echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
                     exit 1
                 fi
 
                 for FILE in "${FILES[@]}"; do
-                  uv run -- mypy "$FILE" --python-version ${{matrix.python-version}}
+                  uv run -- mypy "$FILE" "${ARGS[@]}"
                 done
 
     pre-commit-PUSH:  # yamllint disable-line rule:key-ordering
