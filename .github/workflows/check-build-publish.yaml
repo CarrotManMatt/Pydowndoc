@@ -22,7 +22,7 @@ jobs:
         env:
             SKIP_MISSING_DOWNDOC: "True"
         name: Validate uv lockfile
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - uses: actions/checkout@v7
@@ -45,7 +45,7 @@ jobs:
             UV_PYTHON_DOWNLOADS: never
         name: Lint code with Flake8
         needs: [uv-check]
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - uses: actions/checkout@v7
@@ -76,7 +76,7 @@ jobs:
             UV_PYTHON_DOWNLOADS: never
         name: Type-check code with mypy
         needs: [uv-check]
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         strategy:
             fail-fast: false
@@ -169,7 +169,7 @@ jobs:
         if: github.event_name == 'pull_request'
 
         name: Verify pre-commit hooks and commit auto-fixes (pull_request)
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - timeout-minutes: 15
@@ -191,7 +191,7 @@ jobs:
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Lint code with ruff
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - uses: actions/checkout@v7
@@ -256,7 +256,7 @@ jobs:
                       display_architecture: x86_64
                       display_os: Linux
                       os: linux
-                      runner: ubuntu-latest
+                      runner: ubuntu-26.04
 
                     - architecture: x86-64
                       container: "null"
@@ -353,7 +353,7 @@ jobs:
 
         name: Build `Pydowndoc` package
         needs: [flake8, mypy, pre-commit-PUSH, pre-commit-PULL_REQUEST, ruff-lint, uv-check, upload-downdoc-binaries]
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - uses: actions/checkout@v7
@@ -402,7 +402,7 @@ jobs:
         needs: [build-pydowndoc, build-pydowndoc-bin]
         permissions:
             id-token: write  # Needed to authenticate to PyPI
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - uses: actions/checkout@v7
@@ -445,7 +445,7 @@ jobs:
         needs: [build-pydowndoc, build-pydowndoc-bin]
         permissions:
             id-token: write  # Needed to authenticate to Test-PyPI
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - uses: actions/checkout@v7
@@ -482,7 +482,7 @@ jobs:
         permissions:
             contents: write  # Needed to create a release in the GitHub repository
             id-token: write  # Needed to authenticate to GitHub API
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04
 
         steps:
             - name: Download `Pydowndoc` build artifacts
