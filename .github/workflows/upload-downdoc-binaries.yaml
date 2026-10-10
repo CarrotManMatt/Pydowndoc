@@ -27,7 +27,7 @@ jobs:
                       downdoc_binary_suffix: ""
                       downdoc_os: linux
                       os: linux
-                      runner: ubuntu-26.04
+                      runner: ubuntu-latest
 
                     - architecture: x86-64
                       container: "null"
