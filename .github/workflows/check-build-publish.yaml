@@ -497,4 +497,5 @@ jobs:
                 RELEASE_REPOSITORY: ${{github.repository}}
                 RELEASE_TAG: ${{github.ref_name}}
               run: gh release create "${RELEASE_TAG}" dist/** --repo "${RELEASE_REPOSITORY}" --verify-tag
-                --generate-notes
+                --generate-notes --notes "$(git tag -l --format='%(contents:subject)%0a%0a%(contents:body)'
+                "${RELEASE_TAG}")"
