@@ -94,27 +94,12 @@ jobs:
               with:
                 persist-credentials: false
 
-            - if: matrix.component == 'package'
-              name: Set up Python (using matrix version)
-              uses: actions/setup-python@v7
-              with:
-                python-version: ${{matrix.python-version}}
-
-            - if: matrix.component == 'scripts'
-              name: Set up Python (using `.python-version` File)
+            - name: Set up Python (using `.python-version` File)
               uses: actions/setup-python@v7
               with:
                 python-version-file: .python-version
 
-            - if: matrix.component == 'package'
-              name: Install uv (with matrix Python version)
-              uses: astral-sh/setup-uv@v10.3.0
-              with:
-                enable-cache: true
-                python-version: ${{matrix.python-version}}
-
-            - if: matrix.component == 'scripts'
-              name: Install uv (with `.python-version` file)
+            - name: Install uv (with `.python-version` file)
               uses: astral-sh/setup-uv@v10.3.0
               with:
                 enable-cache: true
@@ -154,7 +139,7 @@ jobs:
                 fi
 
                 for FILE in "${FILES[@]}"; do
-                  uv run -- mypy "$FILE"
+                  uv run -- mypy "$FILE" --python-version ${{matrix.python-version}}
                 done
 
     pre-commit-PUSH:  # yamllint disable-line rule:key-ordering
