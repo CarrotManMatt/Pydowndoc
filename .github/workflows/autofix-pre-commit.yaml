@@ -24,7 +24,7 @@ jobs:
             UV_NO_SYNC: true
             UV_PYTHON_DOWNLOADS: never
         name: Run pre-commit hooks and commit any auto-fixes
-        runs-on: ubuntu-26.04
+        runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v7
