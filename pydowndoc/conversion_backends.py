@@ -1,5 +1,24 @@
 """Conversion backend classes relating to alternative executable conversion programs."""
 
+__all__: "Sequence[str]" = (
+    "BaseConversionBackend",
+    "DowndocMarkdownConversionBackend",
+    "PandocMarkdownConversionBackend",
+    "PandocMultiMarkdownConversionBackend",
+    "PandocPHPMarkdownExtraConversionBackend",
+    "PandocRSTConversionBackend",
+    "PandocTXTConversionBackend",
+)
+__lazy_modules__: "Sequence[str]" = (
+    "itertools",
+    "re",
+    "shlex",
+    "shutil",
+    "subprocess",
+    "pathlib",
+    "pydowndoc._utils",
+)
+
 import abc
 import itertools
 import re
@@ -10,14 +29,14 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, final, overload
 
+from typed_classproperties import classproperty
+
+from ._utils import OUTPUT_CONVERSION_TO_STRING
+
 if sys.version_info >= (3, 12):
     from typing import override
 else:
     from typing_extensions import override
-
-from typed_classproperties import classproperty
-
-from ._utils import OUTPUT_CONVERSION_TO_STRING, ConversionOutputDestinationFlag
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
@@ -27,17 +46,6 @@ if TYPE_CHECKING:
         from typing import LiteralString
     else:
         from typing_extensions import LiteralString
-
-
-__all__: "Sequence[str]" = (
-    "BaseConversionBackend",
-    "DowndocMarkdownConversionBackend",
-    "PandocMarkdownConversionBackend",
-    "PandocMultiMarkdownConversionBackend",
-    "PandocPHPMarkdownExtraConversionBackend",
-    "PandocRSTConversionBackend",
-    "PandocTXTConversionBackend",
-)
 
 
 class BaseConversionBackend(abc.ABC):
@@ -79,9 +87,9 @@ class BaseConversionBackend(abc.ABC):
     @abc.abstractmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
-        output_location: "ConversionOutputDestinationFlag",
+        output_location: OUTPUT_CONVERSION_TO_STRING,
         attributes: "Mapping[str, str] | None" = ...,
         postpublish: bool = ...,
         prepublish: bool = ...,
@@ -92,7 +100,7 @@ class BaseConversionBackend(abc.ABC):
     @abc.abstractmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = ...,
         output_location: "Path | None" = ...,
@@ -104,10 +112,10 @@ class BaseConversionBackend(abc.ABC):
     @abc.abstractmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = None,
-        output_location: "Path | ConversionOutputDestinationFlag | None" = None,
+        output_location: "Path | OUTPUT_CONVERSION_TO_STRING | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
     ) -> str | None:
@@ -117,9 +125,9 @@ class BaseConversionBackend(abc.ABC):
     @classmethod
     def convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
-        output_location: "ConversionOutputDestinationFlag",
+        output_location: OUTPUT_CONVERSION_TO_STRING,
         attributes: "Mapping[str, str] | None" = ...,
         postpublish: bool = ...,
         prepublish: bool = ...,
@@ -129,7 +137,7 @@ class BaseConversionBackend(abc.ABC):
     @classmethod
     def convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = ...,
         output_location: "Path | None" = ...,
@@ -141,10 +149,10 @@ class BaseConversionBackend(abc.ABC):
     @classmethod
     def convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = None,
-        output_location: "Path | ConversionOutputDestinationFlag | None" = None,
+        output_location: "Path | OUTPUT_CONVERSION_TO_STRING | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
     ) -> str | None:
@@ -300,9 +308,9 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
     @classmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
-        output_location: "ConversionOutputDestinationFlag",
+        output_location: OUTPUT_CONVERSION_TO_STRING,
         attributes: "Mapping[str, str] | None" = ...,
         postpublish: bool = ...,
         prepublish: bool = ...,
@@ -312,7 +320,7 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
     @classmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = ...,
         output_location: "Path | None" = ...,
@@ -324,10 +332,10 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
     @override
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = None,
-        output_location: "Path | ConversionOutputDestinationFlag | None" = None,
+        output_location: "Path | OUTPUT_CONVERSION_TO_STRING | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
     ) -> str | None:
@@ -358,9 +366,6 @@ class DowndocMarkdownConversionBackend(BaseConversionBackend):
 
         if output_location is OUTPUT_CONVERSION_TO_STRING:
             return converted_readme_content
-
-        if isinstance(output_location, ConversionOutputDestinationFlag):
-            raise TypeError
 
         if output_location is None:
             output_location = file_path.with_suffix(cls.FILE_SUFFIX)
@@ -473,9 +478,9 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
     @classmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
-        output_location: "ConversionOutputDestinationFlag",
+        output_location: OUTPUT_CONVERSION_TO_STRING,
         attributes: "Mapping[str, str] | None" = ...,
         postpublish: bool = ...,
         prepublish: bool = ...,
@@ -485,7 +490,7 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
     @classmethod
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = ...,
         output_location: "Path | None" = ...,
@@ -497,10 +502,10 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
     @override
     def _convert_file(
         cls,
-        file_path: "Path",
+        file_path: Path,
         *,
         attributes: "Mapping[str, str] | None" = None,
-        output_location: "Path | ConversionOutputDestinationFlag | None" = None,
+        output_location: "Path | OUTPUT_CONVERSION_TO_STRING | None" = None,
         postpublish: bool = False,
         prepublish: bool = False,
     ) -> str | None:

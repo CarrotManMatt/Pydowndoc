@@ -1,5 +1,7 @@
 """Common utility classes internal to this project."""
 
+__all__: "Sequence[str]" = ("OUTPUT_CONVERSION_TO_STRING", "ConversionError")
+
 import sys
 from typing import TYPE_CHECKING
 
@@ -8,24 +10,14 @@ if sys.version_info >= (3, 12):
 else:
     from typing_extensions import override
 
+if sys.version_info < (3, 15):  # noqa: CAR105
+    from typing_extensions import sentinel
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from typing import Final
-
-__all__: "Sequence[str]" = (
-    "OUTPUT_CONVERSION_TO_STRING",
-    "ConversionError",
-    "ConversionOutputDestinationFlag",
-)
 
 
-class ConversionOutputDestinationFlag:
-    pass
-
-
-OUTPUT_CONVERSION_TO_STRING: "Final[ConversionOutputDestinationFlag]" = (
-    ConversionOutputDestinationFlag()
-)
+OUTPUT_CONVERSION_TO_STRING = sentinel("OUTPUT_CONVERSION_TO_STRING")
 
 
 class ConversionError(RuntimeError):

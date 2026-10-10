@@ -1,28 +1,19 @@
 """Project build script to convert this project's AsciiDoc README file to Markdown format."""
 
-import inspect
-import os
-import re
-import shutil
-import subprocess
-import sys
-import warnings
-from collections.abc import Collection, Iterable
-from pathlib import Path
-from typing import TYPE_CHECKING
+__all__: Sequence[str] = ("DowndocCustomReadmeMetadataHook",)
 
-if sys.version_info >= (3, 12):
-    from typing import override
-else:
-    from typing_extensions import override
+from typing import override
+lazy import inspect
+lazy import os
+lazy import re
+lazy import shutil
+lazy import subprocess
+lazy import warnings
+lazy from collections.abc import Collection, Iterable, Mapping, Sequence
+lazy from pathlib import Path
+lazy from typing import Final
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
-    from typing import Final
-
-__all__: "Sequence[str]" = ("DowndocCustomReadmeMetadataHook",)
 
 
 class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
@@ -31,7 +22,7 @@ class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
     PLUGIN_NAME = "custom"
 
     @classmethod
-    def _get_raw_readme_path(cls, config: "Mapping[str, object]") -> str:
+    def _get_raw_readme_path(cls, config: Mapping[str, object]) -> str:
         try:
             invalid_readme_path_key: object | str = config["path"]
         except KeyError:
@@ -59,11 +50,11 @@ class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
         return raw_readme_path
 
     @classmethod
-    def _get_readme_path(cls, config: "Mapping[str, object]", root: "Path") -> "Path":
+    def _get_readme_path(cls, config: Mapping[str, object], root: Path) -> Path:
         return root / cls._get_raw_readme_path(config)
 
     @classmethod
-    def _is_project_misconfigured(cls, metadata: "Mapping[str, object]") -> bool:
+    def _is_project_misconfigured(cls, metadata: Mapping[str, object]) -> bool:
         if "readme" in metadata:
             return True
 
@@ -141,7 +132,7 @@ class _DowndocReadmeConverter:
     def __init__(self, project_name: str) -> None:
         self.project_name: str = project_name
 
-    def convert(self, readme_path: "Path") -> str:
+    def convert(self, readme_path: Path) -> str:
         downdoc_executable: str | None = shutil.which("downdoc")
         if downdoc_executable is None:
             DOWNDOC_NOT_INSTALLED_MESSAGE: Final[str] = (

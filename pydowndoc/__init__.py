@@ -1,5 +1,13 @@
 """Python wrapper for converting/reducing AsciiDoc files back to Markdown."""
 
+__all__: "Sequence[str]" = (
+    "OUTPUT_CONVERSION_TO_STRING",
+    "ConversionError",
+    "convert_file",
+    "convert_string",
+    "get_version",
+)
+
 from typing import TYPE_CHECKING, overload
 
 from ._utils import OUTPUT_CONVERSION_TO_STRING, ConversionError
@@ -9,16 +17,7 @@ if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from pathlib import Path
 
-    from ._utils import ConversionOutputDestinationFlag
     from .conversion_backends import BaseConversionBackend
-
-__all__: "Sequence[str]" = (
-    "OUTPUT_CONVERSION_TO_STRING",
-    "ConversionError",
-    "convert_file",
-    "convert_string",
-    "get_version",
-)
 
 
 def get_version(
@@ -44,7 +43,7 @@ def get_version(
 def convert_file(
     file_path: "Path",
     *,
-    output_location: "ConversionOutputDestinationFlag",
+    output_location: "OUTPUT_CONVERSION_TO_STRING",
     backend: "type[BaseConversionBackend]" = ...,
     attributes: "Mapping[str, str] | None" = ...,
     postpublish: bool = ...,
@@ -68,7 +67,7 @@ def convert_file(
     file_path: "Path",
     *,
     attributes: "Mapping[str, str] | None" = None,
-    output_location: "Path | ConversionOutputDestinationFlag | None" = None,
+    output_location: "Path | OUTPUT_CONVERSION_TO_STRING | None" = None,
     backend: "type[BaseConversionBackend]" = DowndocMarkdownConversionBackend,
     postpublish: bool = False,
     prepublish: bool = False,

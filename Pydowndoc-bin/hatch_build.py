@@ -1,30 +1,5 @@
 """Project build script to package binary artefacts into platform-specific builds."""
 
-import os
-import platform
-import re
-import stat
-import subprocess
-import sys
-import warnings
-from collections.abc import Iterable, Mapping
-from pathlib import Path
-from typing import TYPE_CHECKING, override
-
-import setuptools_scm
-from hatchling.builders.hooks.plugin.interface import BuildHookInterface
-from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
-from hatchling.metadata.plugin.interface import MetadataHookInterface
-from packaging.version import Version
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-    from typing import Final, Protocol
-
-    from hatchling.builders.config import BuilderConfig
-    from hatchling.builders.plugin.interface import BuilderInterface
-    from hatchling.plugin.manager import PluginManager
-
 __all__: Sequence[str] = (
     "DowndocBinaryExecutableWheelBuilder",
     "DowndocVersionHook",
@@ -32,6 +7,26 @@ __all__: Sequence[str] = (
     "get_metadata_hook",
 )
 
+from typing import TYPE_CHECKING, override
+lazy import os
+lazy import platform
+lazy import re
+lazy import stat
+lazy import subprocess
+lazy import sys
+lazy import warnings
+lazy from collections.abc import Iterable, Mapping, Sequence
+lazy from pathlib import Path
+lazy from typing import Final, Protocol
+
+from hatchling.builders.hooks.plugin.interface import BuildHookInterface
+from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
+from hatchling.metadata.plugin.interface import MetadataHookInterface
+lazy import setuptools_scm
+lazy from hatchling.builders.config import BuilderConfig
+lazy from hatchling.builders.plugin.interface import BuilderInterface
+lazy from hatchling.plugin.manager import PluginManager
+lazy from packaging.version import Version
 
 if TYPE_CHECKING:
 

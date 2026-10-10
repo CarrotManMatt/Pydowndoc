@@ -34,6 +34,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: 3.16",
     "Topic :: Software Development",
     "Topic :: Text Processing :: Markup",
     "Typing :: Typed"
@@ -41,7 +42,7 @@ classifiers = [
 dependencies = [
     "hatchling",
     "typed_classproperties>=1.3",
-    "typing-extensions; python_version < '3.12'"
+    "typing-extensions>=4.16; python_version < '3.15'",
 ]
 optional-dependencies = { "bin" = ["Pydowndoc-bin"] }
 dynamic = ["description", "readme", "version"]
@@ -66,23 +67,23 @@ build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
 lint-format = [
     "flake8-carrot>=0.1.2; python_version >= '3.14'",
     "flake8-pyproject>=1.2; python_version >= '3.14'",
-    "ruff>=0.13"
+    "ruff>=0.17"
 ]
 package-analysis = ["pyroma>=5.0.1"]
 pre-commit = ["prek>=0.5.3"]
 test = []
-type-check = ["mypy>=1.20"]
+type-check = ["mypy>=2.4"]
 
 [build-system]
 requires = [
     "hatch-docstring-description",
     "hatch-vcs",
     "hatchling",
-    "typing-extensions; python_version < '3.12'"
 ]
 build-backend = "hatchling.build"
 
 [tool.flake8]
+ignore = ["CAR110"]
 select = ["CAR"]
 extend_exclude = [".venv/"]
 require_plugins = ["flake8-carrot"]
@@ -145,7 +146,7 @@ line-length = 95
 output-format = "concise"
 
 [tool.ruff.per-file-target-version]
-"Pydowndoc-bin/**" = "py314"
+"**/hatch_build.py" = "py315"
 
 [tool.ruff.format]
 docstring-code-format = true

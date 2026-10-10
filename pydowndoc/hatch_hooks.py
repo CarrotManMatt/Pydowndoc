@@ -5,6 +5,16 @@ Convert your AsciiDoc README to the Markdown format, supported by PyPA's README 
 https://packaging.python.org/en/latest/specifications/pyproject-toml/#readme
 """
 
+__all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadata_hook")
+__lazy_modules__: "Sequence[str]" = (
+    "collections.abc",
+    "inspect",
+    "pathlib",
+    "pydowndoc",
+    "pydowndoc.conversion_backends",
+    "warnings",
+)
+
 import inspect
 import sys
 import warnings
@@ -41,8 +51,6 @@ if TYPE_CHECKING:
         from typing_extensions import LiteralString
 
     from pydowndoc.conversion_backends import BaseConversionBackend
-
-__all__: "Sequence[str]" = ("DowndocReadmeMetadataHook", "hatch_register_metadata_hook")
 
 
 class DowndocReadmeMetadataHook(MetadataHookInterface):
