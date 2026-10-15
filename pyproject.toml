@@ -222,7 +222,7 @@ max-returns = 10
 keep-runtime-typing = true
 
 [tool.ruff.per-file-target-version]
-"**/hatch_build.py" = "py315"
+"Pydowndoc-bin/**" = "py315"
 
 [tool.tombi.format.rules]
 indent-width = 4

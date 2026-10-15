@@ -1,19 +1,32 @@
 """Project build script to convert this project's AsciiDoc README file to Markdown format."""
 
-__all__: Sequence[str] = ("DowndocCustomReadmeMetadataHook",)
+__all__: "Sequence[str]" = ("DowndocCustomReadmeMetadataHook",)
+__lazy_modules__: "Sequence[str]" = (
+    "collections.abc",
+    "inspect",
+    "os",
+    "pathlib",
+    "re",
+    "shutil",
+    "subprocess",
+    "warnings",
+)
 
-from typing import override
-lazy import inspect
-lazy import os
-lazy import re
-lazy import shutil
-lazy import subprocess
-lazy import warnings
-lazy from collections.abc import Collection, Iterable, Mapping, Sequence
-lazy from pathlib import Path
-lazy from typing import Final
+import inspect
+import os
+import re
+import shutil
+import subprocess
+import warnings
+from collections.abc import Collection, Iterable
+from pathlib import Path
+from typing import TYPE_CHECKING, override
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+    from typing import Final
 
 
 class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
@@ -22,7 +35,7 @@ class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
     PLUGIN_NAME = "custom"
 
     @classmethod
-    def _get_raw_readme_path(cls, config: Mapping[str, object]) -> str:
+    def _get_raw_readme_path(cls, config: "Mapping[str, object]") -> str:
         try:
             invalid_readme_path_key: object | str = config["path"]
         except KeyError:
@@ -50,11 +63,11 @@ class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
         return raw_readme_path
 
     @classmethod
-    def _get_readme_path(cls, config: Mapping[str, object], root: Path) -> Path:
+    def _get_readme_path(cls, config: "Mapping[str, object]", root: Path) -> Path:
         return root / cls._get_raw_readme_path(config)
 
     @classmethod
-    def _is_project_misconfigured(cls, metadata: Mapping[str, object]) -> bool:
+    def _is_project_misconfigured(cls, metadata: "Mapping[str, object]") -> bool:
         if "readme" in metadata:
             return True
 
