@@ -40,8 +40,8 @@ jobs:
 
     flake8:  # yamllint disable-line rule:key-ordering
         env:
-            UV_FROZEN: true
-            UV_NO_SYNC: true
+            UV_FROZEN: "true"
+            UV_NO_SYNC: "true"
             UV_PYTHON_DOWNLOADS: never
         name: Lint code with Flake8
         needs: [uv-check]
@@ -71,8 +71,8 @@ jobs:
     mypy:  # yamllint disable-line rule:key-ordering
         env:
             SKIP_MISSING_DOWNDOC: "True"
-            UV_FROZEN: true
-            UV_NO_SYNC: true
+            UV_FROZEN: "true"
+            UV_NO_SYNC: "true"
             UV_PYTHON_DOWNLOADS: never
         name: Type-check code with mypy
         needs: [uv-check]
@@ -174,8 +174,8 @@ jobs:
 
     ruff-lint:  # yamllint disable-line rule:key-ordering
         env:
-            UV_FROZEN: true
-            UV_NO_SYNC: true
+            UV_FROZEN: "true"
+            UV_NO_SYNC: "true"
             UV_PYTHON_DOWNLOADS: never
         name: Lint code with ruff
         runs-on: ubuntu-latest
@@ -215,8 +215,8 @@ jobs:
         container: ${{fromJSON(matrix.container)}}
         env:
             SKIP_MISSING_DOWNDOC: "False"
-            UV_FROZEN: true
-            UV_NO_SYNC: true
+            UV_FROZEN: "true"
+            UV_NO_SYNC: "true"
             UV_PYTHON_DOWNLOADS: never
 
         if: |
@@ -323,7 +323,7 @@ jobs:
     build-pydowndoc:  # yamllint disable-line rule:key-ordering
         env:
             SKIP_MISSING_DOWNDOC: "False"
-            UV_NO_SYNC: true
+            UV_NO_SYNC: "true"
             UV_PYTHON_DOWNLOADS: never
 
         if: |
