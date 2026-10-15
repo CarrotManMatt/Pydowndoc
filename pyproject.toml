@@ -79,6 +79,7 @@ requires = [
     "hatch-docstring-description",
     "hatch-vcs",
     "hatchling",
+    "typing-extensions>=4.5.0; python_version < '3.12'"
 ]
 build-backend = "hatchling.build"
 
