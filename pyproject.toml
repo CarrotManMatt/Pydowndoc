@@ -231,10 +231,7 @@ line-width = 95
 
 [tool.uv]
 default-groups = ["dev"]
-no-binary-package = [
-    "Pydowndoc",  # TODO: Remove explicit `no-binary-package` for current project once https://github.com/astral-sh/uv/issues/17416 is resolved
-    "Pydowndoc-bin"
-]
+no-binary-package = ["Pydowndoc-bin"]
 no-build = true
 package = true
 required-environments = [
@@ -244,7 +241,7 @@ required-environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
     "sys_platform == 'win32' and platform_machine == 'AMD64'"
 ]
-required-version = ">=0.5.21"
+required-version = ">=0.12.20"
 trusted-publishing = "always"
 
 [tool.uv.sources]

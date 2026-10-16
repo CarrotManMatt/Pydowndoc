@@ -368,7 +368,7 @@ jobs:
                 enable-cache: true
 
             - name: Build package
-              run: uv build --build --no-sources
+              run: uv build --no-sources
 
             - name: Save build artifacts
               uses: actions/upload-artifact@v7
