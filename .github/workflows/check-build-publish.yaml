@@ -31,7 +31,7 @@ jobs:
                 persist-credentials: false
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -58,7 +58,7 @@ jobs:
                 python-version-file: .python-version
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -100,7 +100,7 @@ jobs:
                 python-version-file: .python-version
 
             - name: Install uv (with `.python-version` file)
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -191,7 +191,7 @@ jobs:
                 python-version-file: .python-version
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -288,7 +288,7 @@ jobs:
 
             - if: "!contains(matrix.container, 'pypa/manylinux')"
               name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -363,7 +363,7 @@ jobs:
                 python-version-file: .python-version
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -397,7 +397,7 @@ jobs:
                 persist-credentials: false
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
@@ -440,7 +440,7 @@ jobs:
                 persist-credentials: false
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v10.3.0
+              uses: astral-sh/setup-uv@v10.3.2
               with:
                 enable-cache: true
 
