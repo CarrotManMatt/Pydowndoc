@@ -40,12 +40,7 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
-    from typing import Final, NoReturn
-
-    if sys.version_info >= (3, 11):
-        from typing import LiteralString
-    else:
-        from typing_extensions import LiteralString
+    from typing import Final, LiteralString, NoReturn
 
 
 class BaseConversionBackend(abc.ABC):
