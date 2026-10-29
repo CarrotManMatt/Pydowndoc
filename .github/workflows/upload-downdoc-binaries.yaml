@@ -86,7 +86,7 @@ jobs:
             - if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               uses: actions/setup-node@v7
               with:
-                node-version: 24
+                node-version: 26
 
             - if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               name: Build downdoc ${{matrix.display_os}} ${{matrix.display_architecture}} binary
