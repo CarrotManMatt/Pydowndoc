@@ -309,7 +309,7 @@ jobs:
               env:  # yamllint disable-line rule:key-ordering
                 MATRIX_AUDITWHEEL_ARCH: ${{matrix.auditwheel_architecture}}
                 MATRIX_OS: ${{matrix.os}}
-              run: rm -f "Pydowndoc-bin/dist/*-${MATRIX_OS}_${AUDITWHEEL_ARCH}.whl"
+              run: rm -f Pydowndoc-bin/dist/*-"${MATRIX_OS}"_"${MATRIX_AUDITWHEEL_ARCH}".whl
 
             - name: Save build artifacts
               uses: actions/upload-artifact@v7
