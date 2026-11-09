@@ -68,82 +68,6 @@ jobs:
             - name: Run Flake8
               run: uv run -- flake8
 
-    mypy:  # yamllint disable-line rule:key-ordering
-        env:
-            SKIP_MISSING_DOWNDOC: "True"
-            UV_FROZEN: "true"
-            UV_NO_SYNC: "true"
-            UV_PYTHON_DOWNLOADS: never
-        name: Type-check code with mypy
-        needs: [uv-check]
-        runs-on: ubuntu-latest
-
-        strategy:
-            fail-fast: false
-            matrix:
-                component: [package, scripts]
-                python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
-                exclude:  # yamllint disable-line rule:key-ordering
-                    - component: scripts
-                include:  # yamllint disable-line rule:key-ordering
-                    - component: scripts
-                      python-version: ""
-
-        steps:
-            - uses: actions/checkout@v7
-              with:
-                persist-credentials: false
-
-            - name: Set up Python (using `.python-version` File)
-              uses: actions/setup-python@v7
-              with:
-                python-version-file: .python-version
-
-            - name: Install uv (with `.python-version` file)
-              uses: astral-sh/setup-uv@v10.3.3
-              with:
-                enable-cache: true
-
-            - name: Install mypy from locked dependencies
-              run: |  # zizmor: ignore[template-injection]
-                if [ "${{matrix.component}}" == "package" ]; then
-                    ARGS=("--no-group" "dev" "--group" "type-check")
-                elif [ "${{matrix.component}}" == "scripts" ]; then
-                    ARGS=("--only-group" "type-check" "--only-group" "build-dev")
-                else
-                    echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
-                    exit 1
-                fi
-
-                uv sync "${ARGS[@]}"
-
-            - id: store-hashed-python-version
-              name: Store hashed Python version
-              run: echo "hashed_python_version=$(uv run -- python -VV | sha256sum | cut -d' ' -f1)"
-                >> "$GITHUB_OUTPUT"
-
-            - uses: actions/cache@v6
-              with:
-                key: mypy|${{steps.store-hashed-python-version.outputs.hashed_python_version}}|${{matrix.component}}
-                path: ./.mypy_cache
-
-            - name: Run mypy
-              run: |  # zizmor: ignore[template-injection]
-                if [ "${{matrix.component}}" == "package" ]; then
-                    FILES=("pydowndoc/")
-                    ARGS=("--python-version" "${{matrix.python-version}}")
-                elif [ "${{matrix.component}}" == "scripts" ]; then
-                    FILES=("hatch_build.py" "Pydowndoc-bin/hatch_build.py")
-                    ARGS=()
-                else
-                    echo "Error: Unknown matrix.component value: '${{matrix.component}}'" >&2
-                    exit 1
-                fi
-
-                for FILE in "${FILES[@]}"; do
-                  uv run -- mypy "$FILE" "${ARGS[@]}"
-                done
-
     pre-commit-PUSH:  # yamllint disable-line rule:key-ordering
         if: github.event_name != 'pull_request'
 
@@ -211,6 +135,66 @@ jobs:
             - name: Run ruff check
               run: uv run -- ruff check --no-fix --output-format=github
 
+    ty:  # yamllint disable-line rule:key-ordering
+        env:
+            SKIP_MISSING_DOWNDOC: "True"
+            UV_FROZEN: "true"
+            UV_NO_SYNC: "true"
+            UV_PYTHON_DOWNLOADS: never
+        name: Type-check code with ty
+        needs: [uv-check]
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                component: [pydowndoc, Pydowndoc-bin]
+
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                persist-credentials: false
+
+            - name: Set up Python
+              uses: actions/setup-python@v7
+              with:
+                python-version-file: .python-version
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v10.3.3
+              with:
+                enable-cache: true
+
+            - name: Install ty from locked dependencies
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_COMPONENT: ${{matrix.component}}
+              run: |
+                if [ "$MATRIX_COMPONENT" == "pydowndoc" ]; then
+                    ARGS=("--no-group" "dev" "--group" "type-check")
+                elif [ "$MATRIX_COMPONENT" == "Pydowndoc-bin" ]; then
+                    ARGS=("--only-group" "type-check" "--only-group" "build-dev")
+                else
+                    echo "Error: Unknown matrix.component value: '$MATRIX_COMPONENT'" >&2
+                    exit 1
+                fi
+
+                uv sync "${ARGS[@]}"
+
+            - name: Run ty
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_COMPONENT: ${{matrix.component}}
+              run: |
+                if [ "$MATRIX_COMPONENT" == "pydowndoc" ]; then
+                    ARGS=()
+                elif [ "$MATRIX_COMPONENT" == "Pydowndoc-bin" ]; then
+                    ARGS=("Pydowndoc-bin/" "--python-version" "$(< .python-version)")
+                else
+                    echo "Error: Unknown matrix.component value: '$MATRIX_COMPONENT'" >&2
+                    exit 1
+                fi
+
+                uv run -- ty check "${ARGS[@]}" --output-format=github
+
     build-pydowndoc-bin:  # yamllint disable-line rule:key-ordering
         container: ${{fromJSON(matrix.container)}}
         env:
@@ -222,16 +206,16 @@ jobs:
         if: |
             always()
             && needs.flake8.result == 'success'
-            && needs.mypy.result =='success'
             && (
                 needs.pre-commit-PUSH.result == 'success'
                 || needs.pre-commit-PULL_REQUEST.result == 'success'
             )
             && needs.ruff-lint.result == 'success'
+            && needs.ty.result =='success'
             && needs.upload-downdoc-binaries.result == 'success'
 
         name: Build ${{matrix.display_os}} ${{matrix.display_architecture}} `Pydowndoc-bin` package
-        needs: [flake8, mypy, pre-commit-PUSH, pre-commit-PULL_REQUEST, ruff-lint, upload-downdoc-binaries]
+        needs: [flake8, pre-commit-PUSH, pre-commit-PULL_REQUEST, ruff-lint, ty, upload-downdoc-binaries]
         runs-on: ${{matrix.runner}}
 
         strategy:
@@ -307,12 +291,25 @@ jobs:
 
             - if: matrix.os == 'linux'
               name: Repair ${{matrix.display_os}} ${{matrix.display_architecture}} package
-              run: uv run --no-project -- auditwheel repair "$(find Pydowndoc-bin/dist/ -type f -iname
-                "*${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl")" -w Pydowndoc-bin/dist  # zizmor: ignore[template-injection]
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_AUDITWHEEL_ARCH: ${{matrix.auditwheel_architecture}}
+                MATRIX_OS: ${{matrix.os}}
+              run: |
+                WHEEL_FILE=$(find Pydowndoc-bin/dist/ -type f -iname "*${MATRIX_OS}_${MATRIX_AUDITWHEEL_ARCH}.whl" | head -n 1)
+
+                if [ -z "$WHEEL_FILE" ]; then
+                    echo "Error: No matching wheel found for ${MATRIX_OS}_${MATRIX_AUDITWHEEL_ARCH}" >&2
+                    exit 1
+                fi
+
+                uv run --no-project -- auditwheel repair "$WHEEL_FILE" -w Pydowndoc-bin/dist
 
             - if: matrix.os == 'linux'
               name: Remove unrepaired ${{matrix.display_os}} ${{matrix.display_architecture}} package
-              run: rm Pydowndoc-bin/dist/*-${{matrix.os}}_${{matrix.auditwheel_architecture}}.whl  # zizmor: ignore[template-injection]
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_AUDITWHEEL_ARCH: ${{matrix.auditwheel_architecture}}
+                MATRIX_OS: ${{matrix.os}}
+              run: rm -f "Pydowndoc-bin/dist/*-${MATRIX_OS}_${AUDITWHEEL_ARCH}.whl"
 
             - name: Save build artifacts
               uses: actions/upload-artifact@v7
@@ -329,17 +326,17 @@ jobs:
         if: |
             always()
             && needs.flake8.result == 'success'
-            && needs.mypy.result =='success'
             && (
                 needs.pre-commit-PUSH.result == 'success'
                 || needs.pre-commit-PULL_REQUEST.result == 'success'
             )
             && needs.ruff-lint.result == 'success'
+            && needs.ty.result =='success'
             && needs.uv-check.result == 'success'
             && needs.upload-downdoc-binaries.result == 'success'
 
         name: Build `Pydowndoc` package
-        needs: [flake8, mypy, pre-commit-PUSH, pre-commit-PULL_REQUEST, ruff-lint, uv-check, upload-downdoc-binaries]
+        needs: [flake8, pre-commit-PUSH, pre-commit-PULL_REQUEST, ruff-lint, ty, uv-check, upload-downdoc-binaries]
         runs-on: ubuntu-latest
 
         steps:
@@ -496,6 +493,6 @@ jobs:
                 GITHUB_TOKEN: ${{github.token}}
                 RELEASE_REPOSITORY: ${{github.repository}}
                 RELEASE_TAG: ${{github.ref_name}}
-              run: gh release create "${RELEASE_TAG}" dist/** --repo "${RELEASE_REPOSITORY}" --verify-tag
+              run: gh release create "$RELEASE_TAG" dist/** --repo "$RELEASE_REPOSITORY" --verify-tag
                 --generate-notes --notes "$(git tag -l --format='%(contents:subject)%0a%0a%(contents:body)'
-                "${RELEASE_TAG}")"
+                "$RELEASE_TAG")"

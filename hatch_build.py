@@ -147,7 +147,6 @@ class DowndocCustomReadmeMetadataHook(MetadataHookInterface):
 
 
 class _DowndocReadmeConverter:
-    @override
     def __init__(self, project_name: str) -> None:
         self.project_name: str = project_name
 

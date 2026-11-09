@@ -27,7 +27,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, final, overload
+from typing import TYPE_CHECKING, cast, final, overload
 
 from typed_classproperties import classproperty
 
@@ -168,7 +168,7 @@ class BaseConversionBackend(abc.ABC):
         cls, attributes: "Mapping[str, str] | None"
     ) -> "Iterable[str]":
         if attributes is None:
-            attributes = {}
+            attributes = cast("dict[str, str]", {})
 
         return itertools.chain.from_iterable(
             ("--attribute", f"{shlex.quote(name)}={shlex.quote(val)}")
@@ -513,14 +513,15 @@ class _BasePandocConversionBackend(BaseConversionBackend, abc.ABC):
 
         optional_arguments: list[str] = []
 
-        if output_location is None:
-            optional_arguments.extend(
-                ("--output", str(file_path.with_suffix(cls.FILE_SUFFIX)))
-            )
-        elif output_location is OUTPUT_CONVERSION_TO_STRING:
-            optional_arguments.extend(("--output", "-"))
-        elif isinstance(output_location, Path):
-            optional_arguments.extend(("--output", str(output_location)))
+        match output_location:
+            case None:
+                optional_arguments.extend(
+                    ("--output", str(file_path.with_suffix(cls.FILE_SUFFIX)))
+                )
+            case Path():
+                optional_arguments.extend(("--output", str(output_location)))
+            case _:
+                optional_arguments.extend(("--output", "-"))
 
         subprocess_stdout: str = subprocess.run(
             (
