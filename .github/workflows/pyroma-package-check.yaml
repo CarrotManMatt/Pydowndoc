@@ -61,11 +61,13 @@ jobs:
             - if: github.event_name == 'workflow_dispatch' || steps.store-current-week-number-is-even.outputs.current-week-number-is-even
                 == '1'
               name: Run pyroma
-              run: |-  # zizmor: ignore[template-injection]
-                if [ "${{matrix.package-name}}" == "Pydowndoc-bin" ]; then
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_PACKAGE_NAME: ${{matrix.package-name}}
+              run: |-
+                if [ "$MATRIX_PACKAGE_NAME" == "Pydowndoc-bin" ]; then
                     EXTRA_SKIP_TESTS=",PythonClassifierVersion,PythonRequiresVersion,SDist"
                 else
                     EXTRA_SKIP_TESTS=""
                 fi
 
-                uv run -- pyroma --min=10 --pypi --skip-tests "BusFactor${EXTRA_SKIP_TESTS}" ${{matrix.package-name}}
+                uv run -- pyroma --min=10 --pypi --skip-tests "BusFactor${EXTRA_SKIP_TESTS}" "$MATRIX_PACKAGE_NAME"

@@ -90,12 +90,30 @@ jobs:
 
             - if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               name: Build downdoc ${{matrix.display_os}} ${{matrix.display_architecture}} binary
-              run: npx pkg -t node18-${{matrix.downdoc_os}}-${{matrix.downdoc_architecture}} . --out-path
-                Pydowndoc-bin/downloads  # zizmor: ignore[template-injection]
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_DOWNDOC_ARCHITECTURE: ${{matrix.downdoc_architecture}}
+                MATRIX_DOWNDOC_OS: ${{matrix.downdoc_os}}
+              run: npx pkg -t "node18-${MATRIX_DOWNDOC_OS}-${MATRIX_DOWNDOC_ARCHITECTURE}" . --out-path
+                "Pydowndoc-bin/downloads"
 
             - if: steps.restore-binary-from-cache.outputs.cache-hit != 'true'
               name: Rename built downdoc executable binary
-              run: mv Pydowndoc-bin/downloads/downdoc${{matrix.downdoc_binary_suffix}} Pydowndoc-bin/downloads/downdoc-${{matrix.os}}-${{matrix.architecture}}${{matrix.downdoc_binary_suffix}}  # zizmor: ignore[template-injection]
+              env:  # yamllint disable-line rule:key-ordering
+                MATRIX_ARCHITECTURE: ${{matrix.architecture}}
+                MATRIX_DOWNDOC_BINARY_SUFFIX: ${{matrix.downdoc_binary_suffix}}
+                MATRIX_OS: ${{matrix.os}}
+              run: |
+                SRC="Pydowndoc-bin/downloads/downdoc${MATRIX_DOWNDOC_BINARY_SUFFIX}"
+                DEST="Pydowndoc-bin/downloads/downdoc-${MATRIX_OS}-${MATRIX_ARCHITECTURE}${MATRIX_DOWNDOC_BINARY_SUFFIX}"
+
+                if [ ! -f "$SRC" ]; then
+                    echo "Error: Expected built binary not found at '$SRC'" >&2
+                    echo "Available files in downloads:" >&2
+                    ls -la "Pydowndoc-bin/downloads/" || true
+                    exit 1
+                fi
+
+                mv "$SRC" "$DEST"
 
             - uses: actions/upload-artifact@v7
               with:

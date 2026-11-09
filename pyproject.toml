@@ -62,7 +62,7 @@ dev = [
     { include-group = "type-check" }
 ]
 build = ["hatch", "pip"]
-build-dev = ["auditwheel", "setuptools-scm", { include-group = "build" }]
+build-dev = ["auditwheel", "packaging", "setuptools-scm", { include-group = "build" }]
 lint-format = [
     "flake8-carrot>=0.1.2; python_version >= '3.14'",
     "flake8-pyproject>=1.2; python_version >= '3.14'",
@@ -71,7 +71,7 @@ lint-format = [
 package-analysis = ["pyroma>=5.0.1"]
 pre-commit = ["prek>=0.5.3"]
 test = []
-type-check = ["mypy>=2.4"]
+type-check = ["ty>=0.0.99"]
 
 [build-system]
 requires = [
@@ -83,7 +83,7 @@ requires = [
 build-backend = "hatchling.build"
 
 [tool.flake8]
-ignore = ["CAR110"]
+ignore = ["CAR110", "CAR163"]
 select = ["CAR"]
 extend_exclude = [".venv/"]
 require_plugins = ["flake8-carrot"]
@@ -101,44 +101,6 @@ docstring-description = {}
 [tool.hatch.version]
 raw-options = { local_scheme = "no-local-version", version_scheme = "python-simplified-semver" }
 source = "vcs"
-
-[tool.mypy]
-check_untyped_defs = true
-disallow_any_decorated = true
-disallow_any_explicit = true
-disallow_any_generics = true
-disallow_any_unimported = true
-disallow_incomplete_defs = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_decorators = true
-disallow_untyped_defs = true
-enable_error_code = [
-    "deprecated",
-    "explicit-override",
-    "ignore-without-code",
-    "mutable-override",
-    "narrowed-type-not-subtype",
-    "possibly-undefined",
-    "redundant-expr",
-    "redundant-self",
-    "truthy-bool",
-    "truthy-iterable",
-    "unused-awaitable"
-]
-extra_checks = true
-local_partial_types = true
-mypy_path = "stubs"
-no_implicit_reexport = true
-strict_bytes = true
-strict_equality = true
-strict_equality_for_none = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
-warn_incomplete_stub = true
 
 [tool.ruff]
 indent-width = 4
@@ -158,6 +120,7 @@ ignore = [
     "COM812",
     "COM819",
     "CPY",
+    "D107",
     "D206",
     "D212",
     "FA",
@@ -227,6 +190,29 @@ keep-runtime-typing = true
 [tool.tombi.format.rules]
 indent-width = 4
 line-width = 95
+
+[tool.ty.src]
+exclude = ["Pydowndoc-bin/"]
+
+[tool.ty.rules]
+blanket-ignore-comment = "error"
+disjoint-cast = "error"
+division-by-zero = "error"
+dynamic-function-decorator-return = "error"
+mismatched-sentinel-name = "warn"
+missing-direct-dependency = "error"
+missing-override-decorator = "error"
+missing-type-argument = "error"
+possibly-missing-attribute = "error"
+possibly-missing-import = "error"
+possibly-unresolved-reference = "error"
+redundant-cast = "error"
+redundant-condition-strict = "error"
+unsound-assignment = "error"
+unsound-return-statement = "error"
+unsound-yield = "error"
+unsupported-dynamic-base = "error"
+unused-ignore-comment = "error"
 
 [tool.uv]
 default-groups = ["dev"]

@@ -17,7 +17,7 @@ lazy import sys
 lazy import warnings
 lazy from collections.abc import Iterable, Mapping, Sequence
 lazy from pathlib import Path
-lazy from typing import Final, Protocol
+lazy from typing import Final, Protocol, cast
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from hatchling.builders.wheel import WheelBuilder, WheelBuilderConfig
@@ -189,7 +189,10 @@ class DowndocBinaryExecutableWheelBuilder(WheelBuilder):
                 self.PLUGIN_NAME,
                 self.app,
             ),
-            **super().get_build_hooks(directory),
+            **cast(
+                "dict[str, BuildHookInterface[WheelBuilderConfig]]",
+                super().get_build_hooks(directory),
+            ),
         }
 
     @override
@@ -243,7 +246,10 @@ def get_builder() -> (
     | Iterable[type[BuilderInterface[BuilderConfig, PluginManager]]]
 ):
     """Retrieve the correct hatch builder hook class."""
-    return DowndocBinaryExecutableWheelBuilder
+    return cast(
+        "type[BuilderInterface[BuilderConfig, PluginManager]]",
+        DowndocBinaryExecutableWheelBuilder,
+    )
 
 
 def _get_downdoc_binary_operating_system() -> str:

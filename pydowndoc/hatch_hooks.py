@@ -20,7 +20,7 @@ import sys
 import warnings
 from collections.abc import Collection, Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if sys.version_info >= (3, 12):
     from typing import override
@@ -110,7 +110,7 @@ class DowndocReadmeMetadataHook(MetadataHookInterface):
 
         try:
             return {
-                conversion_backend.ID: conversion_backend
+                cast("str", conversion_backend.ID): conversion_backend
                 for conversion_backend in (
                     DowndocMarkdownConversionBackend,
                     PandocMarkdownConversionBackend,

@@ -6,9 +6,9 @@ import sys
 from typing import TYPE_CHECKING
 
 if sys.version_info >= (3, 12):
-    from typing import override
+    pass
 else:
-    from typing_extensions import override
+    pass
 
 if sys.version_info < (3, 15):  # noqa: CAR105
     from typing_extensions import sentinel
@@ -23,7 +23,6 @@ OUTPUT_CONVERSION_TO_STRING = sentinel("OUTPUT_CONVERSION_TO_STRING")
 class ConversionError(RuntimeError):
     """Raised when an error occurs while using the downdoc binary in a subprocess."""
 
-    @override
     def __init__(
         self,
         message: str | None = None,
