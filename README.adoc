@@ -23,12 +23,12 @@
 :url-python-wiki-virtual-environments: {url-python-wiki}/tutorial/venv
 :url-python-wiki-extras: https://packaging.python.org/en/latest/specifications/dependency-specifiers#extras
 :url-python-wiki-packaging-supported-readme-formats: https://packaging.python.org/en/latest/specifications/core-metadata/#core-metadata-description-content-type
-:url-pre-commit-home: https://pre-commit.com
-:url-pre-commit: {url-pre-commit-home}
+:url-prek-home: https://prek.j178.dev
+:url-prek: {url-prek-home}
 :url-ruff-home: https://ruff.rs
 :url-ruff: {url-ruff-home}
-:url-mypy-home: https://mypy-lang.org
-:url-mypy: {url-mypy-home}
+:url-ty-repo: {_url-github}/astral-sh/ty
+:url-ty: {url-ty-repo}
 :url-github-wiki-readme: {_url-github-wiki}/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes
 :url-downdoc-repository: {_url-github}/opendevise/downdoc
 :url-pandoc-home: https://pandoc.org/
@@ -85,8 +85,8 @@ image:https://img.shields.io/pypi/v/Pydowndoc[PyPI Version,link={url-project-pyp
 image:https://img.shields.io/pypi/pyversions/Pydowndoc?logo=Python&logoColor=white&label=Python[Python Version,link={url-python-download}]
 image:https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2FCarrotManMatt%2FPydowndoc%2Fmain%2F.github%2Fworkflows%2Fupload-downdoc-binaries.yaml&query=%24.jobs.upload-downdoc-binaries.steps%5B0%5D.with.ref&label=downdoc&logo=asciidoctor[downdoc Version,link={url-downdoc}]
 image:{url-project-repository}/actions/workflows/check-build-publish.yaml/badge.svg[Tests Status,link={url-project-repository}/actions/workflows/check-build-publish.yaml]
-image:https://img.shields.io/badge/mypy-checked-%232EBB4E&label=mypy[mypy Status,link={url-mypy}]
-image:https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit[pre-commit Status,link={url-pre-commit}]
+image:https://raw.githubusercontent.com/j178/prek/main/docs/assets/badge.svg[prek Status,link={url-prek}]
+image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ty/main/assets/badge/v0.json[ruff,link={url-ty}]
 image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json[ruff,link={url-ruff}]
 image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json[uv,link={url-uv}]
 
